@@ -1,12 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle, ArrowLeft, ShieldCheck, Loader2 } from "lucide-react";
+import { useNavigate } from "react-router-dom";
 
 const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
-  const [userId, setUserId] = useState('');
-  const [password, setPassword] = useState('');
+  const [userId, setUserId] = useState("");
+  const [password, setPassword] = useState("");
+  const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -21,8 +23,12 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
           <div className="inline-flex h-12 w-12 bg-primary rounded-xl items-center justify-center mb-4 shadow-lg shadow-primary/20">
             <ShieldCheck className="text-primary-foreground h-7 w-7" />
           </div>
-          <h1 className="text-3xl font-bold text-foreground tracking-tight">Welcome back</h1>
-          <p className="text-muted-foreground mt-2 text-sm">Please enter your details to sign in</p>
+          <h1 className="text-3xl font-bold text-foreground tracking-tight">
+            Welcome back
+          </h1>
+          <p className="text-muted-foreground mt-2 text-sm">
+            Please enter your details to sign in
+          </p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -48,7 +54,10 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
                 Password
               </label>
-              <button type="button" className="text-xs text-primary hover:underline font-medium">
+              <button
+                type="button"
+                className="text-xs text-primary hover:underline font-medium"
+              >
                 Forgot password?
               </button>
             </div>
@@ -82,13 +91,18 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
                 <Loader2 className="h-4 w-4 animate-spin" />
                 Signing in...
               </span>
-            ) : "Sign In"}
+            ) : (
+              "Sign In"
+            )}
           </Button>
         </form>
 
         {/* Footer Navigation */}
         <div className="mt-8 pt-6 border-t border-muted">
           <button
+            onClick={() => {
+              navigate("/");
+            }}
             type="button"
             className="group flex items-center justify-center w-full gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >
