@@ -134,7 +134,6 @@ const ShiftFloorPlanFinal = () => {
                     </span>
                   </div>
                 </div>
-
                 {/* 3. CENTRAL OPEN AREA: Island Seating */}
                 <div className="ml-[28%] mr-[5%] h-[50%] flex gap-24 justify-center items-center relative">
                   {[1, 2].map((islandId) => (
@@ -142,83 +141,120 @@ const ShiftFloorPlanFinal = () => {
                       key={islandId}
                       className="relative h-full w-14 bg-slate-800/20 border border-slate-800 rounded-full flex flex-col items-center justify-around py-4"
                     >
-                      {/* Left Side Seats */}
+                      {/* Left Side Seats (C1-C5 and C11-C15) */}
                       <div className="absolute -left-8 h-full flex flex-col justify-around">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <SeatNode
-                            key={i}
-                            id={`island-${islandId}-L-${i}`}
-                            isOccupied={occupied.has(
-                              `island-${islandId}-L-${i}`,
-                            )}
-                          />
-                        ))}
+                        {Array.from({ length: 5 }).map((_, i) => {
+                          // Logic: Table 1 starts at 1, Table 2 starts at 11
+                          const seatNumber = islandId === 1 ? i + 1 : i + 11;
+                          const label = `C${seatNumber}`;
+
+                          return (
+                            <SeatNode
+                              key={i}
+                              id={`island-${islandId}-L-${i}`}
+                              label={label}
+                              isOccupied={occupied.has(
+                                `island-${islandId}-L-${i}`,
+                              )}
+                            />
+                          );
+                        })}
                       </div>
-                      {/* Right Side Seats */}
+
+                      {/* Right Side Seats (C6-C10 and C16-C20) */}
                       <div className="absolute -right-8 h-full flex flex-col justify-around">
-                        {Array.from({ length: 5 }).map((_, i) => (
-                          <SeatNode
-                            key={i}
-                            id={`island-${islandId}-R-${i}`}
-                            isOccupied={occupied.has(
-                              `island-${islandId}-R-${i}`,
-                            )}
-                          />
-                        ))}
+                        {Array.from({ length: 5 }).map((_, i) => {
+                          // Logic: Table 1 starts at 6, Table 2 starts at 16
+                          const seatNumber = islandId === 1 ? i + 6 : i + 16;
+                          const label = `C${seatNumber}`;
+
+                          return (
+                            <SeatNode
+                              key={i}
+                              id={`island-${islandId}-R-${i}`}
+                              label={label}
+                              isOccupied={occupied.has(
+                                `island-${islandId}-R-${i}`,
+                              )}
+                            />
+                          );
+                        })}
                       </div>
+
                       <div className="text-[8px] text-center font-black text-slate-700 uppercase vertical-text">
                         Long Table 0{islandId}
                       </div>
                     </div>
                   ))}
-                </div>
-
-                {/* 4. SOUTH WING: Primary Entrance & Specialized Seating */}
-<div className="absolute bottom-4 md:bottom-2 left-4 md:left-8 right-4 md:right-8 h-[18%] flex gap-3 items-end">
+                {/* 3. EAST PERIMETER: Wall Table 03 (Right-most Adjustment) */}
+                <div className="relative h-full w-12 border-r-4 border-double border-slate-800/80 flex flex-col items-center justify-around z-10">
+                  {/* Positioned seats to the left of the wall-line */}
+                  <div className="absolute -left-10 h-full flex flex-col justify-around">
+                    {Array.from({ length: 5 }).map((_, i) => (
+                      <SeatNode
+                        key={i}
+                        id={`wall-3-${i}`}
+                        label={`C${i + 21}`}
+                        isOccupied={occupied.has(`wall-3-${i}`)}
+                      />
+                    ))}
+                  </div>
   
-  {/* THE MAIN ENTRANCE: Architectural Digital Twin */}
-  <div className="w-[30%] h-full flex flex-col justify-end pb-1">
-    <div className="relative w-full h-16 border-l-2 border-b-2 border-slate-800 rounded-bl-3xl flex items-center px-4 group">
-      {/* Senior Designer Note: The arc mimics the standard architectural door swing. 
-          It leads directly into the Reception/Waiting Area as shown in the blueprint. 
-      */}
-      <div className="absolute -bottom-[2px] left-0 w-12 h-12 border-t-2 border-r-2 border-primary/40 rounded-tr-full opacity-50 group-hover:opacity-100 transition-opacity" />
-      
-      <div className="flex flex-col ml-10">
-        <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">
-          Main Entrance
-        </span>
-        <span className="text-[7px] text-slate-500 uppercase font-bold tracking-tighter">
-          Shift Option 2
-        </span>
-      </div>
-    </div>
-  </div>
-
-  {/* FOCUS CUBICLES: Strategically placed to optimize floor space */}
-  <div className="flex-1 flex gap-2 h-[75%]">
-    {Array.from({ length: 4 }).map((_, i) => (
-      <div
-        key={i}
-        className={`flex-1 border-2 rounded-xl flex items-center justify-center transition-all ${
-          occupied.has(`cube-${i}`)
-            ? "border-slate-800 bg-slate-900/40"
-            : "border-primary/40 bg-primary/10 shadow-[0_0_10px_rgba(255,107,0,0.1)]"
-        }`}
-      >
-        <Monitor
-          className={`w-3.5 h-3.5 ${occupied.has(`cube-${i}`) ? "text-slate-800" : "text-primary"}`}
-        />
-      </div>
-    ))}
-  </div>
-
-  {/* VERTICAL ACCESS: Access to mezzanine study areas */}
-  <div className="w-[12%] h-[75%] border-2 border-slate-800 bg-slate-900/80 rounded-xl flex flex-col items-center justify-center group hover:border-primary/50 transition-colors">
-    <ArrowUpRight className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors mb-0.5" />
-    <span className="text-[6px] font-black text-slate-600 uppercase">Stairs</span>
+  {/* Vertical label rotated to fit narrow space */}
+  <div className="absolute -right-8 text-[9px] font-black text-slate-500 uppercase vertical-text tracking-widest whitespace-nowrap">
+    Wall Table 03
   </div>
 </div>
+                  
+                </div>
+                
+                {/* 4. SOUTH WING: Primary Entrance & Specialized Seating */}
+                <div className="absolute bottom-4 md:bottom-2 left-4 md:left-8 right-4 md:right-8 h-[18%] flex gap-3 items-end">
+                  {/* THE MAIN ENTRANCE: Architectural Digital Twin */}
+                  <div className="w-[30%] h-full flex flex-col justify-end pb-1">
+                    <div className="relative w-full h-16 border-l-2 border-b-2 border-slate-800 rounded-bl-3xl flex items-center px-4 group">
+                      {/* Senior Designer Note: The arc mimics the standard architectural door swing. 
+          It leads directly into the Reception/Waiting Area as shown in the blueprint. 
+      */}
+                      <div className="absolute -bottom-[2px] left-0 w-12 h-12 border-t-2 border-r-2 border-primary/40 rounded-tr-full opacity-50 group-hover:opacity-100 transition-opacity" />
+
+                      <div className="flex flex-col ml-10">
+                        <span className="text-[10px] font-black text-primary uppercase tracking-[0.2em] animate-pulse">
+                          Main Entrance
+                        </span>
+                        <span className="text-[7px] text-slate-500 uppercase font-bold tracking-tighter">
+                          Shift Option 2
+                        </span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* FOCUS CUBICLES: Strategically placed to optimize floor space */}
+                  <div className="flex-1 flex gap-2 h-[75%]">
+                    {Array.from({ length: 4 }).map((_, i) => (
+                      <div
+                        key={i}
+                        className={`flex-1 border-2 rounded-xl flex items-center justify-center transition-all ${
+                          occupied.has(`cube-${i}`)
+                            ? "border-slate-800 bg-slate-900/40"
+                            : "border-primary/40 bg-primary/10 shadow-[0_0_10px_rgba(255,107,0,0.1)]"
+                        }`}
+                      >
+                        <Monitor
+                          className={`w-3.5 h-3.5 ${occupied.has(`cube-${i}`) ? "text-slate-800" : "text-primary"}`}
+                        />
+                      </div>
+                    ))}
+                  </div>
+
+                  {/* VERTICAL ACCESS: Access to mezzanine study areas */}
+                  <div className="w-[12%] h-[75%] border-2 border-slate-800 bg-slate-900/80 rounded-xl flex flex-col items-center justify-center group hover:border-primary/50 transition-colors">
+                    <ArrowUpRight className="w-4 h-4 text-slate-600 group-hover:text-primary transition-colors mb-0.5" />
+                    <span className="text-[6px] font-black text-slate-600 uppercase">
+                      Stairs
+                    </span>
+                  </div>
+                </div>
 
                 {/* ENTRANCE INDICATOR */}
                 <div className="absolute bottom-0 left-[22%] translate-y-full pt-4 flex items-center gap-2">
@@ -253,7 +289,15 @@ const ShiftFloorPlanFinal = () => {
 
 /* Sub-components for Clean Architectural Design */
 
-const SeatNode = ({ id, isOccupied }: { id: string; isOccupied: boolean }) => (
+const SeatNode = ({
+  id,
+  isOccupied,
+  label,
+}: {
+  id: string;
+  isOccupied: boolean;
+  label?: string;
+}) => (
   <div
     className={`w-6 h-6 rounded-full flex items-center justify-center border transition-all duration-300 ${
       isOccupied
@@ -261,7 +305,11 @@ const SeatNode = ({ id, isOccupied }: { id: string; isOccupied: boolean }) => (
         : "bg-primary border-primary shadow-[0_0_15px_rgba(255,107,0,0.3)] text-white hover:scale-110"
     }`}
   >
-    <User size={12} strokeWidth={3} />
+    {label ? (
+      <span className="text-[8px] font-black leading-none">{label}</span>
+    ) : (
+      <User size={12} strokeWidth={3} />
+    )}
   </div>
 );
 
