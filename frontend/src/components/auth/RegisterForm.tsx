@@ -110,10 +110,6 @@ const RegisterForm = ({
 
           {/* Security Section */}
           <div className="space-y-4">
-            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary/80 ml-1">
-              <span className="w-8 h-[1px] bg-primary/30"></span>
-              Security
-            </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Password</label>
