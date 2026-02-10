@@ -107,8 +107,8 @@ namespace ASI.Basecode.Services.Services
                 role = model.Role;
                 prefix = role switch
                 {
-                    UserRoles.Teacher => "TCH",
-                    UserRoles.Student => "STU",
+                    UserRoles.Cashier => "CSH",
+                    UserRoles.Shifty => "SHFT",
                     _ => throw new ArgumentException("Invalid role")
                 };
             }
@@ -200,8 +200,8 @@ namespace ASI.Basecode.Services.Services
             return new UserStatisticsViewModel
             {
                 TotalUsers = users.Count,
-                TotalStudents = users.Count(u => u.Role == UserRoles.Student),
-                TotalTeachers = users.Count(u => u.Role == UserRoles.Teacher),
+                TotalStudents = users.Count(u => u.Role == UserRoles.Shifty),
+                TotalTeachers = users.Count(u => u.Role == UserRoles.Cashier),
                 TotalAdmins = users.Count(u => u.Role == UserRoles.Admin)
             };
         }

@@ -58,12 +58,6 @@ namespace ASI.Basecode.Data.Repositories
                     !u.IsDeleted)
                 .IsDeleted = true;
 
-            // GetDbSet<User>().Remove(user);
-            GetDbSet<StudentCourse>()
-                .Where(sc => sc.UserId == userId)
-                .ExecuteUpdate(setters =>
-                    setters.SetProperty(sc => sc.IsDeleted, true)
-                );
 
             UnitOfWork.SaveChanges();
         }

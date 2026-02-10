@@ -26,26 +26,26 @@ namespace ASI.Basecode.WebApp.Controllers
     public class AdminController : ControllerBase
     {
         private readonly IUserService _userService;
-        private readonly ICourseService _courseService;
+        //private readonly ICourseService _courseService;
         private readonly IJwtService _jwtService;
-        private readonly IStudentCourseService _studentCourseService;
+        //private readonly IStudentCourseService _studentCourseService;
         private readonly IPdfService _pdfService;
         private readonly ILogger<AdminController> _logger;
         private readonly IMapper _mapper;
         public AdminController(
             IJwtService jwtService,
             IUserService userService,
-            ICourseService courseService,
+            //ICourseService courseService,
             IPdfService pdfService,
-            IStudentCourseService studentCourseService,
+            //IStudentCourseService studentCourseService,
             ILogger<AdminController> logger,
             IMapper mapper
         )
         {
             _jwtService = jwtService;
             _userService = userService;
-            _studentCourseService = studentCourseService;
-            _courseService = courseService;
+            //_studentCourseService = studentCourseService;
+            //_courseService = courseService;
             _pdfService = pdfService;
             _logger = logger;
             _mapper = mapper;
@@ -86,7 +86,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 // Return the generated ID in the response
                 return Ok(new RegisterControllerViewModel
                 {
-                    userId = generatedUserId,      
+                    userId = generatedUserId,
                     message = "User created successfully."
                 });
             }
@@ -337,32 +337,32 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <returns>Dashboard statistics including user and course counts</returns>
         /// <response code="200">Dashboard statistics retrieved successfully</response>
         /// <response code="500">Internal server error</response>
-        [HttpGet("dashboard-stats")]
-        [Authorize(Roles = "Admin")]
-        [ProducesResponseType(typeof(DashboardStatsViewModel), StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult wGetDashboardStats()
-        {
-            try
-            {
-                var userStats = _userService.GetUserStatistics();
-                var courseCount = _courseService.GetCourseCount();
+        //[HttpGet("dashboard-stats")]
+        //[Authorize(Roles = "Admin")]
+        //[ProducesResponseType(typeof(DashboardStatsViewModel), StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public IActionResult wGetDashboardStats()
+        //{
+        //    try
+        //    {
+        //        var userStats = _userService.GetUserStatistics();
+        //        var courseCount = _courseService.GetCourseCount();
 
-                // Dili ma automap :/
-                var dashboardStats = new DashboardStatsViewModel
-                {
-                    UserStats = userStats,
-                    TotalCourses = courseCount
-                };
+        //        // Dili ma automap :/
+        //        var dashboardStats = new DashboardStatsViewModel
+        //        {
+        //            UserStats = userStats,
+        //            TotalCourses = courseCount
+        //        };
 
-                return Ok(dashboardStats);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "An internal server error has occurred: ");
-                return StatusCode(500, new { message = "An internal server error has occurred.", error = ex.Message });
-            }
-        }
+        //        return Ok(dashboardStats);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "An internal server error has occurred: ");
+        //        return StatusCode(500, new { message = "An internal server error has occurred.", error = ex.Message });
+        //    }
+        //}
 
         /// <summary>
         /// Assigns a teacher to a course
@@ -370,193 +370,193 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <remarks>
         /// **Authorization:** Admin
         /// </remarks>
-        /// <param name="courseId">The ID of the course</param>
-        /// <param name="teacherId">The user ID of the teacher</param>
-        /// <returns>Success or error</returns>
-        [HttpPut("course/assign-teacher/{courseId}")]
-        [Authorize(Roles = "Admin")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult AssignTeacherToCourse(int courseId, [FromQuery] string teacherId)
-        {
-            if (string.IsNullOrWhiteSpace(teacherId))
-                return BadRequest(new { message = "Teacher ID is required." });
+        ///// <param name="courseId">The ID of the course</param>
+        ///// <param name="teacherId">The user ID of the teacher</param>
+        ///// <returns>Success or error</returns>
+        //[HttpPut("course/assign-teacher/{courseId}")]
+        //[Authorize(Roles = "Admin")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public IActionResult AssignTeacherToCourse(int courseId, [FromQuery] string teacherId)
+        //{
+        //    if (string.IsNullOrWhiteSpace(teacherId))
+        //        return BadRequest(new { message = "Teacher ID is required." });
 
-            try
-            {
-                // Fetch teacher and validate role
-                var teacher = _userService.FetchUser(teacherId);
-                if (teacher == null || teacher.Role != Enums.UserRoles.Teacher)
-                {
-                    return BadRequest(new { message = "Invalid teacher ID or user is not a teacher." });
-                }
+        //    try
+        //    {
+        //        // Fetch teacher and validate role
+        //        var teacher = _userService.FetchUser(teacherId);
+        //        if (teacher == null || teacher.Role != Enums.UserRoles.Teacher)
+        //        {
+        //            return BadRequest(new { message = "Invalid teacher ID or user is not a teacher." });
+        //        }
 
-                // Assign teacher
-                _courseService.AssignTeacher(courseId, teacherId);
+        //        // Assign teacher
+        //        _courseService.AssignTeacher(courseId, teacherId);
 
-                return Ok(new { message = "Teacher assigned successfully." });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error assigning teacher to course.");
-                return StatusCode(500, new { message = "An internal server error occurred.", error = ex.Message });
-            }
-        }
+        //        return Ok(new { message = "Teacher assigned successfully." });
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error assigning teacher to course.");
+        //        return StatusCode(500, new { message = "An internal server error occurred.", error = ex.Message });
+        //    }
+        //}
 
-        //Generate pdf for dashboard summary frontend buttons is missing please provide for it
-        //(choose :
-        //1.all users : null
-        //2.students = students
-        //3.teachers = teachers
-        //4.admin = admin)
-        [HttpGet("pdf/dashboard-summary")]
-        [Authorize(Roles = "Admin")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult GenerateDashboardSummaryPdf(string? role = null)
-        {
-            try
-            {
-                var userStats = _userService.GetUserStatistics();
-                var courseCount = _courseService.GetCourseCount();
+        ////Generate pdf for dashboard summary frontend buttons is missing please provide for it
+        ////(choose :
+        ////1.all users : null
+        ////2.students = students
+        ////3.teachers = teachers
+        ////4.admin = admin)
+        //[HttpGet("pdf/dashboard-summary")]
+        //[Authorize(Roles = "Admin")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status400BadRequest)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public IActionResult GenerateDashboardSummaryPdf(string? role = null)
+        //{
+        //    try
+        //    {
+        //        var userStats = _userService.GetUserStatistics();
+        //        var courseCount = _courseService.GetCourseCount();
 
 
-                UserRoles? parsedRole = null;
+        //        UserRoles? parsedRole = null;
 
-                // Fetch filtered or all users
-                List<UserViewAdminModel> userLists;
+        //        // Fetch filtered or all users
+        //        List<UserViewAdminModel> userLists;
 
-                if (!string.IsNullOrWhiteSpace(role))
-                {
-                    if (Enum.TryParse<UserRoles>(role.Trim(), true, out var tempRole))
-                    {
-                        parsedRole = tempRole;
-                        userLists = _userService.GetUsersByRole(parsedRole.Value)
-                            .Select(u => new UserViewAdminModel
-                            {
-                                UserId = u.UserId,
-                                FirstName = u.FirstName,
-                                LastName = u.LastName,
-                                Program = u.Program,
-                                Role = u.Role
-                            })
-                            .ToList();
-                    }
-                    else
-                    {
-                        return BadRequest(new { message = "Invalid role. Use Student, Teacher, or Admin." });
-                    }
-                }
-                else
-                {
-                    userLists = _userService.GetAllUsers()
-                        .Select(u => new UserViewAdminModel
-                        {
-                            UserId = u.UserId,
-                            FirstName = u.FirstName,
-                            LastName = u.LastName,
-                            Program = u.Program,
-                            Role = u.Role
-                        })
-                        .ToList();
-                }
+        //        if (!string.IsNullOrWhiteSpace(role))
+        //        {
+        //            if (Enum.TryParse<UserRoles>(role.Trim(), true, out var tempRole))
+        //            {
+        //                parsedRole = tempRole;
+        //                userLists = _userService.GetUsersByRole(parsedRole.Value)
+        //                    .Select(u => new UserViewAdminModel
+        //                    {
+        //                        UserId = u.UserId,
+        //                        FirstName = u.FirstName,
+        //                        LastName = u.LastName,
+        //                        Program = u.Program,
+        //                        Role = u.Role
+        //                    })
+        //                    .ToList();
+        //            }
+        //            else
+        //            {
+        //                return BadRequest(new { message = "Invalid role. Use Student, Teacher, or Admin." });
+        //            }
+        //        }
+        //        else
+        //        {
+        //            userLists = _userService.GetAllUsers()
+        //                .Select(u => new UserViewAdminModel
+        //                {
+        //                    UserId = u.UserId,
+        //                    FirstName = u.FirstName,
+        //                    LastName = u.LastName,
+        //                    Program = u.Program,
+        //                    Role = u.Role
+        //                })
+        //                .ToList();
+        //        }
 
-                var dashboardStats = new DashboardStatsViewModel
-                {
-                    UserStats = userStats,
-                    TotalCourses = courseCount
-                    
-                };
+        //        var dashboardStats = new DashboardStatsViewModel
+        //        {
+        //            UserStats = userStats,
+        //            TotalCourses = courseCount
 
-                var courses = _courseService.GetAllCourses()
-                    .Select(c => new CourseViewModel
-                    {
-                        Id = c.Id,
-                        CourseCode = c.CourseCode,
-                        CourseName = c.CourseName,
-                        CourseDescription = c.CourseDescription
-                    })
-                    .ToList();
+        //        };
 
-                var pdfBytes = _pdfService.GenerateDashboardSummaryReport(
-                    dashboardStats,
-                    userLists,
-                    courses,
-                    parsedRole
-                );
+        //        var courses = _courseService.GetAllCourses()
+        //            .Select(c => new CourseViewModel
+        //            {
+        //                Id = c.Id,
+        //                CourseCode = c.CourseCode,
+        //                CourseName = c.CourseName,
+        //                CourseDescription = c.CourseDescription
+        //            })
+        //            .ToList();
 
-                string fileName = string.IsNullOrWhiteSpace(role)
-                    ? "dashboard_summary_report.pdf"
-                    : $"dashboard_summary_{role.Trim().ToLower()}_report.pdf";
+        //        var pdfBytes = _pdfService.GenerateDashboardSummaryReport(
+        //            dashboardStats,
+        //            userLists,
+        //            courses,
+        //            parsedRole
+        //        );
 
-                return File(pdfBytes, "application/pdf", fileName);
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error generating dashboard summary PDF");
-                return StatusCode(500, new
-                {
-                    message = "Error generating dashboard summary PDF",
-                    error = ex.Message
-                });
-            }
-        }
+        //        string fileName = string.IsNullOrWhiteSpace(role)
+        //            ? "dashboard_summary_report.pdf"
+        //            : $"dashboard_summary_{role.Trim().ToLower()}_report.pdf";
+
+        //        return File(pdfBytes, "application/pdf", fileName);
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        _logger.LogError(ex, "Error generating dashboard summary PDF");
+        //        return StatusCode(500, new
+        //        {
+        //            message = "Error generating dashboard summary PDF",
+        //            error = ex.Message
+        //        });
+        //    }
+        //}
+
+        //// GET: api/admin/pdf/grades-per-course
+        //[HttpGet("pdf/course-grade-summary")]
+        //[Authorize(Roles = "Admin")]
+        //[ProducesResponseType(StatusCodes.Status200OK)]
+        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //public IActionResult GetGradesPerCoursePdf()
+        //{
+        //    try
+        //    {
+        //        // Fetch grades using the service
+        //        var grades = _studentCourseService.GetGradesPerCourse();
+
+        //        // Generate PDF using pdfService
+        //        var pdfBytes = _pdfService.GenerateCourseGradeSummary(grades);
+
+        //        // Return and download file
+        //        return File(pdfBytes, "application/pdf", "CourseGradeSummary.pdf");
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        // Optional: log the exception
+        //        return StatusCode(500, $"Internal server error: {ex.Message}");
+        //    }
+        //}
+
 
         // GET: api/admin/pdf/grades-per-course
-        [HttpGet("pdf/course-grade-summary")]
-        [Authorize(Roles = "Admin")]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult GetGradesPerCoursePdf()
-        {
-            try
-            {
-                // Fetch grades using the service
-                var grades = _studentCourseService.GetGradesPerCourse();
+        //    [HttpGet("pdf/grades-per-course")]
+        //    //[Authorize(Roles = "Admin")]
+        //    [AllowAnonymous]
+        //    [ProducesResponseType(StatusCodes.Status200OK)]
+        //    [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        //    public IActionResult GetCourseGradesByCourseCode(string courseCode)
+        //    {
+        //        try
+        //        {
+        //            // Fetch grades using the service
+        //            var grades = _studentCourseService.GetGradesByCourseCode(courseCode);
 
-                // Generate PDF using pdfService
-                var pdfBytes = _pdfService.GenerateCourseGradeSummary(grades);
+        //            // Generate PDF using pdfService
+        //            var pdfBytes = _pdfService.GenerateGradesByCourse(grades);
 
-                // Return and download file
-                return File(pdfBytes, "application/pdf", "CourseGradeSummary.pdf");
-            }
-            catch (Exception ex)
-            {
-                // Optional: log the exception
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
+        //            // Return and download file
+        //            return File(pdfBytes, "application/pdf", "CourseGradeSummary.pdf");
 
+        //        }
+        //        catch (Exception ex)
+        //        {
+        //            // Optional: log the exception
+        //            return StatusCode(500, $"Internal server error: {ex.Message}");
+        //        }
+        //    }
+        //}
 
-           // GET: api/admin/pdf/grades-per-course
-        [HttpGet("pdf/grades-per-course")]
-        //[Authorize(Roles = "Admin")]
-        [AllowAnonymous]
-        [ProducesResponseType(StatusCodes.Status200OK)]
-        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult GetCourseGradesByCourseCode(string courseCode)
-        {
-            try
-            {
-                // Fetch grades using the service
-                var grades = _studentCourseService.GetGradesByCourseCode(courseCode);
-
-                // Generate PDF using pdfService
-                var pdfBytes = _pdfService.GenerateGradesByCourse(grades);
-
-                // Return and download file
-                return File(pdfBytes, "application/pdf", "CourseGradeSummary.pdf");
-
-            }
-            catch (Exception ex)
-            {
-                // Optional: log the exception
-                return StatusCode(500, $"Internal server error: {ex.Message}");
-            }
-        }
     }
-
-
 }

@@ -150,12 +150,12 @@ namespace ASI.Basecode.Services.Services
 
                 // Students
                 gfx.DrawRoundedRectangle(cardColor, margin + cardWidth + cardGap, cardY, cardWidth, cardHeight, 8, 8);
-                gfx.DrawString($"Students: {users.Count(u => u.Role == UserRoles.Student)}",
+                gfx.DrawString($"Students: {users.Count(u => u.Role == UserRoles.Shifty)}",
                     sectionFont, primaryColor, new XPoint(margin + cardWidth + cardGap + 10, cardY + 35));
 
                 // Teachers
                 gfx.DrawRoundedRectangle(cardColor, margin + 2 * (cardWidth + cardGap), cardY, cardWidth, cardHeight, 8, 8);
-                gfx.DrawString($"Teachers: {users.Count(u => u.Role == UserRoles.Teacher)}",
+                gfx.DrawString($"Teachers: {users.Count(u => u.Role == UserRoles.Cashier)}",
                     sectionFont, primaryColor, new XPoint(margin + 2 * (cardWidth + cardGap) + 10, cardY + 35));
 
                 y += cardHeight + 50;

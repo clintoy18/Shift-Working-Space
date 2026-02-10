@@ -18,6 +18,6 @@ namespace ASI.Basecode.Data.Models
         public bool IsDeleted { get; set; } = false;
 
         public DateTime CreatedTime { get; set; } = DateTime.UtcNow;
-        public UserRoles Role { get; set; } = UserRoles.Student;
+        public UserRoles Role { get; set; } = UserRoles.Shifty;
     }
 }

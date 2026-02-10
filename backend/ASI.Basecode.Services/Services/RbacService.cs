@@ -31,13 +31,13 @@ namespace ASI.Basecode.Services.Services
         public bool IsTeacher(string userId)
         {
             var role = GetUserRole(userId);
-            return role == UserRoles.Teacher;
+            return role == UserRoles.Cashier;
         }
 
         public bool IsStudent(string userId)
         {
             var role = GetUserRole(userId);
-            return role == UserRoles.Student;
+            return role == UserRoles.Shifty;
         }
 
         public bool IsAdmin(string userId)

@@ -12,7 +12,7 @@ namespace ASI.Basecode.Data
         }
 
         public virtual DbSet<User> Users { get; set; } = null!;
-      
+
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -31,6 +31,7 @@ namespace ASI.Basecode.Data
                 entity.Property(u => u.Role).IsRequired();
                 entity.Property(u => u.IsDeleted).IsRequired().HasDefaultValue(false);
             });
+        }
 
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);

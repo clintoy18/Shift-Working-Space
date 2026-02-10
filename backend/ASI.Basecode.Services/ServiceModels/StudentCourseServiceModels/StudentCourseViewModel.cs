@@ -12,6 +12,6 @@ namespace ASI.Basecode.Services.ServiceModels
         public string MiddleName { get; set; }
         public string LastName { get; set; }
         public string Program { get; set; }
-        public Course Course { get; set; }
+        //public Course Course { get; set; }
     }
 }
