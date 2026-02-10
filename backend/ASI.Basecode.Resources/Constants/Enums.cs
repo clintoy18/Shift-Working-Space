@@ -29,8 +29,8 @@
         /// </summary>
         public enum UserRoles
         {
-            Student,
-            Teacher,
+            Shifty,
+            Cashier,
             Admin
         }
     }
