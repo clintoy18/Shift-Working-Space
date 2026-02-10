@@ -3,6 +3,7 @@ import DashboardLayout from "./components/layout/DashboardLayout";
 import ProtectedRoute from "./components/routing/ProtectedRoute";
 import GuestRoute from "./components/routing/GuestRoute";
 import AuthPage from "./pages/AuthPage";
+import LandingPage from "./pages/LandingPage";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ToastProvider } from "./context/ToastContext"; // ✅ Import ToastProvider
@@ -13,8 +14,9 @@ export default function App() {
       <AuthProvider>
         <Router>
           <Routes>
+            <Route path="/" element={<LandingPage />} />
             <Route element={<GuestRoute />}>
-              <Route path="/" element={<AuthPage />} />
+              <Route path="/auth" element={<AuthPage />} />
             </Route>
 
             <Route element={<ProtectedRoute />}>

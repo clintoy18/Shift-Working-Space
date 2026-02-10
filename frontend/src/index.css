@@ -1,15 +1,118 @@
-@import url("https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap");
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
-body {
-  @apply max-w-[1200px] mx-auto;
+/* Definition of the design system. All colors, gradients, fonts, etc should be defined here. 
+All colors MUST be HSL.
+*/
+
+@layer base {
+  :root {
+    /* Shift Working Space - Orange & Slate Palette */
+    --background: 210 40% 99%;
+    --foreground: 215 28% 17%;
+
+    --card: 0 0% 100%;
+    --card-foreground: 215 28% 17%;
+
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 28% 17%;
+
+    /* Primary Orange: #FF6B00 = 25 100% 50% */
+    --primary: 25 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    /* Slate Light for secondary */
+    --secondary: 210 40% 98%;
+    --secondary-foreground: 215 28% 17%;
+
+    /* Slate Medium for muted */
+    --muted: 210 40% 96%;
+    --muted-foreground: 215 19% 35%;
+
+    --accent: 25 100% 95%;
+    --accent-foreground: 25 100% 40%;
+
+    --destructive: 0 84% 60%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 214 32% 91%;
+    --input: 214 32% 91%;
+    --ring: 25 100% 50%;
+
+    --radius: 0.5rem;
+
+    /* Slate Dark for headings */
+    --slate-dark: 215 28% 17%;
+    --slate-medium: 215 19% 35%;
+    --slate-light: 210 40% 98%;
+
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 25 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 25 100% 50%;
+  }
+
+  .dark {
+    --background: 215 28% 10%;
+    --foreground: 210 40% 98%;
+
+    --card: 215 28% 13%;
+    --card-foreground: 210 40% 98%;
+
+    --popover: 215 28% 13%;
+    --popover-foreground: 210 40% 98%;
+
+    --primary: 25 100% 50%;
+    --primary-foreground: 0 0% 100%;
+
+    --secondary: 215 28% 20%;
+    --secondary-foreground: 210 40% 98%;
+
+    --muted: 215 28% 20%;
+    --muted-foreground: 215 20% 65%;
+
+    --accent: 25 100% 20%;
+    --accent-foreground: 25 100% 70%;
+
+    --destructive: 0 63% 31%;
+    --destructive-foreground: 210 40% 98%;
+
+    --border: 215 28% 20%;
+    --input: 215 28% 20%;
+    --ring: 25 100% 50%;
+
+    --slate-dark: 210 40% 98%;
+    --slate-medium: 215 20% 65%;
+    --slate-light: 215 28% 17%;
+
+    --sidebar-background: 215 28% 10%;
+    --sidebar-foreground: 240 4.8% 95.9%;
+    --sidebar-primary: 25 100% 50%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 240 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 25 100% 50%;
+  }
 }
 
-@layer utilities {
-  .btn-disabled {
-    @apply opacity-50 cursor-not-allowed pointer-events-none;
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  /* Smooth scrolling for anchor navigation and space for fixed navbar */
+  html {
+    scroll-behavior: smooth;
+    scroll-padding-top: 4rem; /* matches navbar height (h-16) */
+  }
+
+  body {
+    @apply bg-background text-foreground;
   }
 }
