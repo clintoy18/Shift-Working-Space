@@ -8,18 +8,18 @@ import { ManageStudents } from '../components/dashboard/teacher/ManageStudents';
 import { StudentCourse } from "../components/dashboard/student/StudentCourse";
 import TeacherOverview from '../components/dashboard/teacher/TeacherOverview';
 
-export type Role = 'Student' | 'Teacher' | 'Admin';
+export type Role = 'Shifty' | 'Cashier' | 'Admin';
 
 // Map backend numeric roles to Role strings
 const NUMERIC_ROLE_MAP: Record<number, Role | undefined> = {
-    0: 'Student',
-    1: 'Teacher',
+    0: 'Shifty',
+    1: 'Cashier',
     2: 'Admin',
 };
 
 export const ROLE_TO_NUMBER: Record<Role, number> = {
-    Student: 0,
-    Teacher: 1,
+    Shifty: 0,
+    Cashier: 1,
     Admin: 2,
 };
 export type UserId = string;
@@ -52,12 +52,12 @@ export function getRoleConfig(role: Role, studentUserId?: string) {
         tabs: adminTabs,
         description: "Manage users, oversee reports, and configure settings.",
       };
-    case "Teacher":
+    case "Cashier":
       return {
         tabs: teacherTabs,
         description: "Manage your subjects, grade students, and track their progress.",
       };
-    case "Student":
+    case "Shifty":
       return {
         tabs: studentTabs(studentUserId), // pass studentUserId here
         description: "View your subjects, grades, and progress tracking.",
