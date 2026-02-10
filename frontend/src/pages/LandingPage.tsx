@@ -1,7 +1,7 @@
 import Navbar from '../components/landing/Navbar';
 import Hero from '../components/landing/Hero';
 import Features from '../components/landing/Features';
-import DashboardTeaser from '../components/landing/DashboardTeaser';
+import SeatMap from '../components/landing/SeatMap';
 import Pricing from '../components/landing/Pricing';
 import Testimonials from '../components/landing/Testimonials';  
 import FAQ from '../components/landing/FAQ';
@@ -15,7 +15,7 @@ const Landing = () => {
       <Navbar />
       <Hero />
       <Features />
-      <DashboardTeaser />
+      <SeatMap />
       <Pricing />
       <Testimonials />
       {/* <Location /> */}
