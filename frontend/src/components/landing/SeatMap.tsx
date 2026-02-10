@@ -1,10 +1,10 @@
 import { useState } from "react";
-import { Users, Monitor, Coffee,  ArrowUpRight, Lock } from "lucide-react";
+import { Users, Monitor, Coffee, ArrowUpRight, Lock } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const ShiftFloorPlanFinal = () => {
   // Real-time occupancy state simulation
-    const navigate = useNavigate();
+  const navigate = useNavigate();
   const [occupied] = useState(
     new Set(["island-1-seat-2", "island-2-seat-4", "cube-1", "huddle-1"]),
   );
@@ -70,8 +70,10 @@ const ShiftFloorPlanFinal = () => {
             </div>
 
             {/* Persuasive Call to Action */}
-            <button  onClick={() => navigate("/auth")} 
-            className="w-full mt-6 py-4 bg-primary text-white font-black uppercase text-xs tracking-[0.2em] rounded-xl shadow-[0_0_20px_rgba(255,107,0,0.2)] hover:shadow-[0_0_30px_rgba(255,107,0,0.4)] hover:-translate-y-0.5 transition-all">
+            <button
+              onClick={() => navigate("/auth")}
+              className="w-full mt-6 py-4 bg-primary text-white font-black uppercase text-xs tracking-[0.2em] rounded-xl shadow-[0_0_20px_rgba(255,107,0,0.2)] hover:shadow-[0_0_30px_rgba(255,107,0,0.4)] hover:-translate-y-0.5 transition-all"
+            >
               Be a Member and Book Online!
             </button>
           </div>
@@ -100,10 +102,41 @@ const ShiftFloorPlanFinal = () => {
                       className="w-[20%]"
                       icon={<Users className="text-slate-500" />}
                     />
-                    <div className="flex-1 border-2 border-slate-800 border-dashed rounded-xl flex items-center justify-center bg-slate-900/20">
-                      <span className="text-[9px] font-bold text-slate-600 uppercase">
-                        Table for 6
-                      </span>
+                    {/* REFACTORED TABLE FOR 6 */}
+                    <div className="flex-1 flex items-center justify-center relative">
+                      <div className="relative h-32 w-14 bg-slate-800/10 border border-slate-800/60 rounded-sm flex flex-col items-center justify-center py-2">
+                        {/* VERTICAL DIVIDER */}
+                        <div className="absolute inset-y-0 left-1/2 w-[1px] bg-slate-800/40" />
+
+                        {/* LEFT SIDE SEATS - 3 Chairs */}
+                        <div className="absolute -left-8 h-full flex flex-col justify-around py-2">
+                          {[2, 1, 0].map((i) => (
+                            <SeatNode
+                              key={i}
+                              id={`huddle-2-L-${i}`}
+                              label={`R${i + 28}`}
+                              isOccupied={occupied.has(`huddle-2-L-${i}`)}
+                            />
+                          ))}
+                        </div>
+
+                        {/* RIGHT SIDE SEATS - 3 Chairs */}
+                        <div className="absolute -right-8 h-full flex flex-col justify-around py-2">
+                          {[2, 1, 0].map((i) => (
+                            <SeatNode
+                              key={i}
+                              id={`huddle-2-R-${i}`}
+                              label={`R${i + 25}`}
+                              isOccupied={occupied.has(`huddle-2-R-${i}`)}
+                            />
+                          ))}
+                        </div>
+
+                        {/* TABLE LABEL */}
+                        <div className="absolute -bottom-5 w-max text-[7px] text-center font-black text-slate-700 uppercase">
+                          Regular Table for (6)
+                        </div>
+                      </div>
                     </div>
                   </div>
 
@@ -140,57 +173,68 @@ const ShiftFloorPlanFinal = () => {
                   </div>
 
                   {/* 3. CENTRAL OPEN AREA */}
-                  <div className="ml-[40%] mr-[3%] h-[50%] flex gap-24 justify-center items-center relative">
-                    {[1, 2].map((islandId) => (
-                      <div
-                        key={islandId}
-                        className="relative h-full w-14 bg-slate-800/20 border border-slate-800 rounded-full flex flex-col items-center justify-around py-4"
-                      >
-                        <div className="absolute -left-8 h-full flex flex-col justify-around">
-                          {Array.from({ length: 5 }).map((_, i) => {
-                            const num = islandId === 1 ? i + 1 : i + 11;
-                            return (
-                              <SeatNode
-                                key={i}
-                                id={`isl-${islandId}-L-${i}`}
-                                label={`C${num}`}
-                                isOccupied={occupied.has(
-                                  `isl-${islandId}-L-${i}`,
-                                )}
-                              />
-                            );
-                          })}
-                        </div>
-                        <div className="absolute -right-8 h-full flex flex-col justify-around">
-                          {Array.from({ length: 5 }).map((_, i) => {
-                            const num = islandId === 1 ? i + 6 : i + 16;
-                            return (
-                              <SeatNode
-                                key={i}
-                                id={`isl-${islandId}-R-${i}`}
-                                label={`C${num}`}
-                                isOccupied={occupied.has(
-                                  `isl-${islandId}-R-${i}`,
-                                )}
-                              />
-                            );
-                          })}
-                        </div>
-                        <div className="text-[8px] text-center font-black text-slate-700 uppercase vertical-text">
-                          Table 0{islandId}
-                        </div>
-                      </div>
-                    ))}
+                  <div className="ml-[40%] mr-[3%] h-[55%] flex gap-22 justify-center items-center relative">
+                    {/* NESTED GRID: 2x2 layout */}
+                    <div className="grid grid-cols-2 gap-x-24 gap-y-12 items-center justify-items-center">
+                      {[1, 2, 3, 4].map((islandId) => (
+                        <div
+                          key={islandId}
+                          className="relative h-24 w-14 bg-slate-800/10 border border-slate-800/60 rounded-sm flex flex-col items-center justify-center py-2"
+                        >
+                          {/* VERTICAL DIVIDER: Splits the table down the middle */}
+                          <div className="absolute inset-y-0 left-1/2 w-[1px] bg-slate-800/40" />
 
-                    {/* EAST PERIMETER: Wall Table 03 */}
-                    <div className="relative -right-20 h-full w-10 z-10">
-                      <div className="absolute inset-y-0 right-0 w-full bg-slate-800/20 border-r-4 border-y-2 border-l border-slate-800/80 rounded-l-2xl shadow-inner" />
+                          {/* LEFT SIDE SEATS - 2 Chairs */}
+                          <div className="absolute -left-8 h-full flex flex-col justify-around py-1">
+                            {[0, 1].map((i) => {
+                              const num = (islandId - 1) * 4 + (i + 1);
+                              return (
+                                <SeatNode
+                                  key={i}
+                                  id={`isl-${islandId}-L-${i}`}
+                                  label={`R${num}`}
+                                  isOccupied={occupied.has(
+                                    `isl-${islandId}-L-${i}`,
+                                  )}
+                                />
+                              );
+                            })}
+                          </div>
+
+                          {/* RIGHT SIDE SEATS - 2 Chairs */}
+                          <div className="absolute -right-8 h-full flex flex-col justify-around py-1">
+                            {[0, 1].map((i) => {
+                              const num = (islandId - 1) * 4 + (i + 3);
+                              return (
+                                <SeatNode
+                                  key={i}
+                                  id={`isl-${islandId}-R-${i}`}
+                                  label={`R${num}`}
+                                  isOccupied={occupied.has(
+                                    `isl-${islandId}-R-${i}`,
+                                  )}
+                                />
+                              );
+                            })}
+                          </div>
+
+                          {/* TABLE LABEL - Moved to bottom slightly for better visibility with the divider */}
+                          <div className="absolute -bottom-5 text-[7px] text-center font-black text-slate-700 uppercase">
+                            T-0{islandId}
+                          </div>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* EAST PERIMETER: Wall Table 03 - Remains Unchanged */}
+                    <div className="relative -right-24 h-full w-10 z-10">
+                      <div className="absolute inset-y-0 right-0 w-full bg-slate-800/20 border-r-4 border-y-2 border-l border-slate-800/80 rounded-md shadow-inner" />
                       <div className="absolute -left-10 h-full flex flex-col justify-around">
                         {Array.from({ length: 5 }).map((_, i) => (
                           <SeatNode
                             key={i}
                             id={`wall-3-${i}`}
-                            label={`C${i + 21}`}
+                            label={`R${i + 20}`}
                             isOccupied={occupied.has(`wall-3-${i}`)}
                           />
                         ))}
