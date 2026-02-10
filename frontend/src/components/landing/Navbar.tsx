@@ -39,13 +39,13 @@ const Navbar = () => {
           {/* CTA Button */}
           <div className="hidden md:flex items-center gap-3">
             <button
-              onClick={() => navigate("/login")}
+              onClick={() => navigate("/auth")}
               className="text-foreground hover:text-primary transition-colors font-medium"
             >
               Login
             </button>
             <Button
-              onClick={() => navigate("/register")}
+              onClick={() => navigate("/auth")}
               className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"
             >
               Be a Member
@@ -83,7 +83,7 @@ const Navbar = () => {
               <div className="flex gap-2 pt-2">
                 <button
                   onClick={() => {
-                    navigate("/login");
+                    navigate("/auth");
                     setIsOpen(false);
                   }}
                   className="flex-1 px-4 py-2 text-foreground hover:text-primary transition-colors font-medium border border-border rounded-lg"
@@ -92,7 +92,7 @@ const Navbar = () => {
                 </button>
                 <Button
                   onClick={() => {
-                    navigate("/register");
+                    navigate("/auth");
                     setIsOpen(false);
                   }}
                   className="flex-1 bg-primary hover:bg-primary/90 text-primary-foreground font-semibold"

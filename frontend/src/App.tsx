@@ -14,11 +14,9 @@ export default function App() {
       <AuthProvider>
         <Router>
           <Routes>
-
-             <Route path="/" element={<LandingPage />} />
-            
+            <Route path="/" element={<LandingPage />} />
             <Route element={<GuestRoute />}>
-              <Route path="/" element={<AuthPage />} />
+              <Route path="/auth" element={<AuthPage />} />
             </Route>
 
             <Route element={<ProtectedRoute />}>
