@@ -10,5 +10,5 @@ export interface IRegisterRequest {
     lastName: string;
     password: string;
     confirmPassword: string;
-    program: string;
+    // program: string;
 }
