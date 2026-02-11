@@ -31,6 +31,29 @@ namespace ASI.Basecode.Data.Repositories
             return user;
         }
 
+        public IEnumerable<User> GetUserRole(string role)
+        {
+            return GetDbSet<User>()
+                .Where(u => u.).ToList();
+        }
+
+        /// <summary>
+        /// Retrieves a user that matches the provided user ID and hashed password and is not marked as deleted.
+        /// </summary>
+        /// <param name="userId">The user's identifier.</param>
+        /// <param name="hashedPassword">The hashed password to compare against the stored value.</param>
+        /// <returns>The matching <see cref="User"/> if found; otherwise <c>null</c>.</returns>
+        public User GetUserByCredentials(string userId, string hashedPassword)
+        {
+            var user = GetDbSet<User>()
+                .FirstOrDefault(u =>
+                    u.UserId == userId &&
+                    u.HashedPassword == hashedPassword &&
+                    !u.IsDeleted);
+
+            return user;
+        }
+
         public bool UserExists(string userId)
         {
             return GetDbSet<User>().Any(x =>

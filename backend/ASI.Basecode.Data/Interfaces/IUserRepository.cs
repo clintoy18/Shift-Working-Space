@@ -8,16 +8,19 @@ namespace ASI.Basecode.Data.Interfaces
 {
     public interface IUserRepository
     {
-        IQueryable<User> GetUsers();
-        User GetUser(string userId);
-
-        bool UserExists(string userId);
-        void AddUser(User user);
-        void UpdateUser(User user);
-        void DeleteUserById(string userId);
-        IQueryable<User> GetRecentUsers(int count);
-        IQueryable<User> GetUsersByRole(UserRoles role);
-        bool IsIDExists<T>(string id, string idPropertyName) where T : class;
-
+        LoginResult AuthenticateUser(string userId, string password);
+        string RegisterUser(RegisterUserViewModel model);
+        User FetchUser(string userId);
+        // public User FetchUserNoNullException(string userId);
+        // void UpdateUser(RegisterUserViewModel model);
+        public User? FetchUserEvenIfNull(string userId);
+        void DeleteUser(string userId);
+        void RegisterUserAdmin(RegisterUserAdminModel model);
+        void UpdateUserAdmin(RegisterUserAdminModel model);
+        public List<UserViewAdminModel> GetAllUsers();
+        public bool UserExists(string userId);
+        public List<UserViewAdminModel> GetRecentUsers(int count);
+        public UserStatisticsViewModel GetUserStatistics();
+        public List<User> GetUsersByRole(UserRoles role);
     }
 }

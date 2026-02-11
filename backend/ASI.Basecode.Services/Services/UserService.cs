@@ -33,15 +33,44 @@ namespace ASI.Basecode.Services.Services
 
         public LoginResult AuthenticateUser(string userId, string password)
         {
-            var passwordKey = PasswordManager.EncryptPassword(password);
-            var user = _repository.GetUsers()
-                .Where(x =>
-                    x.UserId == userId &&
-                    x.HashedPassword == passwordKey)
-                .FirstOrDefault();
+            try
+            {
+                var passwordKey = PasswordManager.EncryptPassword(password);
+                var user = _repository.GetUsers()
+                    .Where(x =>
+                        x.UserId == userId &&
+                        x.HashedPassword == passwordKey)
+                    .FirstOrDefault();
 
-            return user != null ? LoginResult.Success : LoginResult.Failed;
+                return user != null ? LoginResult.Success : LoginResult.Failed;
+            }
+            catch
+            {
+                return LoginResult.Failed;
+            }
         }
+
+       /// <summary>
+        /// Attempts to authenticate a user with the provided credentials.
+        /// </summary>
+        /// <remarks>
+        /// <param name="userId">The user's identifier (e.g. username or user id).</param>
+        /// <param name="password">The plain-text password to validate.</param>
+        //public LoginResult AuthenticateUser(string userId, string password)
+        //{
+        //    try
+        //    {
+        //        var passwordKey = PasswordManager.EncryptPassword(password);
+        //        var user = _repository.GetUserByCredentials(userId, passwordKey);
+
+        //        return user != null ? LoginResult.Success : LoginResult.Failed;
+        //    }
+        //    catch
+        //    {
+        //        return LoginResult.Failed;
+        //    }
+
+        //}
 
         public User FetchUser(string userId)
         {
@@ -137,81 +166,147 @@ namespace ASI.Basecode.Services.Services
         // For admin
         public void RegisterUserAdmin(RegisterUserAdminModel model)
         {
-            ArgumentNullException.ThrowIfNull(model);
+            try
+            {
+                ArgumentNullException.ThrowIfNull(model);
 
-            var user = new User();
-            _mapper.Map(model, user);
+                var user = new User();
+                _mapper.Map(model, user);
 
-            user.HashedPassword = PasswordManager.EncryptPassword(model.Password);
-            _repository.AddUser(user);
+                user.HashedPassword = PasswordManager.EncryptPassword(model.Password);
+                _repository.AddUser(user);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public void UpdateUserAdmin(RegisterUserAdminModel model)
         {
-            ArgumentNullException.ThrowIfNull(model);
-
-            var existingUser = _repository.GetUser(model.UserId);    // Fetch the existing user to preserve current password if not updating
-            _mapper.Map(model, existingUser);    // Map the view model to a new user entity
-
-            // Password update logic
-            if (!string.IsNullOrWhiteSpace(model.Password))
+            try
             {
-                existingUser.HashedPassword = PasswordManager.EncryptPassword(model.Password);
+                ArgumentNullException.ThrowIfNull(model);
+
+                var existingUser = _repository.GetUser(model.UserId);    // Fetch the existing user to preserve current password if not updating
+                _mapper.Map(model, existingUser);    // Map the view model to a new user entity
+
+                // Password update logic
+                if (!string.IsNullOrWhiteSpace(model.Password))
+                {
+                    existingUser.HashedPassword = PasswordManager.EncryptPassword(model.Password);
+                }
+                _repository.UpdateUser(existingUser);
             }
-            _repository.UpdateUser(existingUser);
+
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public void DeleteUser(string userId)
         {
-            if (!_repository.UserExists(userId))
+            try
             {
-                throw new InvalidDataException(Resources.Messages.Errors.UserNotExist);
-            }
+                if (!_repository.UserExists(userId))
+                {
+                    throw new InvalidDataException(Resources.Messages.Errors.UserNotExist);
+                }
 
-            _repository.DeleteUserById(userId);
+                _repository.DeleteUserById(userId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         // Add this method to your UserService class
         public List<UserViewAdminModel> GetAllUsers()
         {
-            var usersQuery = _repository.GetUsers(); // IQueryable<User>
-            return usersQuery
-                .ProjectTo<UserViewAdminModel>(_mapper.ConfigurationProvider)
-                .ToList();
+            try
+            {
+                var usersQuery = _repository.GetUsers(); // IQueryable<User>
+                return usersQuery
+                    .ProjectTo<UserViewAdminModel>(_mapper.ConfigurationProvider)
+                    .ToList();
+            }
+            catch
+            (Exception)
+            {
+                throw;
+            }
+
+            //var usersQuery = _repository.GetUsers();
+            //return usersQuery.Select(user => _mapper.Map<UserViewAdminModel>(user)).ToList();
         }
 
         public bool UserExists(string userId)
         {
-            return _repository.UserExists(userId);
+            try
+            {
+                return _repository.UserExists(userId);
+            }
+            catch (Exception)
+            {
+                throw;
+            }   
         }
 
         public List<UserViewAdminModel> GetRecentUsers(int count)
         {
-            
-            return _repository.GetRecentUsers(count)
-                .ProjectTo<UserViewAdminModel>(_mapper.ConfigurationProvider) //allows selecting only the necesa
-                .ToList();
+            try
+            {
+                return _repository.GetRecentUsers(count)
+                   .ProjectTo<UserViewAdminModel>(_mapper.ConfigurationProvider) //allows selecting only the necesa
+                   .ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public UserStatisticsViewModel GetUserStatistics()
         {
-            var users = _repository.GetUsers().ToList();
-
-            return new UserStatisticsViewModel
+            try
             {
-                TotalUsers = users.Count,
-                TotalStudents = users.Count(u => u.Role == UserRoles.Shifty),
-                TotalTeachers = users.Count(u => u.Role == UserRoles.Cashier),
-                TotalAdmins = users.Count(u => u.Role == UserRoles.Admin)
-            };
+                var users = _repository.GetUsers().ToList();
+
+                return new UserStatisticsViewModel
+                {
+                    TotalUsers = users.Count,
+                    TotalStudents = users.Count(u => u.Role == UserRoles.Shifty),
+                    TotalTeachers = users.Count(u => u.Role == UserRoles.Cashier),
+                    TotalAdmins = users.Count(u => u.Role == UserRoles.Admin)
+                };
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
 
         public List<User> GetUsersByRole(UserRoles role)
         {
-            return _repository.GetUsers()
-                .Where(u => u.Role == role)
-                .ToList();
+            try
+            {
+                return _repository.GetUsers()
+                   .Where(u => u.Role == role)
+                   .ToList();
+            }
+            catch (Exception)
+            {
+                throw;
+            }
         }
+
+        //public List<User> GetUsersByRole(UserRoles role)
+        //{
+        //    var users = _repository.GetUserRole(role.ToString());
+        //    return users?.ToList() ?? new List<User>();
+        //}
 
     }
 }
