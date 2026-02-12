@@ -22,19 +22,19 @@ namespace ASI.Basecode.Data.Repositories
                 .Where(u => !u.IsDeleted);
         }
 
-        public User GetUser(string userId)
+        public User GetUser(string email)
         {
             var user = GetDbSet<User>()
                 .FirstOrDefault(u =>
-                    u.UserId == userId &&
+                    u.Email == email &&
                     !u.IsDeleted);
             return user;
         }
 
-        public bool UserExists(string userId)
+        public bool UserExists(string email)
         {
             return GetDbSet<User>().Any(x =>
-                x.UserId == userId &&
+                x.Email == email &&
                 !x.IsDeleted);
         }
 

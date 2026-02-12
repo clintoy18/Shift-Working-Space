@@ -10,7 +10,7 @@ namespace ASI.Basecode.Services.Interfaces
 {
     public interface IUserService
     {
-        LoginResult AuthenticateUser(string userId, string password);
+        LoginResult AuthenticateUser(string email, string password);
         string RegisterUser(RegisterUserViewModel model);
         User FetchUser(string userId);
         // public User FetchUserNoNullException(string userId);

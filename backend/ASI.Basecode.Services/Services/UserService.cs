@@ -31,23 +31,23 @@ namespace ASI.Basecode.Services.Services
             _repository = repository;
         }
 
-        public LoginResult AuthenticateUser(string userId, string password)
+        public LoginResult AuthenticateUser(string email, string password)
         {
             var passwordKey = PasswordManager.EncryptPassword(password);
             var user = _repository.GetUsers()
                 .Where(x =>
-                    x.UserId == userId &&
+                    x.Email == email &&
                     x.HashedPassword == passwordKey)
                 .FirstOrDefault();
 
             return user != null ? LoginResult.Success : LoginResult.Failed;
         }
 
-        public User FetchUser(string userId)
+        public User FetchUser(string email)
         {
-            if (_repository.UserExists(userId))
+            if (_repository.UserExists(email))
             {
-                return _repository.GetUser(userId);
+                return _repository.GetUser(email);
             }
             else
             {
