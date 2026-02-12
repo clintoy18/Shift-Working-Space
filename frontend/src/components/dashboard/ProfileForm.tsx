@@ -17,6 +17,7 @@ const ProfileForm = () => {
     middleName: user.MiddleName || "",
     lastName: user.LastName || "",
     role: user.Role || "",
+    email: user.Email || "",
     password: "",
     confirmPassword: "",
   });
@@ -44,6 +45,7 @@ const ProfileForm = () => {
       middleName: user.MiddleName || "",
       lastName: user.LastName || "",
       role: user.Role || "",
+      email: user.Email || "",
       password: "",
       confirmPassword: ""
     });
@@ -70,7 +72,7 @@ const ProfileForm = () => {
         MiddleName: formData.middleName,
         LastName: formData.lastName,
         Role: user.Role,
-        Program: user.Program,
+        Email: user.Email,
         CreatedTime: user.CreatedTime
       };
       
@@ -155,7 +157,7 @@ const ProfileForm = () => {
                   placeholder="First name"
                   disabled={!isEditing}
                   icon={<User className="w-4 h-4" />}
-                  className="bg-white/50"
+                  // className="bg-white/50"
                 />
                 <TextInputField
                   id="middleName"
@@ -165,7 +167,7 @@ const ProfileForm = () => {
                   placeholder="Middle name (optional)"
                   disabled={!isEditing}
                   icon={<User className="w-4 h-4" />}
-                  className="bg-white/50"
+                  // className="bg-white/50"
                 />
                 <TextInputField
                   id="lastName"
@@ -175,7 +177,7 @@ const ProfileForm = () => {
                   placeholder="Last name"
                   disabled={!isEditing}
                   icon={<User className="w-4 h-4" />}
-                  className="bg-white/50"
+                  // className="bg-white/50"
                 />
               </div>
 
@@ -188,7 +190,7 @@ const ProfileForm = () => {
                 placeholder="Student, Teacher, Admin"
                 disabled={true}
                 icon={<FileText className="w-4 h-4" />}
-                className="bg-slate-50/80"
+                // className="bg-slate-50/80"
               />
             </div>
 
@@ -215,7 +217,7 @@ const ProfileForm = () => {
                     }}
                     placeholder="Leave blank to keep current"
                     icon={<Lock className="w-4 h-4" />}
-                    className="bg-white/50"
+                    // className="bg-white/50"
                   />
                   <TextInputField
                     id="confirmPassword"
@@ -228,7 +230,7 @@ const ProfileForm = () => {
                     }}
                     placeholder="Confirm new password"
                     icon={<Lock className="w-4 h-4" />}
-                    className="bg-white/50"
+                    // className="bg-white/50"
                   />
                 </div>
                 

@@ -109,7 +109,7 @@ const AdminOverview = () => {
               FirstName: user.firstName,
               LastName: user.lastName,
               MiddleName: user.middleName,
-              Program: user.program,
+              Email: user.email,
               UserId: user.userId,
               CreatedTime: user.createdTime,
               Role: role
