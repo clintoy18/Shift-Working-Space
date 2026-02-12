@@ -35,10 +35,25 @@ namespace ASI.Basecode.Services.Services
         {
             var passwordKey = PasswordManager.EncryptPassword(password);
             var user = _repository.GetUsers()
-                .Where(x =>
-                    x.UserId == userId &&
+                .Where(x => !x.IsDeleted &&
+                    (x.Email == userId ||
+                    x.UserId == userId) &&
                     x.HashedPassword == passwordKey)
                 .FirstOrDefault();
+
+            return user != null ? LoginResult.Success : LoginResult.Failed;
+        }
+
+         //if the AuthenticateUser be async it can cause more workaround
+        public async Task<LoginResult> AuthenticateUserAsync(string userId, string password)
+        {
+            var passwordKey = PasswordManager.EncryptPassword(password);
+
+            var user = await _repository.GetUsers()
+                .Where(x => !x.IsDeleted &&
+                    (x.Email == userId || x.UserId == userId) &&
+                    x.HashedPassword == passwordKey)
+                .FirstOrDefaultAsync();
 
             return user != null ? LoginResult.Success : LoginResult.Failed;
         }

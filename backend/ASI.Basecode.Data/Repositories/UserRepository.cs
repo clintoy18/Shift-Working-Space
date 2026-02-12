@@ -24,18 +24,16 @@ namespace ASI.Basecode.Data.Repositories
 
         public User GetUser(string userId)
         {
-            var user = GetDbSet<User>()
-                .FirstOrDefault(u =>
-                    u.UserId == userId &&
-                    !u.IsDeleted);
-            return user;
+            return GetDbSet<User>().FirstOrDefault(x =>
+                !x.IsDeleted &&
+                (x.Email == userId || x.UserId == userId));
         }
 
         public bool UserExists(string userId)
         {
             return GetDbSet<User>().Any(x =>
-                x.UserId == userId &&
-                !x.IsDeleted);
+                !x.IsDeleted &&
+                (x.Email == userId || x.UserId == userId));
         }
 
         public void AddUser(User user)
