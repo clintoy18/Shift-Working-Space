@@ -24,7 +24,7 @@ const AdminOverview = () => {
           trend: null
         },
         {
-          title: "Total Students",
+          title: "Total Customers",
           icon: GraduationCap,
           value: "0",
           description: "Loading...",
@@ -32,7 +32,7 @@ const AdminOverview = () => {
           trend: null
         },
         {
-          title: "Total Teachers",
+          title: "Total Cashiers",
           icon: UserCog,
           value: "0",
           description: "Loading...",
@@ -60,7 +60,7 @@ const AdminOverview = () => {
         trend: "+12%"
       },
       {
-        title: "Total Students",
+        title: "Total Customers",
         icon: GraduationCap,
         value: dashboardStats.userStats.totalStudents.toString(),
         description: "Enrolled students",
@@ -68,18 +68,18 @@ const AdminOverview = () => {
         trend: "+8%"
       },
       {
-        title: "Total Teachers",
+        title: "Total Cashiers",
         icon: UserCog,
         value: dashboardStats.userStats.totalTeachers.toString(),
-        description: "Active teachers",
+        description: "Active cashiers",
         color: "purple",
         trend: "+5%"
       },
       {
-        title: "Total Courses",
+        title: "Monthly Members",
         icon: BookOpen,
         value: dashboardStats.totalCourses.toString(),
-        description: "Available courses",
+        description: "Active monthly members",
         color: "amber",
         trend: "+15%"
       },
