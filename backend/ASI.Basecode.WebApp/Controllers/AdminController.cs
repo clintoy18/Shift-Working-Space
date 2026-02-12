@@ -337,32 +337,30 @@ namespace ASI.Basecode.WebApp.Controllers
         /// <returns>Dashboard statistics including user and course counts</returns>
         /// <response code="200">Dashboard statistics retrieved successfully</response>
         /// <response code="500">Internal server error</response>
-        //[HttpGet("dashboard-stats")]
-        //[Authorize(Roles = "Admin")]
-        //[ProducesResponseType(typeof(DashboardStatsViewModel), StatusCodes.Status200OK)]
-        //[ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        //public IActionResult wGetDashboardStats()
-        //{
-        //    try
-        //    {
-        //        var userStats = _userService.GetUserStatistics();
-        //        var courseCount = _courseService.GetCourseCount();
+        [HttpGet("dashboard-stats")]
+        [Authorize(Roles = "Admin")]
+        [ProducesResponseType(typeof(DashboardStatsViewModel), StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+        public IActionResult GetDashboardStats()
+        {
+            try
+            {
+                var userStats = _userService.GetUserStatistics();
 
-        //        // Dili ma automap :/
-        //        var dashboardStats = new DashboardStatsViewModel
-        //        {
-        //            UserStats = userStats,
-        //            TotalCourses = courseCount
-        //        };
+                // Dili ma automap :/
+                var dashboardStats = new DashboardStatsViewModel
+                {
+                    UserStats = userStats,
+                };
 
-        //        return Ok(dashboardStats);
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        _logger.LogError(ex, "An internal server error has occurred: ");
-        //        return StatusCode(500, new { message = "An internal server error has occurred.", error = ex.Message });
-        //    }
-        //}
+                return Ok(dashboardStats);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "An internal server error has occurred: ");
+                return StatusCode(500, new { message = "An internal server error has occurred.", error = ex.Message });
+            }
+        }
 
         /// <summary>
         /// Assigns a teacher to a course
