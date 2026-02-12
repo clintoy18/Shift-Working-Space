@@ -28,7 +28,8 @@ const RegisterPage: React.FC = () => {
   return (
     <AuthLayout 
       title="Create your workspace." 
-      subtitle="Join the Shift community and start collaborating today."
+      subtitle="Join the Shift community avail exclusive member discounts and 
+    premium hourly rates. "
     >
       <RegisterForm onRegister={onRegister} isLoading={isLoading} />
     </AuthLayout>
