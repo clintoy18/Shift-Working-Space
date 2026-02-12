@@ -29,7 +29,7 @@ namespace ASI.Basecode.Services.ServiceModels
         [Required(ErrorMessage = "Email is required.")]
         [EmailAddress(ErrorMessage = "Invalid email address format.")]
         [StringLength(150, ErrorMessage = "Email cannot exceed 150 characters.")]
-        public string Email { get; set; } = null!;
+        public string Email { get; set; }
 
 
         [Required(ErrorMessage = "Role is required.")]

@@ -201,7 +201,6 @@ namespace ASI.Basecode.Services.Services
 
                     gfx.DrawString(user.UserId ?? "-", textFont, XBrushes.Black, new XPoint(margin + 10, y + 16));
                     gfx.DrawString($"{user.FirstName} {user.LastName}", textFont, XBrushes.Black, new XPoint(margin + colWidthsUsers[0] + 10, y + 16));
-                    gfx.DrawString(user.Program ?? "-", textFont, XBrushes.Black, new XPoint(margin + colWidthsUsers[0] + colWidthsUsers[1] + 10, y + 16));
                     gfx.DrawString(user.Role.ToString(), textFont, XBrushes.Black, new XPoint(margin + colWidthsUsers[0] + colWidthsUsers[1] + colWidthsUsers[2] + 10, y + 16));
 
                     y += rowHeight;
