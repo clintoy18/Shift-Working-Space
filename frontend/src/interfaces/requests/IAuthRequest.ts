@@ -8,6 +8,7 @@ export interface IRegisterRequest {
     firstName: string;
     middleName: string;
     lastName: string;
+    email : string;
     password: string;
     confirmPassword: string;
     // program: string;

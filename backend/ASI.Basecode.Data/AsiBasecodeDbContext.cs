@@ -25,7 +25,14 @@ namespace ASI.Basecode.Data
                 entity.Property(u => u.FirstName).IsRequired().HasMaxLength(50);
                 entity.Property(u => u.MiddleName).HasMaxLength(50);
                 entity.Property(u => u.LastName).IsRequired().HasMaxLength(50);
-                entity.Property(u => u.Program).HasMaxLength(50);
+                // Email configuration
+                entity.Property(u => u.Email)
+                       .IsRequired()      
+                       .HasMaxLength(150); 
+
+                entity.HasIndex(u => u.Email)
+                      .IsUnique();
+
                 entity.Property(u => u.HashedPassword).IsRequired();
                 entity.Property(u => u.CreatedTime).IsRequired();
                 entity.Property(u => u.Role).IsRequired();

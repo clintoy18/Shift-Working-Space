@@ -13,8 +13,9 @@ namespace ASI.Basecode.Data.Models
         public string FirstName { get; set; } = null!;
         public string? MiddleName { get; set; }
         public string LastName { get; set; } = null!;
+
+        public string Email { get; set; } = null!;
         public string HashedPassword { get; set; } = null!;
-        public string? Program { get; set; }
         public bool IsDeleted { get; set; } = false;
 
         public DateTime CreatedTime { get; set; } = DateTime.UtcNow;

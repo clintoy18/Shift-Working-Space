@@ -25,6 +25,12 @@ namespace ASI.Basecode.Services.ServiceModels
         [StringLength(100, ErrorMessage = "This field cannot exceed 100 characters.")]
         public string LastName { get; set; }
 
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address format.")]
+        [StringLength(150, ErrorMessage = "Email cannot exceed 150 characters.")]
+        public string Email { get; set; } = null!;
+
+
         [Required(ErrorMessage = "Password is required.")]
         [StringLength(50, ErrorMessage = "Your password must not exceed 50 characters.")]
         public string Password { get; set; }
@@ -34,7 +40,6 @@ namespace ASI.Basecode.Services.ServiceModels
         [Compare("Password", ErrorMessage = "Password and Confirmation Password must match.")]
         public string ConfirmPassword { get; set; }
         //nullable so we can create teacher without program
-        public string? Program { get; set; }
         public UserRoles Role { get; set; }
 
     }

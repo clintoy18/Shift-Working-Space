@@ -18,6 +18,7 @@ const RegisterForm = ({
     firstName: '',
     middleName: '',
     lastName: '',
+    email: '',
     password: '',
     confirmPassword: '',
   });
@@ -36,6 +37,11 @@ const RegisterForm = ({
     const errors: Partial<IRegisterRequest> = {};
     if (!formData.firstName.trim()) errors.firstName = 'Required';
     if (!formData.lastName.trim()) errors.lastName = 'Required';
+    if (!formData.email.trim()) {
+      errors.email = 'Required';
+    } else if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email)) {
+      errors.email = 'Invalid email';
+    }
     if (!formData.password) {
       errors.password = 'Required';
     } else if (formData.password.length < 6) {
@@ -54,8 +60,9 @@ const RegisterForm = ({
       await onRegister(formData);
     }
   };
+
   return (
-    <Card className="w-full max-w-xl  shadow-2xl bg-card/50 backdrop-blur-md mx-auto">
+    <Card className="w-full max-w-xl shadow-2xl bg-card/50 backdrop-blur-md mx-auto">
       <CardContent className="p-8">
         {/* Header */}
         <div className="mb-10 text-center">
@@ -84,6 +91,7 @@ const RegisterForm = ({
                   placeholder="John" 
                   className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.firstName ? "border-destructive ring-destructive/20" : "border-muted-foreground/20"}`} 
                 />
+                {formErrors.firstName && <p className="text-[10px] text-destructive font-medium ml-1">{formErrors.firstName}</p>}
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Middle Name</label>
@@ -104,12 +112,32 @@ const RegisterForm = ({
                   placeholder="Smith" 
                   className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.lastName ? "border-destructive ring-destructive/20" : "border-muted-foreground/20"}`} 
                 />
+                {formErrors.lastName && <p className="text-[10px] text-destructive font-medium ml-1">{formErrors.lastName}</p>}
               </div>
+            </div>
+
+            {/* Email Field */}
+            <div className="space-y-1.5">
+              <label className="text-xs font-semibold text-muted-foreground ml-1">Email Address</label>
+              <Input 
+                id="email" 
+                type="email"
+                value={formData.email} 
+                onChange={handleInputChange} 
+                placeholder="john.smith@example.com" 
+                className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.email ? "border-destructive ring-destructive/20" : "border-muted-foreground/20"}`} 
+              />
+              {formErrors.email && <p className="text-[10px] text-destructive font-medium ml-1">{formErrors.email}</p>}
             </div>
           </div>
 
           {/* Security Section */}
           <div className="space-y-4">
+            <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary/80 ml-1">
+              <span className="w-8 h-[1px] bg-primary/30"></span>
+              Security
+            </div>
+            
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Password</label>

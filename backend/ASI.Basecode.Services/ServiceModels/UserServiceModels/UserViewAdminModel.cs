@@ -26,9 +26,11 @@ namespace ASI.Basecode.Services.ServiceModels
         [StringLength(100, ErrorMessage = "This field cannot exceed 100 characters.")]
         public string LastName { get; set; }
 
-        [Required(ErrorMessage = "Program is required.")]
-        [StringLength(100, ErrorMessage = "This field must not exceed 50 characters.")]
-        public string Program { get; set; }
+        [Required(ErrorMessage = "Email is required.")]
+        [EmailAddress(ErrorMessage = "Invalid email address format.")]
+        [StringLength(150, ErrorMessage = "Email cannot exceed 150 characters.")]
+        public string Email { get; set; }
+
 
         [Required(ErrorMessage = "Role is required.")]
         [EnumDataType(typeof(UserRoles), ErrorMessage = "Please select a valid role.")]
