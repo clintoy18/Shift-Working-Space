@@ -5,7 +5,6 @@ export interface IUser {
     FirstName: string
     MiddleName: string
     LastName: string 
-    Program?: string;
     CreatedTime: string
     Role: Role
 }

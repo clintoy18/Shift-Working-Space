@@ -24,7 +24,7 @@ export default function CreateUserModal({
     program: "",
     password: "",
     confirmPassword: "",
-    role: "Teacher",
+    role: "Cashier",
   });
   const [loading, setLoading] = useState(false);
   const [generatedUserId, setGeneratedUserId] = useState("");
@@ -67,8 +67,7 @@ export default function CreateUserModal({
         FirstName: formData.firstName,
         MiddleName: formData.middleName,
         LastName: formData.lastName,
-        Program: formData.program,
-        Role: formData.role,
+        Role: formData.role.toString() as IUser["Role"],
         CreatedTime: new Date().toISOString(),
         Password: formData.password,
         ConfirmPassword: formData.confirmPassword,
@@ -249,13 +248,13 @@ export default function CreateUserModal({
                   required
                   disabled={loading}
                 >
-                  <option value="Teacher">Teacher</option>
-                  <option value="Student">Student</option>
+                  <option value="Cashier">Cashier</option>
+                  <option value="Shifty">Shifty</option>
                 </select>
               </div>
 
               {/* Program */}
-              {formData.role === "Student" && (
+              {/* {formData.role === "Shifty" && (
                 <SelectField
                   id="program"
                   label="Program"
@@ -271,7 +270,7 @@ export default function CreateUserModal({
                     { value: "BSBA", label: "BSBA" },
                   ]}
                 />
-              )}
+              )} */}
 
               {/* Password */}
               <div className="space-y-4">
