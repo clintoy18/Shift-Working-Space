@@ -122,12 +122,12 @@ namespace ASI.Basecode.Services.Services
             // First user is always Admin
             bool isFirstUser = !_repository.GetUsers().Any();
 
-            UserRoles role;
+            UserRole role;
             string prefix;
 
             if (isFirstUser)
             {
-                role = UserRoles.Admin;
+                role = UserRole.Admin;
                 prefix = "ADM";
             }
             else
@@ -135,8 +135,8 @@ namespace ASI.Basecode.Services.Services
                 role = model.Role;
                 prefix = role switch
                 {
-                    UserRoles.Cashier => "CSH",
-                    UserRoles.Shifty => "SHFT",
+                    UserRole.Cashier => "CSH",
+                    UserRole.Shifty => "SHFT",
                     _ => throw new ArgumentException("Invalid role")
                 };
             }
@@ -228,13 +228,13 @@ namespace ASI.Basecode.Services.Services
             return new UserStatisticsViewModel
             {
                 TotalUsers = users.Count,
-                TotalStudents = users.Count(u => u.Role == UserRoles.Shifty),
-                TotalTeachers = users.Count(u => u.Role == UserRoles.Cashier),
-                TotalAdmins = users.Count(u => u.Role == UserRoles.Admin)
+                TotalStudents = users.Count(u => u.Role == UserRole.Shifty),
+                TotalTeachers = users.Count(u => u.Role == UserRole.Cashier),
+                TotalAdmins = users.Count(u => u.Role == UserRole.Admin)
             };
         }
 
-        public List<User> GetUsersByRole(UserRoles role)
+        public List<User> GetUsersByRole(UserRole role)
         {
             return _repository.GetUsers()
                 .Where(u => u.Role == role)

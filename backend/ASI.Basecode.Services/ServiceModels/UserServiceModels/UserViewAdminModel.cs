@@ -33,8 +33,8 @@ namespace ASI.Basecode.Services.ServiceModels
 
 
         [Required(ErrorMessage = "Role is required.")]
-        [EnumDataType(typeof(UserRoles), ErrorMessage = "Please select a valid role.")]
-        public UserRoles Role { get; set; }
+        [EnumDataType(typeof(UserRole), ErrorMessage = "Please select a valid role.")]
+        public UserRole Role { get; set; }
 
          public DateTime CreatedTime {get;set;}
     }

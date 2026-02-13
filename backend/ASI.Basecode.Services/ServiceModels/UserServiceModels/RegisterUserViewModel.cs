@@ -40,7 +40,7 @@ namespace ASI.Basecode.Services.ServiceModels
         [Compare("Password", ErrorMessage = "Password and Confirmation Password must match.")]
         public string ConfirmPassword { get; set; }
         //nullable so we can create teacher without program
-        public UserRoles Role { get; set; }
+        public UserRole Role { get; set; }
 
     }
 }

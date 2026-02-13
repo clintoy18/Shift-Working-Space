@@ -11,7 +11,7 @@ namespace ASI.Basecode.Services.Interfaces
 {
     public interface IJwtService
     {
-        string GenerateToken(string name, Enums.UserRoles role);
+        string GenerateToken(string name, Enums.UserRole role);
         ClaimsPrincipal ValidateToken(string token);
     }
 }

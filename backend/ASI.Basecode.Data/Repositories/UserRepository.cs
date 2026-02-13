@@ -102,7 +102,7 @@ namespace ASI.Basecode.Data.Repositories
                 .Take(count);
         }
 
-        public IQueryable<User> GetUsersByRole(UserRoles role)
+        public IQueryable<User> GetUsersByRole(UserRole role)  // ✅ Changed from UserRoles to UserRole
         {
             return GetDbSet<User>()
                 .Where(u =>
