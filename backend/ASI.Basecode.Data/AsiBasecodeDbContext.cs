@@ -105,13 +105,23 @@ namespace ASI.Basecode.Data
         {
             modelBuilder.Entity<Seat>(entity =>
             {
-                // Primary key
                 entity.HasKey(s => s.SeatId);
 
-                // Properties
                 entity.Property(s => s.SeatNumber)
                     .IsRequired()
                     .HasMaxLength(20);
+
+                entity.Property(s => s.SeatCode)      // ✅ NEW
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(s => s.ZoneType)      // ✅ NEW
+                    .IsRequired()
+                    .HasMaxLength(50);
+
+                entity.Property(s => s.DisplayLabel)  // ✅ NEW
+                    .IsRequired()
+                    .HasMaxLength(10);
 
                 entity.Property(s => s.SeatType)
                     .IsRequired()
@@ -146,12 +156,12 @@ namespace ASI.Basecode.Data
                     .HasDefaultValue(false);
 
                 // Indexes
-                entity.HasIndex(s => s.SeatNumber)
-                    .IsUnique();
-
+                entity.HasIndex(s => s.SeatNumber).IsUnique();
+                entity.HasIndex(s => s.SeatCode).IsUnique();  // ✅ NEW: Frontend ID lookup
                 entity.HasIndex(s => s.Status);
+                entity.HasIndex(s => s.ZoneType);             // ✅ NEW: Query by zone
 
-                // Relationships
+                // Relationships (unchanged)
                 entity.HasMany(s => s.Reservations)
                     .WithOne(r => r.Seat)
                     .HasForeignKey(r => r.SeatId)
@@ -163,7 +173,6 @@ namespace ASI.Basecode.Data
                     .OnDelete(DeleteBehavior.Restrict);
             });
         }
-
         private void ConfigureReservation(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Reservation>(entity =>
@@ -263,24 +272,143 @@ namespace ASI.Basecode.Data
 
         private void SeedData(ModelBuilder modelBuilder)
         {
-            // ✅ Use static DateTime values instead of DateTime.UtcNow
             var seedDate = new DateTime(2025, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-
-            // Seed Seats (20 seats)
             var seats = new List<Seat>();
-            for (int i = 1; i <= 20; i++)
+
+            // 1. ISLAND TABLES (4 tables × 4 seats = 16 seats) - OPEN AREA CENTER
+            var islandSeats = new[]
+            {
+        // Table 1 (T-01)
+        (1, "isl-1-L-0", "R1", "Left"),
+        (2, "isl-1-L-1", "R2", "Left"),
+        (3, "isl-1-R-0", "R3", "Right"),
+        (4, "isl-1-R-1", "R4", "Right"),
+        
+        // Table 2 (T-02)
+        (5, "isl-2-L-0", "R5", "Left"),
+        (6, "isl-2-L-1", "R6", "Left"),
+        (7, "isl-2-R-0", "R7", "Right"),
+        (8, "isl-2-R-1", "R8", "Right"),
+        
+        // Table 3 (T-03)
+        (9, "isl-3-L-0", "R9", "Left"),
+        (10, "isl-3-L-1", "R10", "Left"),
+        (11, "isl-3-R-0", "R11", "Right"),
+        (12, "isl-3-R-1", "R12", "Right"),
+        
+        // Table 4 (T-04)
+        (13, "isl-4-L-0", "R13", "Left"),
+        (14, "isl-4-L-1", "R14", "Left"),
+        (15, "isl-4-R-0", "R15", "Right"),
+        (16, "isl-4-R-1", "R16", "Right"),
+    };
+
+            foreach (var (id, code, label, side) in islandSeats)
             {
                 seats.Add(new Seat
                 {
-                    SeatId = i,
-                    SeatNumber = $"S-{i:D3}",
-                    SeatType = i <= 5 ? SeatType.VIP : i <= 15 ? SeatType.Premium : SeatType.Regular,
+                    SeatId = id,
+                    SeatNumber = $"S-{id:D3}",
+                    SeatCode = code,
+                    DisplayLabel = label,
+                    SeatType = SeatType.Regular,
                     Status = SeatStatus.Available,
-                    Location = $"Floor 1, Zone {(char)('A' + (i - 1) / 5)}",
-                    HourlyRate = i <= 5 ? 50 : i <= 15 ? 30 : 20,
-                    DailyRate = i <= 5 ? 400 : i <= 15 ? 240 : 160,
+                    Location = $"Floor 1, Central Area, Island Table {(id - 1) / 4 + 1}, {side} Side",
+                    ZoneType = "Island",
+                    HourlyRate = 20,
+                    DailyRate = 160,
                     IsActive = true,
-                    CreatedTime = seedDate,  // ✅ Static value
+                    CreatedTime = seedDate,
+                    IsDeleted = false
+                });
+            }
+
+            // 2. WALL SEATS (5 seats) - RIGHT SIDE WALL
+            var wallSeats = new[]
+            {
+        (17, "wall-3-0", "R20"),
+        (18, "wall-3-1", "R21"),
+        (19, "wall-3-2", "R22"),
+        (20, "wall-3-3", "R23"),
+        (21, "wall-3-4", "R24"),
+    };
+
+            foreach (var (id, code, label) in wallSeats)
+            {
+                seats.Add(new Seat
+                {
+                    SeatId = id,
+                    SeatNumber = $"S-{id:D3}",
+                    SeatCode = code,
+                    DisplayLabel = label,
+                    SeatType = SeatType.Regular,
+                    Status = SeatStatus.Available,
+                    Location = $"Floor 1, East Wall, Position {id - 16}",
+                    ZoneType = "Wall",
+                    HourlyRate = 20,
+                    DailyRate = 160,
+                    IsActive = true,
+                    CreatedTime = seedDate,
+                    IsDeleted = false
+                });
+            }
+
+            // 3. REGULAR TABLE (6 seats) - NORTH WING RIGHT
+            var regularTableSeats = new[]
+            {
+        (22, "huddle-2-L-2", "R28", "Left"),
+        (23, "huddle-2-L-1", "R29", "Left"),
+        (24, "huddle-2-L-0", "R30", "Left"),
+        (25, "huddle-2-R-2", "R25", "Right"),
+        (26, "huddle-2-R-1", "R26", "Right"),
+        (27, "huddle-2-R-0", "R27", "Right"),
+    };
+
+            foreach (var (id, code, label, side) in regularTableSeats)
+            {
+                seats.Add(new Seat
+                {
+                    SeatId = id,
+                    SeatNumber = $"S-{id:D3}",
+                    SeatCode = code,
+                    DisplayLabel = label,
+                    SeatType = SeatType.Regular,
+                    Status = SeatStatus.Available,
+                    Location = $"Floor 1, North Wing, Regular Table, {side} Side",
+                    ZoneType = "Regular Table",
+                    HourlyRate = 20,
+                    DailyRate = 160,
+                    IsActive = true,
+                    CreatedTime = seedDate,
+                    IsDeleted = false
+                });
+            }
+
+            // 4. FOCUS CUBICLES (4 cubicles) - SOUTH WING PREMIUM
+            var cubicleSeats = new[]
+            {
+        (28, "cube-0", "C1"),
+        (29, "cube-1", "C2"),
+        (30, "cube-2", "C3"),
+        (31, "cube-3", "C4"),
+    };
+
+            foreach (var (id, code, label) in cubicleSeats)
+            {
+                seats.Add(new Seat
+                {
+                    SeatId = id,
+                    SeatNumber = $"S-{id:D3}",
+                    SeatCode = code,
+                    DisplayLabel = label,
+                    SeatType = SeatType.Premium,  // ✅ Premium for deep work
+                    Status = SeatStatus.Available,
+                    Location = $"Floor 1, South Wing, Focus Cubicle {id - 27}",
+                    ZoneType = "Cubicle",
+                    HourlyRate = 30,  // ✅ Higher rate for private space
+                    DailyRate = 240,
+                    IsActive = true,
+                    CreatedTime = seedDate,
                     IsDeleted = false
                 });
             }
