@@ -1,6 +1,7 @@
 export interface IDashboardStats {
     // User stats
-    totalUsers: number;
+
+    userStats: IUserStatistics;
     activeMembers: number;
     newUsersToday: number;
     
@@ -31,3 +32,11 @@ export interface IRevenueByDay {
     date: string;
     revenue: number;
 }
+
+export interface IUserStatistics {
+  totalUsers: number;
+  totalStudents: number;
+  totalTeachers: number;
+  totalAdmins: number;
+}
+

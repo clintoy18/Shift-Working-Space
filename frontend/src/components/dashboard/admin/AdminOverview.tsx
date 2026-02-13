@@ -49,7 +49,34 @@ const AdminOverview = () => {
         },
       ];
     }
-   
+
+    return [
+      {
+        title: "Total Users",
+        icon: Users,
+        value: dashboardStats.userStats.totalUsers.toString(),
+        description: `${dashboardStats.userStats.totalAdmins} admin(s)`,
+        color: "blue",
+        trend: "+12%"
+      },
+      {
+        title: "Total Members",
+        icon: GraduationCap,
+        value: dashboardStats.userStats.totalStudents.toString(),
+        description: "Total members",
+        color: "emerald",
+        trend: "+8%"
+      },
+      {
+        title: "Total Cashiers",
+        icon: UserCog,
+        value: dashboardStats.userStats.totalTeachers.toString(),
+        description: "Active cashiers",
+        color: "purple",
+        trend: "+5%"
+      },
+     
+    ];
   };
 
   useEffect(() => {
