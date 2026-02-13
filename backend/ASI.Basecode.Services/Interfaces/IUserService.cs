@@ -11,6 +11,7 @@ namespace ASI.Basecode.Services.Interfaces
     public interface IUserService
     {
         LoginResult AuthenticateUser(string userId, string password);
+        Task<LoginResult> AuthenticateUserAsync(string userId, string password);
         string RegisterUser(RegisterUserViewModel model);
         User FetchUser(string userId);
         // public User FetchUserNoNullException(string userId);

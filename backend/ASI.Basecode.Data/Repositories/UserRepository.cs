@@ -13,7 +13,6 @@ namespace ASI.Basecode.Data.Repositories
     {
         public UserRepository(IUnitOfWork unitOfWork) : base(unitOfWork)
         {
-
         }
 
         public IQueryable<User> GetUsers()
@@ -24,42 +23,75 @@ namespace ASI.Basecode.Data.Repositories
 
         public User GetUser(string userId)
         {
-            var user = GetDbSet<User>()
-                .FirstOrDefault(u =>
-                    u.UserId == userId &&
-                    !u.IsDeleted);
-            return user;
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return null;
+            }
+
+            userId = userId.Trim();
+
+            return GetDbSet<User>().FirstOrDefault(x =>
+                !x.IsDeleted &&
+                ((x.Email != null && x.Email.ToLower() == userId.ToLower()) ||
+                 (x.UserId != null && x.UserId.ToLower() == userId.ToLower())));
         }
 
         public bool UserExists(string userId)
         {
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                return false;
+            }
+
+            userId = userId.Trim();
+
             return GetDbSet<User>().Any(x =>
-                x.UserId == userId &&
-                !x.IsDeleted);
+                !x.IsDeleted &&
+                ((x.Email != null && x.Email.ToLower() == userId.ToLower()) ||
+                 (x.UserId != null && x.UserId.ToLower() == userId.ToLower())));
         }
 
         public void AddUser(User user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             GetDbSet<User>().Add(user);
             UnitOfWork.SaveChanges();
         }
 
         public void UpdateUser(User user)
         {
+            if (user == null)
+            {
+                throw new ArgumentNullException(nameof(user));
+            }
+
             GetDbSet<User>().Update(user);
             UnitOfWork.SaveChanges();
         }
 
         public void DeleteUserById(string userId)
         {
-            GetDbSet<User>()
+            if (string.IsNullOrWhiteSpace(userId))
+            {
+                throw new ArgumentNullException(nameof(userId));
+            }
+
+            userId = userId.Trim();
+
+            var user = GetDbSet<User>()
                 .FirstOrDefault(u =>
-                    u.UserId == userId &&
-                    !u.IsDeleted)
-                .IsDeleted = true;
+                    u.UserId.ToLower() == userId.ToLower() &&
+                    !u.IsDeleted);
 
-
-            UnitOfWork.SaveChanges();
+            if (user != null)
+            {
+                user.IsDeleted = true;
+                UnitOfWork.SaveChanges();
+            }
         }
 
         public IQueryable<User> GetRecentUsers(int count)
@@ -69,6 +101,7 @@ namespace ASI.Basecode.Data.Repositories
                 .OrderByDescending(u => u.CreatedTime)
                 .Take(count);
         }
+
         public IQueryable<User> GetUsersByRole(UserRoles role)
         {
             return GetDbSet<User>()
@@ -79,11 +112,16 @@ namespace ASI.Basecode.Data.Repositories
 
         public bool IsIDExists<T>(string id, string idPropertyName) where T : class
         {
-            return Context.Set<T>().Any(e =>
-                EF.Property<string>(e, idPropertyName) == id &&
-                !EF.Property<bool>(e, "IsDeleted")
-                );
-        }
+            if (string.IsNullOrWhiteSpace(id))
+            {
+                return false;
+            }
 
+            id = id.Trim();
+
+            return Context.Set<T>().Any(e =>
+                EF.Property<string>(e, idPropertyName).ToLower() == id.ToLower() &&
+                !EF.Property<bool>(e, "IsDeleted"));
+        }
     }
 }
