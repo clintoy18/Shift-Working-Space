@@ -6,13 +6,13 @@ import { AlertCircle, ArrowLeft, ShieldCheck, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
-  const [userId, setUserId] = useState("");
+  const [userIdentifier, setUserIdentifier] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin({ userId, password });
+    onLogin({ userIdentifier, password });
   };
 
   return (
@@ -32,17 +32,17 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* User ID Field */}
+          {/* User Identifier Field - UPDATED */}
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-              User ID
+              Email or User ID
             </label>
             <Input
-              id="userId"
+              id="userIdentifier"
               type="text"
-              value={userId}
-              onChange={(e) => setUserId(e.target.value)}
-              placeholder="Enter your user ID"
+              value={userIdentifier}
+              onChange={(e) => setUserIdentifier(e.target.value)}
+              placeholder="Enter your email or user ID"
               required
               className="h-11 focus-visible:ring-primary transition-all"
             />
