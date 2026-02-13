@@ -27,6 +27,11 @@ export const AuthProvider = ({ children }) => {
         Role: data.role,
         MiddleName: data.middleName,
         CreatedTime: data.createdTime,
+        MembershipType: data.membershipType,
+        MembershipStatus: data.membershipStatus,
+        MembershipStart: data.membershipStart,
+        MembershipEnd: data.membershipEnd,
+        IsDeleted: data.isDeleted,
       };
       setUser(transformedUser);
       return transformedUser;
