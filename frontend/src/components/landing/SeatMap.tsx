@@ -435,14 +435,14 @@ const SeatNode = ({
   label: string;
   seatData?: ISeat;
 }) => (
-  <div
-    className={`relative w-6 h-6 md:w-6 md:h-6 rounded-full flex items-center justify-center border transition-all duration-300 group ${
-      isOccupied 
-        ? "bg-slate-800 border-slate-600 text-slate-500 cursor-not-allowed" 
-        : "bg-primary border-orange-400 shadow-[0_0_15px_rgba(255,107,0,0.3)] text-white hover:scale-110 cursor-pointer"
-    }`}
-    title={seatData ? `${seatData.SeatNumber} - ${seatData.Location}` : label}
-  >
+<div
+  className={`relative w-6 h-6 md:w-6 md:h-6 rounded-full flex items-center justify-center border transition-all duration-300 group ${
+    isOccupied 
+      ? "bg-slate-900 border-slate-700 text-slate-500 cursor-not-allowed opacity-50" 
+      : "bg-primary border-orange-400 shadow-[0_0_15px_rgba(255,107,0,0.3)] text-white hover:scale-110 cursor-pointer"
+  }`}
+  title={seatData ? `${seatData.SeatNumber} - ${seatData.Location}` : label}
+>
     <span className="text-[8px] md:text-[10px] font-black leading-none">{label}</span>
     
     {/* Enhanced Tooltip */}
