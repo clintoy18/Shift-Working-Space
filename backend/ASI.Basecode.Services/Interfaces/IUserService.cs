@@ -13,7 +13,7 @@ namespace ASI.Basecode.Services.Interfaces
         LoginResult AuthenticateUser(string userId, string password);
         Task<LoginResult> AuthenticateUserAsync(string userId, string password);
         string RegisterUser(RegisterUserViewModel model);
-        User FetchUser(string userId);
+        User FetchUser(string userIdentifier);
         // public User FetchUserNoNullException(string userId);
         // void UpdateUser(RegisterUserViewModel model);
         public User? FetchUserEvenIfNull(string userId);
