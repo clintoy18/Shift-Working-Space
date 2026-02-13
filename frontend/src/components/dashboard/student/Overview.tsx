@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Card from "../../common/Card";
 import { ChartBarIncreasing } from "lucide-react";
-import { getCoursesByStudent } from "@services/StudentCourseService";
 import { checkStudentFeedbackExists } from "@services/StudentService";
 
 const Overview = ({ studentUserId }: { studentUserId?: string }) => {
@@ -16,50 +15,49 @@ const Overview = ({ studentUserId }: { studentUserId?: string }) => {
       }
 
       try {
-        const data = await getCoursesByStudent(studentUserId);
         
-        // Filter grades that are visible (student has submitted feedback)
-        const gradesWithFeedback = await Promise.all(
-          data.map(async (grade) => {
-            try {
-              const hasStudentFeedback = await checkStudentFeedbackExists(
-                studentUserId,
-                grade.courseCode
-              );
-              return {
-                ...grade,
-                hasStudentFeedback,
-              };
-            } catch (err) {
-              return {
-                ...grade,
-                hasStudentFeedback: false,
-              };
-            }
-          })
-        );
+        // // Filter grades that are visible (student has submitted feedback)
+        // const gradesWithFeedback = await Promise.all(
+        //   data.map(async (grade) => {
+        //     try {
+        //       const hasStudentFeedback = await checkStudentFeedbackExists(
+        //         studentUserId,
+        //         grade.courseCode
+        //       );
+        //       return {
+        //         ...grade,
+        //         hasStudentFeedback,
+        //       };
+        //     } catch (err) {
+        //       return {
+        //         ...grade,
+        //         hasStudentFeedback: false,
+        //       };
+        //     }
+        //   })
+        // );
 
-        // Calculate average of visible grades
-        const validGrades = gradesWithFeedback.filter(
-          (grade) =>
-            grade.hasStudentFeedback &&
-            grade.grade !== null &&
-            grade.grade !== undefined
-        );
+        // // Calculate average of visible grades
+        // const validGrades = gradesWithFeedback.filter(
+        //   (grade) =>
+        //     grade.hasStudentFeedback &&
+        //     grade.grade !== null &&
+        //     grade.grade !== undefined
+        // );
 
-        if (validGrades.length > 0) {
-          const sum = validGrades.reduce((acc, grade) => acc + grade.grade, 0);
-          const average = sum / validGrades.length;
-          setOverallAverage(Math.round(average * 10) / 10); // Round to 1 decimal
-        } else {
-          setOverallAverage(null);
-        }
-      } catch (err) {
-        console.error("Failed to calculate average:", err);
-        setOverallAverage(null);
-      } finally {
-        setLoading(false);
-      }
+      //   if (validGrades.length > 0) {
+      //     const sum = validGrades.reduce((acc, grade) => acc + grade.grade, 0);
+      //     const average = sum / validGrades.length;
+      //     setOverallAverage(Math.round(average * 10) / 10); // Round to 1 decimal
+      //   } else {
+      //     setOverallAverage(null);
+      //   }
+      // } catch (err) {
+      //   console.error("Failed to calculate average:", err);
+      //   setOverallAverage(null);
+      // } finally {
+      //   setLoading(false);
+      // }
     };
 
     fetchGradesAndCalculateAverage();

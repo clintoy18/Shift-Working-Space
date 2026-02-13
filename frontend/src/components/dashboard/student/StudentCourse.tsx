@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { getCoursesByStudent } from "@services/StudentCourseService";
+// import { getCoursesByStudent } from "@services/StudentCourseService";
 import { InlineSpinner } from "../../../components/common/LoadingSpinnerPage";
 
 
@@ -39,14 +39,14 @@ export const StudentCourse: React.FC<StudentCourseProps> = ({ studentUserId }) =
     const fetchEnrollments = async () => {
       if (!studentUserId) return;
 
-      try {
-        const data = await getCoursesByStudent(studentUserId);
-        setEnrollments(data);
-      } catch (err) {
-        console.error("Failed to load enrollments:", err);
-      } finally {
-        setLoading(false);
-      }
+      // try {
+      //   const data = await getCoursesByStudent(studentUserId);
+      //   setEnrollments(data);
+      // } catch (err) {
+      //   console.error("Failed to load enrollments:", err);
+      // } finally {
+      //   setLoading(false);
+      // }
     };
 
     fetchEnrollments();

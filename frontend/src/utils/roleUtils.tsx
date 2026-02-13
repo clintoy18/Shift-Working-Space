@@ -1,12 +1,11 @@
 import Profile from '../components/dashboard/Profile';
-import Overview from '../components/dashboard/student/Overview';
+// import Overview from '../components/dashboard/student/Overview';
 import AdminOverView from '../components/dashboard/admin/AdminOverview';
-import Subjects from '../components/dashboard/admin/Subjects';
+// import Subjects from '../components/dashboard/admin/Subjects';
 import UserTable from '../components/dashboard/user-management/Table';
-import { Grade } from '../components/dashboard/student/Grade';
-import { ManageStudents } from '../components/dashboard/teacher/ManageStudents';
+// import { ManageStudents } from '../components/dashboard/teacher/ManageStudents';
 import { StudentCourse } from "../components/dashboard/student/StudentCourse";
-import TeacherOverview from '../components/dashboard/teacher/TeacherOverview';
+// import TeacherOverview from '../components/dashboard/teacher/TeacherOverview';
 
 export type Role = 'Shifty' | 'Cashier' | 'Admin';
 
@@ -25,22 +24,22 @@ export const ROLE_TO_NUMBER: Record<Role, number> = {
 export type UserId = string;
 
 export const studentTabs = (studentUserId?: string) => [
-  { label: "Overview", content: <Overview studentUserId={studentUserId} /> },
+  // { label: "Overview", content: <Overview studentUserId={studentUserId} /> },
   { label: "Subjects", content: <StudentCourse studentUserId={studentUserId} /> },
-  { label: "My Grades", content: <Grade studentUserId={studentUserId} /> },
+  // { label: "My Grades", content: <Grade studentUserId={studentUserId} /> },
   { label: "Profile", content: <Profile /> },
 ];
 
 export const teacherTabs = [
-    { label: "My Subjects", content: <TeacherOverview /> },
-    { label: "Manage Students", content: <ManageStudents /> },
+    // { label: "My Subjects", content: <TeacherOverview /> },
+    // { label: "Manage Students", content: <ManageStudents /> },
     { label: "Profile", content: <Profile /> },
 ];
 
 export const adminTabs = [
     { label: "Overview", content: <AdminOverView /> },
     { label: "Users", content: <UserTable /> },
-    { label: "Courses", content: <Subjects /> },
+    // { label: "Courses", content: <Subjects /> },
     { label: "Profile", content: <Profile /> },
 ];
 
