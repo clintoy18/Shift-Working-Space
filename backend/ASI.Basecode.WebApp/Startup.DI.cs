@@ -35,6 +35,7 @@ namespace ASI.Basecode.WebApp
 
             // Services
             this._services.AddScoped<IUserService, UserService>();
+            this._services.AddScoped<ISeatService, SeatService>();
             //this._services.AddScoped<ICourseService, CourseService>();
             this._services.AddScoped<IRbacService, RbacService>();
             //this._services.AddScoped<IGradeFeedbackService, GradeFeedbackService>();
@@ -43,6 +44,7 @@ namespace ASI.Basecode.WebApp
             
             // Repositories
             this._services.AddScoped<IUserRepository, UserRepository>();
+            this._services.AddScoped<ISeatRepository, SeatRepository>();
             //this._services.AddScoped<ICourseRepository, CourseRepository>();
             //this._services.AddScoped<IGradeFeedbackRepository, GradeFeedbackRepository>();
             //this._services.AddScoped<IStudentCourseRepository, StudentCourseRepository>();
