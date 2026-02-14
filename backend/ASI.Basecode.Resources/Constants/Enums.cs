@@ -27,11 +27,74 @@
         /// <summary>
         /// User Roles Enum
         /// </summary>
-        public enum UserRoles
+        public enum UserRole  // ✅ Changed from UserRoles to UserRole (singular)
         {
             Shifty,
             Cashier,
             Admin
+        }
+
+        // ✅ ADD NEW ENUMS for Shift Workspace
+        /// <summary>
+        /// Membership Type
+        /// </summary>
+        public enum MembershipType
+        {
+            Regular,
+            Weekly,
+            Monthly
+        }
+
+        /// <summary>
+        /// Membership Status
+        /// </summary>
+        public enum MembershipStatus
+        {
+            Active,
+            Expired,
+            Suspended
+        }
+
+        /// <summary>
+        /// Seat Type
+        /// </summary>
+        public enum SeatType
+        {
+            Regular,
+            Premium,
+            VIP
+        }
+
+        /// <summary>
+        /// Seat Status
+        /// </summary>
+        public enum SeatStatus
+        {
+            Available,
+            Reserved,
+            Occupied,
+            Maintenance
+        }
+
+        /// <summary>
+        /// Reservation Status
+        /// </summary>
+        public enum ReservationStatus
+        {
+            Pending,
+            Confirmed,
+            Cancelled,
+            Completed
+        }
+
+        /// <summary>
+        /// Payment Status
+        /// </summary>
+        public enum PaymentStatus
+        {
+            Paid,
+            Pending,
+            Free
         }
     }
 }

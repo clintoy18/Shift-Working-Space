@@ -4,6 +4,7 @@ using ASI.Basecode.Data;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ASI.Basecode.Data.Migrations
 {
     [DbContext(typeof(AsiBasecodeDBContext))]
-    partial class AsiBasecodeDBContextModelSnapshot : ModelSnapshot
+    [Migration("20260213070054_InitialMigration")]
+    partial class InitialMigration
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -166,11 +169,6 @@ namespace ASI.Basecode.Data.Migrations
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
 
-                    b.Property<string>("DisplayLabel")
-                        .IsRequired()
-                        .HasMaxLength(10)
-                        .HasColumnType("nvarchar(10)");
-
                     b.Property<decimal>("HourlyRate")
                         .HasPrecision(10, 2)
                         .HasColumnType("decimal(10,2)");
@@ -190,11 +188,6 @@ namespace ASI.Basecode.Data.Migrations
                         .HasMaxLength(100)
                         .HasColumnType("nvarchar(100)");
 
-                    b.Property<string>("SeatCode")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<string>("SeatNumber")
                         .IsRequired()
                         .HasMaxLength(20)
@@ -211,22 +204,12 @@ namespace ASI.Basecode.Data.Migrations
                     b.Property<DateTime?>("UpdatedTime")
                         .HasColumnType("datetime2");
 
-                    b.Property<string>("ZoneType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.HasKey("SeatId");
-
-                    b.HasIndex("SeatCode")
-                        .IsUnique();
 
                     b.HasIndex("SeatNumber")
                         .IsUnique();
 
                     b.HasIndex("Status");
-
-                    b.HasIndex("ZoneType");
 
                     b.ToTable("Seats");
 
@@ -235,497 +218,261 @@ namespace ASI.Basecode.Data.Migrations
                         {
                             SeatId = 1,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R1",
-                            HourlyRate = 20m,
+                            DailyRate = 400m,
+                            HourlyRate = 50m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 1, Left Side",
-                            SeatCode = "isl-1-L-0",
+                            Location = "Floor 1, Zone A",
                             SeatNumber = "S-001",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "VIP",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 2,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R2",
-                            HourlyRate = 20m,
+                            DailyRate = 400m,
+                            HourlyRate = 50m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 1, Left Side",
-                            SeatCode = "isl-1-L-1",
+                            Location = "Floor 1, Zone A",
                             SeatNumber = "S-002",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "VIP",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 3,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R3",
-                            HourlyRate = 20m,
+                            DailyRate = 400m,
+                            HourlyRate = 50m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 1, Right Side",
-                            SeatCode = "isl-1-R-0",
+                            Location = "Floor 1, Zone A",
                             SeatNumber = "S-003",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "VIP",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 4,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R4",
-                            HourlyRate = 20m,
+                            DailyRate = 400m,
+                            HourlyRate = 50m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 1, Right Side",
-                            SeatCode = "isl-1-R-1",
+                            Location = "Floor 1, Zone A",
                             SeatNumber = "S-004",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "VIP",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 5,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R5",
-                            HourlyRate = 20m,
+                            DailyRate = 400m,
+                            HourlyRate = 50m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 2, Left Side",
-                            SeatCode = "isl-2-L-0",
+                            Location = "Floor 1, Zone A",
                             SeatNumber = "S-005",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "VIP",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 6,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R6",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 2, Left Side",
-                            SeatCode = "isl-2-L-1",
+                            Location = "Floor 1, Zone B",
                             SeatNumber = "S-006",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 7,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R7",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 2, Right Side",
-                            SeatCode = "isl-2-R-0",
+                            Location = "Floor 1, Zone B",
                             SeatNumber = "S-007",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 8,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R8",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 2, Right Side",
-                            SeatCode = "isl-2-R-1",
+                            Location = "Floor 1, Zone B",
                             SeatNumber = "S-008",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 9,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R9",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 3, Left Side",
-                            SeatCode = "isl-3-L-0",
+                            Location = "Floor 1, Zone B",
                             SeatNumber = "S-009",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 10,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R10",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 3, Left Side",
-                            SeatCode = "isl-3-L-1",
+                            Location = "Floor 1, Zone B",
                             SeatNumber = "S-010",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 11,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R11",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 3, Right Side",
-                            SeatCode = "isl-3-R-0",
+                            Location = "Floor 1, Zone C",
                             SeatNumber = "S-011",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 12,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R12",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 3, Right Side",
-                            SeatCode = "isl-3-R-1",
+                            Location = "Floor 1, Zone C",
                             SeatNumber = "S-012",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 13,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R13",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 4, Left Side",
-                            SeatCode = "isl-4-L-0",
+                            Location = "Floor 1, Zone C",
                             SeatNumber = "S-013",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 14,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R14",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 4, Left Side",
-                            SeatCode = "isl-4-L-1",
+                            Location = "Floor 1, Zone C",
                             SeatNumber = "S-014",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 15,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R15",
-                            HourlyRate = 20m,
+                            DailyRate = 240m,
+                            HourlyRate = 30m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 4, Right Side",
-                            SeatCode = "isl-4-R-0",
+                            Location = "Floor 1, Zone C",
                             SeatNumber = "S-015",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            SeatType = "Premium",
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 16,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DailyRate = 160m,
-                            DisplayLabel = "R16",
                             HourlyRate = 20m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, Central Area, Island Table 4, Right Side",
-                            SeatCode = "isl-4-R-1",
+                            Location = "Floor 1, Zone D",
                             SeatNumber = "S-016",
                             SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Island"
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 17,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DailyRate = 160m,
-                            DisplayLabel = "R20",
                             HourlyRate = 20m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, East Wall, Position 1",
-                            SeatCode = "wall-3-0",
+                            Location = "Floor 1, Zone D",
                             SeatNumber = "S-017",
                             SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Wall"
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 18,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DailyRate = 160m,
-                            DisplayLabel = "R21",
                             HourlyRate = 20m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, East Wall, Position 2",
-                            SeatCode = "wall-3-1",
+                            Location = "Floor 1, Zone D",
                             SeatNumber = "S-018",
                             SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Wall"
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 19,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DailyRate = 160m,
-                            DisplayLabel = "R22",
                             HourlyRate = 20m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, East Wall, Position 3",
-                            SeatCode = "wall-3-2",
+                            Location = "Floor 1, Zone D",
                             SeatNumber = "S-019",
                             SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Wall"
+                            Status = "Available"
                         },
                         new
                         {
                             SeatId = 20,
                             CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
                             DailyRate = 160m,
-                            DisplayLabel = "R23",
                             HourlyRate = 20m,
                             IsActive = true,
                             IsDeleted = false,
-                            Location = "Floor 1, East Wall, Position 4",
-                            SeatCode = "wall-3-3",
+                            Location = "Floor 1, Zone D",
                             SeatNumber = "S-020",
                             SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Wall"
-                        },
-                        new
-                        {
-                            SeatId = 21,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R24",
-                            HourlyRate = 20m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, East Wall, Position 5",
-                            SeatCode = "wall-3-4",
-                            SeatNumber = "S-021",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Wall"
-                        },
-                        new
-                        {
-                            SeatId = 22,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R28",
-                            HourlyRate = 20m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, North Wing, Regular Table, Left Side",
-                            SeatCode = "huddle-2-L-2",
-                            SeatNumber = "S-022",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Regular Table"
-                        },
-                        new
-                        {
-                            SeatId = 23,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R29",
-                            HourlyRate = 20m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, North Wing, Regular Table, Left Side",
-                            SeatCode = "huddle-2-L-1",
-                            SeatNumber = "S-023",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Regular Table"
-                        },
-                        new
-                        {
-                            SeatId = 24,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R30",
-                            HourlyRate = 20m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, North Wing, Regular Table, Left Side",
-                            SeatCode = "huddle-2-L-0",
-                            SeatNumber = "S-024",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Regular Table"
-                        },
-                        new
-                        {
-                            SeatId = 25,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R25",
-                            HourlyRate = 20m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, North Wing, Regular Table, Right Side",
-                            SeatCode = "huddle-2-R-2",
-                            SeatNumber = "S-025",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Regular Table"
-                        },
-                        new
-                        {
-                            SeatId = 26,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R26",
-                            HourlyRate = 20m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, North Wing, Regular Table, Right Side",
-                            SeatCode = "huddle-2-R-1",
-                            SeatNumber = "S-026",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Regular Table"
-                        },
-                        new
-                        {
-                            SeatId = 27,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 160m,
-                            DisplayLabel = "R27",
-                            HourlyRate = 20m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, North Wing, Regular Table, Right Side",
-                            SeatCode = "huddle-2-R-0",
-                            SeatNumber = "S-027",
-                            SeatType = "Regular",
-                            Status = "Available",
-                            ZoneType = "Regular Table"
-                        },
-                        new
-                        {
-                            SeatId = 28,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 240m,
-                            DisplayLabel = "C1",
-                            HourlyRate = 30m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, South Wing, Focus Cubicle 1",
-                            SeatCode = "cube-0",
-                            SeatNumber = "S-028",
-                            SeatType = "Premium",
-                            Status = "Available",
-                            ZoneType = "Cubicle"
-                        },
-                        new
-                        {
-                            SeatId = 29,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 240m,
-                            DisplayLabel = "C2",
-                            HourlyRate = 30m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, South Wing, Focus Cubicle 2",
-                            SeatCode = "cube-1",
-                            SeatNumber = "S-029",
-                            SeatType = "Premium",
-                            Status = "Available",
-                            ZoneType = "Cubicle"
-                        },
-                        new
-                        {
-                            SeatId = 30,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 240m,
-                            DisplayLabel = "C3",
-                            HourlyRate = 30m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, South Wing, Focus Cubicle 3",
-                            SeatCode = "cube-2",
-                            SeatNumber = "S-030",
-                            SeatType = "Premium",
-                            Status = "Available",
-                            ZoneType = "Cubicle"
-                        },
-                        new
-                        {
-                            SeatId = 31,
-                            CreatedTime = new DateTime(2025, 1, 1, 0, 0, 0, 0, DateTimeKind.Utc),
-                            DailyRate = 240m,
-                            DisplayLabel = "C4",
-                            HourlyRate = 30m,
-                            IsActive = true,
-                            IsDeleted = false,
-                            Location = "Floor 1, South Wing, Focus Cubicle 4",
-                            SeatCode = "cube-3",
-                            SeatNumber = "S-031",
-                            SeatType = "Premium",
-                            Status = "Available",
-                            ZoneType = "Cubicle"
+                            Status = "Available"
                         });
                 });
 

@@ -1,11 +1,20 @@
-import type { Role } from "utils/roleUtils";
+import type { Role } from 'utils/roleUtils';
+
+export type MembershipType = 'Regular' | 'Weekly' | 'Monthly';
+export type MembershipStatus = 'Active' | 'Expired' | 'Suspended';
 
 export interface IUser {
     UserId: string;
-    FirstName: string
-    MiddleName: string
-    LastName: string 
-    Email: string
-    CreatedTime: string
-    Role: Role
+    Email: string;
+    FirstName: string;
+    MiddleName: string;
+    LastName: string;
+    Role: Role;                   // From your roleUtils
+    MembershipType: MembershipType;
+    MembershipStatus: MembershipStatus;
+    MembershipStart?: string;
+    MembershipEnd?: string;
+    CreatedTime: string;
+    UpdatedTime?: string;
+    IsDeleted: boolean;
 }

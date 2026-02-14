@@ -22,7 +22,7 @@ namespace ASI.Basecode.WebApp.Services
             _configuration = configuration;
         }
 
-        public string GenerateToken(string userId, Enums.UserRoles role)
+        public string GenerateToken(string userId, Enums.UserRole role)
         {
             var tokenConfig = _configuration.GetSection("TokenAuthentication");
             var secretKey = tokenConfig["SecretKey"];

@@ -4,7 +4,7 @@ export interface ILoginRequest {
 }
 
 export interface IRegisterRequest {
-    userId?: string;
+    userId: string;
     firstName: string;
     middleName: string;
     lastName: string;
@@ -12,4 +12,14 @@ export interface IRegisterRequest {
     password: string;
     confirmPassword: string;
     // program: string;
+}
+
+export interface IForgotPasswordRequest {
+    email: string;
+}
+
+export interface IResetPasswordRequest {
+    token: string;
+    newPassword: string;
+    confirmPassword: string;
 }

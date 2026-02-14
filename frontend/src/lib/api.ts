@@ -1,10 +1,10 @@
 import axios from "axios";
+import type { AxiosInstance } from "axios";
 
-const baseUrl = "http://localhost:54927"; // url sa backend
+const baseUrl = "http://localhost:54927";
 const apiUrl = `${baseUrl}/api`;
 
-// Create a function to add interceptors to any axios instance
-const addAuthInterceptor = (instance) => {
+const addAuthInterceptor = (instance: AxiosInstance): AxiosInstance => {
   instance.interceptors.request.use((config) => {
     const token = sessionStorage.getItem("accessToken");
     if (token) {
@@ -13,13 +13,10 @@ const addAuthInterceptor = (instance) => {
     return config;
   });
 
-  // Optional: Add response interceptor for token refresh or error handling
   instance.interceptors.response.use(
     (response) => response,
     (error) => {
-      // Handle auth errors globally
       if (error.response?.status === 401) {
-        // Redirect to login or refresh token
         console.log("Unauthorized, redirecting to login...");
       }
       return Promise.reject(error);
@@ -30,9 +27,11 @@ const addAuthInterceptor = (instance) => {
 };
 
 export const api = addAuthInterceptor(
-  axios.create({
-    baseURL: apiUrl,
-  })
+  axios.create({ baseURL: apiUrl })
+);
+
+export const seat = addAuthInterceptor(
+  axios.create({ baseURL: `${apiUrl}/seat` })
 );
 
 export const auth = addAuthInterceptor(
@@ -47,11 +46,6 @@ export const admin = addAuthInterceptor(
   })
 );
 
-export const studentCourse = addAuthInterceptor(
-  axios.create({
-    baseURL: `${apiUrl}/student-course`,
-  })
-);
 
 export const course = addAuthInterceptor(
   axios.create({
@@ -59,15 +53,3 @@ export const course = addAuthInterceptor(
   })
 );
 
-// ✅ ADD THESE
-export const teacher = addAuthInterceptor(
-  axios.create({
-    baseURL: `${apiUrl}/teacher`,
-  })
-);
-
-export const feedback = addAuthInterceptor(
-  axios.create({
-    baseURL: `${apiUrl}/feedback`,
-  })
-);

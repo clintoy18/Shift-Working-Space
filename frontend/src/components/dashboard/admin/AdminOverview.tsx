@@ -75,14 +75,7 @@ const AdminOverview = () => {
         color: "purple",
         trend: "+5%"
       },
-      {
-        title: "Premium Members",
-        icon: BookOpen,
-        value: dashboardStats.totalCourses.toString(),
-        description: "Active premium members",
-        color: "amber",
-        trend: "+15%"
-      },
+     
     ];
   };
 

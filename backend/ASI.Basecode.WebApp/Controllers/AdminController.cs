@@ -253,7 +253,7 @@ namespace ASI.Basecode.WebApp.Controllers
         [AllowAnonymous]
         [ProducesResponseType(typeof(IEnumerable<UserViewAdminModel>), StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-        public IActionResult GetUsersByRole(UserRoles role)
+        public IActionResult GetUsersByRole(UserRole role)
         {
             try
             {

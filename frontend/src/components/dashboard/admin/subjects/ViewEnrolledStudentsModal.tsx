@@ -8,10 +8,10 @@ import {
   Search,
   FileText,
 } from "lucide-react";
-import {
-  getStudentsByCourse,
-  removeStudentFromCourse,
-} from "@services/StudentCourseService";
+// import {
+//   getStudentsByCourse,
+//   removeStudentFromCourse,
+// } from "@services/StudentCourseService";
 import type { ICourse } from "@interfaces/models/ICourse";
 import type { IStudentCourse } from "@interfaces/models/IStudentCourse";
 import type { IUser } from "@interfaces";
@@ -78,27 +78,27 @@ export default function ViewEnrolledStudentsModal({
     if (!course) return;
     setLoading(true);
     setError("");
-    try {
-      const rawData = await getStudentsByCourse(course.CourseCode);
+    // try {
+    //   // const rawData = await getStudentsByCourse(course.CourseCode);
 
-      const parsedData: IStudentCourse[] = rawData.map((studentCourse) => ({
-        StudentCourseId: studentCourse.studentCourseId,
-        StudentUserId: studentCourse.studentUserId,
-        CourseCode: studentCourse.courseCode,
-        Grade: studentCourse.grade,
-        FirstName: studentCourse.firstName,
-        MiddleName: studentCourse.middleName,
-        LastName: studentCourse.lastName,
-        Program: studentCourse.program,
-        Course: studentCourse.course,
-      }));
-      setEnrolledStudents(parsedData);
-    } catch (err: any) {
-      console.error("Error fetching enrolled students:", err);
-      setError("Failed to load enrolled students");
-    } finally {
-      setLoading(false);
-    }
+    //   const parsedData: IStudentCourse[] = rawData.map((studentCourse) => ({
+    //     StudentCourseId: studentCourse.studentCourseId,
+    //     StudentUserId: studentCourse.studentUserId,
+    //     CourseCode: studentCourse.courseCode,
+    //     Grade: studentCourse.grade,
+    //     FirstName: studentCourse.firstName,
+    //     MiddleName: studentCourse.middleName,
+    //     LastName: studentCourse.lastName,
+    //     Program: studentCourse.program,
+    //     Course: studentCourse.course,
+    //   }));
+    //   setEnrolledStudents(parsedData);
+    // } catch (err: any) {
+    //   console.error("Error fetching enrolled students:", err);
+    //   setError("Failed to load enrolled students");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   const handleRemoveStudent = async (studentUserId: string) => {
@@ -112,7 +112,7 @@ export default function ViewEnrolledStudentsModal({
     setError("");
 
     try {
-      await removeStudentFromCourse(studentUserId, course.CourseCode);
+      // await removeStudentFromCourse(studentUserId, course.CourseCode);
       await fetchEnrolledStudents();
     } catch (err: any) {
       console.error("Error removing student:", err);

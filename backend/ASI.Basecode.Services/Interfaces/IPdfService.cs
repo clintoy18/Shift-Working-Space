@@ -11,7 +11,7 @@ public interface IPdfService
         DashboardStatsViewModel dashboardStats,
         List<UserViewAdminModel> userLists,
         List<CourseViewModel> courses,
-        UserRoles? roleFilter = null);
+        UserRole? roleFilter = null);
 
     byte[] GenerateCourseGradeSummary(List<CourseGradesViewModel> coursesGrades, string title = "Grades Summary Report");
 

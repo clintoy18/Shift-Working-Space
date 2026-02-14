@@ -1,7 +1,7 @@
 import React, { useState, useEffect, useMemo } from "react";
 import { X, Search, UserPlus, GraduationCap } from "lucide-react";
 import { fetchAllUsersAdmin } from "@services/AdminService";
-import { enrollStudentInCourse } from "@services/StudentCourseService";
+// import { enrollStudentInCourse } from "@services/StudentCourseService";
 import type { IUser } from "@interfaces";
 import type { ICourse } from "@interfaces/models/ICourse";
 import { parseNumericRole } from "../../../../utils/roleUtils";
@@ -93,20 +93,20 @@ export default function EnrollStudentModal({
 
     setLoading(true);
 
-    try {
-      await enrollStudentInCourse({
-        StudentUserId: selectedStudent.UserId,
-        CourseCode: course.CourseCode,
-      });
+    // try {
+    //   await enrollStudentInCourse({
+    //     StudentUserId: selectedStudent.UserId,
+    //     CourseCode: course.CourseCode,
+    //   });
 
-      success("Student enrolled successfully!");
-      onSuccess();
-      onClose();
-    } catch (err: any) {
-      showError(err.response?.data?.message || "Failed to enroll student");
-    } finally {
-      setLoading(false);
-    }
+    //   success("Student enrolled successfully!");
+    //   onSuccess();
+    //   onClose();
+    // } catch (err: any) {
+    //   showError(err.response?.data?.message || "Failed to enroll student");
+    // } finally {
+    //   setLoading(false);
+    // }
   };
 
   if (!isOpen || !course) return null;
@@ -188,11 +188,11 @@ export default function EnrollStudentModal({
                         <p className="text-sm text-gray-500 mt-1">
                           ID: {student.UserId}
                         </p>
-                        {student.Program && (
+                        {/* {student.Program && (
                           <p className="text-sm text-gray-600 mt-1">
                             Program: {student.Program}
                           </p>
-                        )}
+                        )} */}
                       </div>
                       {isSelected && (
                         <UserPlus size={20} className="text-blue-600 flex-shrink-0 ml-2" />
