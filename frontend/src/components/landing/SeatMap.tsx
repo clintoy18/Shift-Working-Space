@@ -36,17 +36,17 @@ const ShiftFloorPlanFinal = () => {
 
   // ✅ Helper functions
   const getSeatByCode = (seatCode: string): ISeat | undefined => {
-    return seats.find(s => s.SeatCode === seatCode);
+    return seats.find(s => s.seatCode === seatCode);
   };
 
   const isSeatOccupied = (seatCode: string): boolean => {
     const seat = getSeatByCode(seatCode);
-    return seat?.Status === 'Occupied' || seat?.Status === 'Reserved';
+    return seat?.status === 'Occupied' || seat?.status === 'Reserved';
   };
 
   const getAvailableCount = (zoneType: string): number => {
     return seats.filter(s => 
-      s.ZoneType === zoneType && s.Status === 'Available'
+      s.zoneType === zoneType && s.status === 'Available'
     ).length;
   };
 
@@ -82,8 +82,8 @@ const ShiftFloorPlanFinal = () => {
 
   // ✅ Calculate statistics
   const totalSeats = seats.length;
-  const availableSeats = seats.filter(s => s.Status === 'Available').length;
-  const occupiedSeats = seats.filter(s => s.Status === 'Occupied' || s.Status === 'Reserved').length;
+  const availableSeats = seats.filter(s => s.status === 'Available').length;
+  const occupiedSeats = seats.filter(s => s.status === 'Occupied' || s.status === 'Reserved').length;
 
   return (
     <section className="py-12 md:py-24 bg-slate-950 font-poppins relative selection:bg-primary/30">
@@ -201,7 +201,7 @@ const ShiftFloorPlanFinal = () => {
                               <SeatNode 
                                 key={i} 
                                 id={seatCode}
-                                label={seat?.DisplayLabel || `R${i + 28}`}
+                                label={seat?.displayLabel || `R${i + 28}`}
                                 isOccupied={isSeatOccupied(seatCode)}
                                 seatData={seat}
                               />
@@ -218,7 +218,7 @@ const ShiftFloorPlanFinal = () => {
                               <SeatNode 
                                 key={i} 
                                 id={seatCode}
-                                label={seat?.DisplayLabel || `R${i + 25}`}
+                                label={seat?.displayLabel || `R${i + 25}`}
                                 isOccupied={isSeatOccupied(seatCode)}
                                 seatData={seat}
                               />
@@ -286,7 +286,7 @@ const ShiftFloorPlanFinal = () => {
                                 <SeatNode 
                                   key={i} 
                                   id={seatCode}
-                                  label={seat?.DisplayLabel || `R${(islandId - 1) * 4 + (i + 1)}`}
+                                  label={seat?.displayLabel || `R${(islandId - 1) * 4 + (i + 1)}`}
                                   isOccupied={isSeatOccupied(seatCode)}
                                   seatData={seat}
                                 />
@@ -303,7 +303,7 @@ const ShiftFloorPlanFinal = () => {
                                 <SeatNode 
                                   key={i} 
                                   id={seatCode}
-                                  label={seat?.DisplayLabel || `R${(islandId - 1) * 4 + (i + 3)}`}
+                                  label={seat?.displayLabel || `R${(islandId - 1) * 4 + (i + 3)}`}
                                   isOccupied={isSeatOccupied(seatCode)}
                                   seatData={seat}
                                 />
@@ -331,7 +331,7 @@ const ShiftFloorPlanFinal = () => {
                             <SeatNode 
                               key={i} 
                               id={seatCode}
-                              label={seat?.DisplayLabel || `R${i + 20}`}
+                              label={seat?.displayLabel || `R${i + 20}`}
                               isOccupied={isSeatOccupied(seatCode)}
                               seatData={seat}
                             />
@@ -371,21 +371,21 @@ const ShiftFloorPlanFinal = () => {
                                 ? "border-slate-700 bg-slate-900/40" 
                                 : "border-primary/60 bg-primary/10 shadow-[0_0_10px_rgba(255,107,0,0.1)] hover:shadow-[0_0_20px_rgba(255,107,0,0.3)] hover:scale-105"
                             }`}
-                            title={seat ? `${seat.SeatNumber} - ${seat.Location} - ₱${seat.HourlyRate}/hr` : `Cubicle ${i + 1}`}
+                            title={seat ? `${seat.seatNumber} - ${seat.location} - ₱${seat.hourlyRate}/hr` : `Cubicle ${i + 1}`}
                           >
                             <Monitor className={`w-3.5 h-3.5 ${isOccupied ? "text-slate-700" : "text-primary"}`} />
                             
                             {/* Cubicle Label */}
                             <span className={`absolute -top-6 text-[8px] font-black uppercase ${isOccupied ? "text-slate-600" : "text-primary"}`}>
-                              {seat?.DisplayLabel || `C${i + 1}`}
+                              {seat?.displayLabel || `C${i + 1}`}
                             </span>
                             
                             {/* Tooltip on hover */}
                             {seat && !isOccupied && (
                               <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 border border-primary/50 rounded-lg text-[9px] text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
-                                <div className="font-bold text-primary">{seat.SeatNumber}</div>
-                                <div className="text-slate-300">{seat.SeatType} Cubicle</div>
-                                <div className="text-slate-400 text-[8px]">₱{seat.HourlyRate}/hr • ₱{seat.DailyRate}/day</div>
+                                <div className="font-bold text-primary">{seat.seatNumber}</div>
+                                <div className="text-slate-300">{seat.seatType} Cubicle</div>
+                                <div className="text-slate-400 text-[8px]">₱{seat.hourlyRate}/hr • ₱{seat.dailyRate}/day</div>
                               </div>
                             )}
                           </div>
@@ -441,17 +441,17 @@ const SeatNode = ({
       ? "bg-slate-900 border-slate-700 text-slate-500 cursor-not-allowed opacity-50" 
       : "bg-primary border-orange-400 shadow-[0_0_15px_rgba(255,107,0,0.3)] text-white hover:scale-110 cursor-pointer"
   }`}
-  title={seatData ? `${seatData.SeatNumber} - ${seatData.Location}` : label}
+  title={seatData ? `${seatData.seatNumber} - ${seatData.location}` : label}
 >
     <span className="text-[8px] md:text-[10px] font-black leading-none">{label}</span>
     
     {/* Enhanced Tooltip */}
     {seatData && !isOccupied && (
       <div className="absolute bottom-full left-1/2 -translate-x-1/2 mb-2 px-3 py-2 bg-slate-900 border border-primary/50 rounded-lg text-white whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none z-50 shadow-xl">
-        <div className="text-[9px] font-bold text-primary">{seatData.SeatNumber}</div>
-        <div className="text-[8px] text-slate-300">{seatData.Location}</div>
+        <div className="text-[9px] font-bold text-primary">{seatData.seatNumber}</div>
+        <div className="text-[8px] text-slate-300">{seatData.location}</div>
         <div className="text-[8px] text-slate-400 mt-1">
-          ₱{seatData.HourlyRate}/hr • ₱{seatData.DailyRate}/day
+          ₱{seatData.hourlyRate}/hr • ₱{seatData.dailyRate}/day
         </div>
       </div>
     )}
