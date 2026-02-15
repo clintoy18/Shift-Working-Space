@@ -3,7 +3,9 @@ import { MapPin, Users } from "lucide-react";
 
 const Hero = () => {
   return (
-    <section className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
+    <section 
+    id="#hero" 
+    className="relative min-h-screen flex items-center justify-center pt-16 overflow-hidden">
       {/* Background Image with Overlay */}
       <div
         className="absolute inset-0 bg-cover bg-center bg-no-repeat"

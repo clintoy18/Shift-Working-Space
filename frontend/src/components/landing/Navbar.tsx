@@ -1,29 +1,69 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Menu, X, LayoutDashboard } from "lucide-react";
 import Logo from "../shared/Logo";
-import { useAuth } from "../../context/AuthContext"; // ✅ Import auth
+import { useAuth } from "../../context/AuthContext";
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
-  const { user } = useAuth(); // ✅ Get user
+  const location = useLocation();
+  const { user } = useAuth();
   
-  const isAuthenticated = !!user; // ✅ Check if logged in
+  const isAuthenticated = !!user;
 
   const navLinks = [
     { href: "#features", label: "Services" },
     { href: "#pricing", label: "Pricing" },
+    { href: "#location", label: "Location" },
     { href: "#faq", label: "FAQ" },
   ];
+
+  // ✅ Smooth scroll function
+  const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
+    e.preventDefault();
+    setIsOpen(false); // Close mobile menu
+    
+    const targetId = href.replace('#', '');
+    const element = document.getElementById(targetId);
+    
+    if (element) {
+      const navbarHeight = 64; // Height of fixed navbar (h-16 = 64px)
+      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+      const offsetPosition = elementPosition - navbarHeight;
+
+      window.scrollTo({
+        top: offsetPosition,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  // ✅ Logo click handler - Smooth scroll to top on landing page
+  const handleLogoClick = (e: React.MouseEvent) => {
+    // If we're on the landing page, smooth scroll to top
+    if (location.pathname === '/') {
+      e.preventDefault();
+      setIsOpen(false); // Close mobile menu if open
+      
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    }
+    // If we're on another page, let Logo component handle navigation
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/95 backdrop-blur-sm border-b border-border">
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           
-          <Logo redirectTo="/" />
+          {/* ✅ Wrap Logo with click handler */}
+          <div onClick={handleLogoClick} className="cursor-pointer">
+            <Logo redirectTo="/" />
+          </div>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
@@ -31,7 +71,8 @@ const Navbar = () => {
               <a
                 key={link.href}
                 href={link.href}
-                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full"
+                onClick={(e) => handleNavClick(e, link.href)}
+                className="text-sm font-medium text-muted-foreground hover:text-foreground transition-colors relative after:absolute after:bottom-[-4px] after:left-0 after:h-[2px] after:w-0 after:bg-primary after:transition-all hover:after:w-full cursor-pointer"
               >
                 {link.label}
               </a>
@@ -41,7 +82,6 @@ const Navbar = () => {
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
             {isAuthenticated ? (
-              // ✅ SHOW: Dashboard button only
               <Button
                 onClick={() => navigate("/dashboard")}
                 className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-md active:scale-95 transition-all"
@@ -50,7 +90,6 @@ const Navbar = () => {
                 Dashboard
               </Button>
             ) : (
-              // ✅ SHOW: Login + Register buttons
               <>
                 <Button
                   variant="ghost"
@@ -91,8 +130,8 @@ const Navbar = () => {
                 <a
                   key={link.href}
                   href={link.href}
-                  className="text-lg font-semibold text-muted-foreground hover:text-primary transition-colors px-2"
-                  onClick={() => setIsOpen(false)}
+                  onClick={(e) => handleNavClick(e, link.href)}
+                  className="text-lg font-semibold text-muted-foreground hover:text-primary transition-colors px-2 cursor-pointer"
                 >
                   {link.label}
                 </a>
@@ -102,7 +141,6 @@ const Navbar = () => {
               
               <div className="flex flex-col gap-3">
                 {isAuthenticated ? (
-                  // ✅ MOBILE: Show Dashboard button only
                   <Button
                     onClick={() => {
                       navigate("/dashboard");
@@ -114,7 +152,6 @@ const Navbar = () => {
                     Go to Dashboard
                   </Button>
                 ) : (
-                  // ✅ MOBILE: Show Login + Register buttons
                   <>
                     <Button
                       variant="outline"

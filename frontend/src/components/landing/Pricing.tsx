@@ -33,7 +33,10 @@ const Pricing = () => {
   ];
 
   return (
-    <section className="py-24 bg-background text-foreground font-poppins">
+    <section 
+      id="pricing" // ✅ ADDED THIS - Critical for smooth scroll
+      className="py-24 bg-background text-foreground font-poppins"
+    >
       <div className="container mx-auto px-4 max-w-6xl">
         
         {/* DESIGNER NOTE: Header uses centered alignment for authority and clarity */}
