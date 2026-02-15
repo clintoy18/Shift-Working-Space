@@ -1,11 +1,7 @@
 import Profile from '../components/dashboard/Profile';
-// import Overview from '../components/dashboard/student/Overview';
 import AdminOverView from '../components/dashboard/admin/AdminOverview';
-// import Subjects from '../components/dashboard/admin/Subjects';
 import UserTable from '../components/dashboard/user-management/Table';
-// import { ManageStudents } from '../components/dashboard/teacher/ManageStudents';
-import { CustomerDashboard } from "../components/dashboard/student/CustomerDashboard";
-// import TeacherOverview from '../components/dashboard/teacher/TeacherOverview';
+import { CustomerDashboard } from "../components/dashboard/customer/CustomerDashboard";
 
 export type Role = 'Shifty' | 'Cashier' | 'Admin';
 
