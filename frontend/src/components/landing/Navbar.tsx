@@ -1,12 +1,16 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Menu, X } from "lucide-react";
+import { Menu, X, LayoutDashboard } from "lucide-react";
 import Logo from "../shared/Logo";
+import { useAuth } from "../../context/AuthContext"; // ✅ Import auth
 
 const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const navigate = useNavigate();
+  const { user } = useAuth(); // ✅ Get user
+  
+  const isAuthenticated = !!user; // ✅ Check if logged in
 
   const navLinks = [
     { href: "#features", label: "Services" },
@@ -19,8 +23,7 @@ const Navbar = () => {
       <div className="container mx-auto px-4">
         <div className="flex items-center justify-between h-16">
           
-          {/* Shift Branding - Consistent with Dashboard Header */}
-        <Logo redirectTo="/" />
+          <Logo redirectTo="/" />
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center gap-8">
@@ -35,21 +38,35 @@ const Navbar = () => {
             ))}
           </div>
 
-          {/* Desktop CTA Group */}
+          {/* Desktop CTA */}
           <div className="hidden md:flex items-center gap-3">
-            <Button
-              variant="ghost"
-              onClick={() => navigate("/login")}
-              className="text-foreground hover:text-primary transition-colors font-medium"
-            >
-              Login
-            </Button>
-            <Button
-              onClick={() => navigate("/register")}
-              className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-md active:scale-95 transition-all"
-            >
-              Be a Member
-            </Button>
+            {isAuthenticated ? (
+              // ✅ SHOW: Dashboard button only
+              <Button
+                onClick={() => navigate("/dashboard")}
+                className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-md active:scale-95 transition-all"
+              >
+                <LayoutDashboard className="w-4 h-4 mr-2" />
+                Dashboard
+              </Button>
+            ) : (
+              // ✅ SHOW: Login + Register buttons
+              <>
+                <Button
+                  variant="ghost"
+                  onClick={() => navigate("/login")}
+                  className="text-foreground hover:text-primary transition-colors font-medium"
+                >
+                  Login
+                </Button>
+                <Button
+                  onClick={() => navigate("/register")}
+                  className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold shadow-md active:scale-95 transition-all"
+                >
+                  Be a Member
+                </Button>
+              </>
+            )}
           </div>
 
           {/* Mobile Menu Button */}
@@ -84,25 +101,42 @@ const Navbar = () => {
               <hr className="border-border my-2" />
               
               <div className="flex flex-col gap-3">
-                <Button
-                  variant="outline"
-                  onClick={() => {
-                    navigate("/login");
-                    setIsOpen(false);
-                  }}
-                  className="w-full h-12 text-foreground font-bold border-border"
-                >
-                  Login
-                </Button>
-                <Button
-                  onClick={() => {
-                    navigate("/register");
-                    setIsOpen(false);
-                  }}
-                  className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
-                >
-                  Be a Member
-                </Button>
+                {isAuthenticated ? (
+                  // ✅ MOBILE: Show Dashboard button only
+                  <Button
+                    onClick={() => {
+                      navigate("/dashboard");
+                      setIsOpen(false);
+                    }}
+                    className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
+                  >
+                    <LayoutDashboard className="w-5 h-5 mr-2" />
+                    Go to Dashboard
+                  </Button>
+                ) : (
+                  // ✅ MOBILE: Show Login + Register buttons
+                  <>
+                    <Button
+                      variant="outline"
+                      onClick={() => {
+                        navigate("/login");
+                        setIsOpen(false);
+                      }}
+                      className="w-full h-12 text-foreground font-bold border-border"
+                    >
+                      Login
+                    </Button>
+                    <Button
+                      onClick={() => {
+                        navigate("/register");
+                        setIsOpen(false);
+                      }}
+                      className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold"
+                    >
+                      Be a Member
+                    </Button>
+                  </>
+                )}
               </div>
             </div>
           </div>

@@ -73,6 +73,9 @@ const ProfileForm = () => {
         LastName: formData.lastName,
         Role: user.Role,
         Email: user.Email,
+        MembershipType : user.MembershipType, 
+        MembershipStatus : user.MembershipStatus,
+        IsDeleted: user.IsDeleted,
         CreatedTime: user.CreatedTime
       };
       
@@ -107,17 +110,21 @@ const ProfileForm = () => {
         <div className="lg:col-span-1">
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm sticky top-6">
             <div className="text-center">
-              <div className="w-20 h-20 bg-gradient-to-br from-blue-500 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+              {/* ✅ Orange Gradient Avatar */}
+              <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <User className="w-8 h-8 text-white" />
               </div>
               <h3 className="text-lg font-heading font-semibold text-slate-800 mb-1">{fullName}</h3>
-              <div className="inline-flex items-center gap-1.5 bg-slate-100 px-3 py-1 rounded-full">
-                <Shield className="w-3 h-3 text-slate-600" />
-                <span className="text-xs font-medium text-slate-700">{formData.role}</span>
+              
+              {/* ✅ Orange Accent Role Badge */}
+              <div className="inline-flex items-center gap-1.5 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
+                <Shield className="w-3 h-3 text-orange-600" />
+                <span className="text-xs font-medium text-orange-700">{formData.role}</span>
               </div>
               
-              <div className="mt-6 p-4 bg-blue-50 rounded-lg border border-blue-200">
-                <div className="flex items-center gap-2 text-sm text-blue-700">
+              {/* ✅ Orange Security Badge */}
+              <div className="mt-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
+                <div className="flex items-center gap-2 text-sm text-orange-700">
                   <Lock className="w-4 h-4" />
                   <span>Your information is secure and encrypted</span>
                 </div>
@@ -157,7 +164,6 @@ const ProfileForm = () => {
                   placeholder="First name"
                   disabled={!isEditing}
                   icon={<User className="w-4 h-4" />}
-                  // className="bg-white/50"
                 />
                 <TextInputField
                   id="middleName"
@@ -167,7 +173,6 @@ const ProfileForm = () => {
                   placeholder="Middle name (optional)"
                   disabled={!isEditing}
                   icon={<User className="w-4 h-4" />}
-                  // className="bg-white/50"
                 />
                 <TextInputField
                   id="lastName"
@@ -177,7 +182,6 @@ const ProfileForm = () => {
                   placeholder="Last name"
                   disabled={!isEditing}
                   icon={<User className="w-4 h-4" />}
-                  // className="bg-white/50"
                 />
               </div>
 
@@ -190,15 +194,15 @@ const ProfileForm = () => {
                 placeholder="Student, Teacher, Admin"
                 disabled={true}
                 icon={<FileText className="w-4 h-4" />}
-                // className="bg-slate-50/80"
               />
             </div>
 
             {/* Password Section */}
             {isEditing && (
               <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
+                {/* ✅ Orange Accent Bar */}
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-2 h-6 bg-amber-500 rounded-full"></div>
+                  <div className="w-2 h-6 bg-orange-500 rounded-full"></div>
                   <div>
                     <h3 className="text-lg font-heading font-semibold text-slate-800">Security Settings</h3>
                     <p className="text-sm text-slate-600 mt-1">Update your password for account security</p>
@@ -217,7 +221,6 @@ const ProfileForm = () => {
                     }}
                     placeholder="Leave blank to keep current"
                     icon={<Lock className="w-4 h-4" />}
-                    // className="bg-white/50"
                   />
                   <TextInputField
                     id="confirmPassword"
@@ -230,11 +233,8 @@ const ProfileForm = () => {
                     }}
                     placeholder="Confirm new password"
                     icon={<Lock className="w-4 h-4" />}
-                    // className="bg-white/50"
                   />
                 </div>
-                
-                {/* Removed duplicate error display - only toast will show */}
               </div>
             )}
 
@@ -249,12 +249,13 @@ const ProfileForm = () => {
                   icon={<X className="w-4 h-4" />}
                   className="flex-1 py-3 border-slate-300 text-slate-700 hover:bg-slate-50"
                 />
+                {/* ✅ Orange Save Button */}
                 <Button
                   type="submit"
                   label={loading ? "Saving..." : "Save Changes"}
                   icon={loading ? null : <Save className="w-4 h-4" />}
-                  className={`flex-1 py-3 bg-blue-600 text-white hover:bg-blue-700 transition-all ${
-                    loading ? 'disabled:bg-blue-400' : ''
+                  className={`flex-1 py-3 bg-orange-600 text-white hover:bg-orange-700 transition-all shadow-lg hover:shadow-xl ${
+                    loading ? 'disabled:bg-orange-400' : ''
                   }`}
                   disabled={loading}
                 />
