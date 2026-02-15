@@ -65,7 +65,9 @@ const ShiftFloorPlanFinal = () => {
   // ✅ Error State
   if (error) {
     return (
-      <section className="py-24 bg-slate-950 font-poppins">
+      <section 
+      id="seatMap"
+      className="py-24 bg-slate-950 font-poppins">
         <div className="container mx-auto px-4 flex flex-col items-center justify-center min-h-[60vh]">
           <AlertCircle className="w-12 h-12 text-red-500 mb-4" />
           <p className="text-red-400 text-sm mb-4">{error}</p>
