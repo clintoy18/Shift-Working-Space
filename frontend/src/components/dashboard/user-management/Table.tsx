@@ -134,7 +134,7 @@ export default function UserTable() {
       const rawData = await fetchAllUsersAdmin();
       const parsedUsers: IUser[] = rawData
         .map((user: any) => {
-          const role = parseNumericRole(user.role);
+          const role = user.role;
           if (role === null) {
             console.warn("Unknown role value:", user.role, "for user", user.userId);
             return null;

@@ -2,7 +2,6 @@ import React, { useState } from "react";
 import { X, Book, Copy, Mail } from "lucide-react";
 import { createNewUserAdmin } from "@services";
 import type { IUser } from "@interfaces";
-import SelectField from "components/common/SelectedField";
 import { useToast } from "../../../context/ToastContext";
 
 interface CreateUserModalProps {
