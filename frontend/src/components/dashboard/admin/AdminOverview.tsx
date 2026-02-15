@@ -1,9 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Users, BookOpen, GraduationCap, UserCog, BriefcaseBusiness, TrendingUp, Activity } from "lucide-react";
+import { useEffect, useState } from "react";
+import { 
+  Users,        
+  CreditCard,   
+  TrendingUp,   
+  Activity     
+} from "lucide-react";
+
 import RecentUsers from "./overview/RecentUsers";
 import { getRecentUsers, fetchStats } from "@services";
 import type { IUser, IDashboardStats } from "@interfaces";
-import { parseNumericRole } from "../../../utils/roleUtils";
 
 const AdminOverview = () => {
   const [users, setUsers] = useState<IUser[]>([])
@@ -23,7 +28,7 @@ const AdminOverview = () => {
         },
         {
           title: "Total Members",
-          icon: GraduationCap,
+          icon: Users,
           value: "0",
           description: "Loading...",
           color: "emerald",
@@ -31,18 +36,10 @@ const AdminOverview = () => {
         },
         {
           title: "Total Cashiers",
-          icon: UserCog,
+          icon: CreditCard,
           value: "0",
           description: "Loading...",
           color: "purple",
-          trend: null
-        },
-        {
-          title: "Total Courses",
-          icon: BookOpen,
-          value: "0",
-          description: "Loading...",
-          color: "amber",
           trend: null
         },
       ];
@@ -59,7 +56,7 @@ const AdminOverview = () => {
       },
       {
         title: "Total Members",
-        icon: GraduationCap,
+        icon: Users,
         value: dashboardStats.userStats.totalStudents.toString(),
         description: "Total members",
         color: "emerald",
@@ -67,7 +64,7 @@ const AdminOverview = () => {
       },
       {
         title: "Total Cashiers",
-        icon: UserCog,
+        icon: CreditCard,
         value: dashboardStats.userStats.totalTeachers.toString(),
         description: "Active cashiers",
         color: "purple",
@@ -90,7 +87,7 @@ const AdminOverview = () => {
 
         const parsedUsers: IUser[] = rawData
           .map((user) => {
-            const role = parseNumericRole(user.role)
+            const role =user.role
             if (role === null) {
               console.warn("Unknown role value:", user.Role, "for user", user.UserId);
               return null;
