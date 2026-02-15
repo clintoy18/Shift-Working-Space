@@ -1,16 +1,30 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Key, CreditCard, LayoutGrid, Check } from "lucide-react";
+import { Clock, Key, CreditCard, LayoutGrid, Check, ChevronLeft, ChevronRight } from "lucide-react";
 
 const Features = () => {
   const [selectedZone, setSelectedZone] = useState<"hot" | "dedicated">("hot");
+  const [currentSlide, setCurrentSlide] = useState(0);
+  const [isMobile, setIsMobile] = useState(false);
+  const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  // Detect mobile screen
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
 
   const features = [
     {
       icon: Clock,
       title: "Real-Time Availability",
       description:
-        "View live desk and room availability at a glance, so you always know what’s free before you arrive.",
+        "View live desk and room availability at a glance, so you always know what's free before you arrive.",
       visual: (
         <div className="mt-4 p-4 bg-secondary rounded-lg">
           <div className="grid grid-cols-4 gap-2">
@@ -71,15 +85,15 @@ const Features = () => {
           <div className="space-y-2">
             <div className="flex items-center justify-between p-2 bg-card rounded">
               <span className="text-sm">Monthly Desk</span>
-              <span className="text-sm font-semibold text-primary">$299</span>
+              <span className="text-sm font-semibold text-primary">₱5,999</span>
             </div>
             <div className="flex items-center justify-between p-2 bg-card rounded">
               <span className="text-sm">Meeting Room (2hr)</span>
-              <span className="text-sm font-semibold text-primary">$25</span>
+              <span className="text-sm font-semibold text-primary">₱540</span>
             </div>
             <div className="flex items-center gap-2 p-2 bg-primary/10 rounded text-primary text-sm">
               <Check className="w-4 h-4" />
-              <span>Auto-pay enabled</span>
+              <span>Always included</span>
             </div>
           </div>
         </div>
@@ -91,59 +105,80 @@ const Features = () => {
       description:
         "Choose a workspace that fits your style and unlock exclusive member-only rates and perks.",
       visual: (
-  <div className="mt-4 p-4 bg-secondary rounded-lg">
-    <div className="grid grid-cols-2 gap-2">
-      <button
-        onClick={() => setSelectedZone("hot")}
-        className={`p-3 rounded-lg text-left transition-all ${
-          selectedZone === "hot"
-            ? "bg-primary text-primary-foreground"
-            : "bg-card hover:bg-card/80"
-        }`}
-      >
-        <p className="font-semibold text-sm">10% Discount</p>
-        <p
-          className={`text-xs mt-1 ${
-            selectedZone === "hot"
-              ? "text-primary-foreground/80"
-              : "text-muted-foreground"
-          }`}
-        >
-          All desk & room bookings
-        </p>
-      </button>
+        <div className="mt-4 p-4 bg-secondary rounded-lg">
+          <div className="grid grid-cols-2 gap-2">
+            <button
+              onClick={() => setSelectedZone("hot")}
+              className={`p-3 rounded-lg text-left transition-all ${
+                selectedZone === "hot"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card hover:bg-card/80"
+              }`}
+            >
+              <p className="font-semibold text-sm">10% Discount</p>
+              <p
+                className={`text-xs mt-1 ${
+                  selectedZone === "hot"
+                    ? "text-primary-foreground/80"
+                    : "text-muted-foreground"
+                }`}
+              >
+                All desk & room bookings
+              </p>
+            </button>
 
-      <button
-        onClick={() => setSelectedZone("dedicated")}
-        className={`p-3 rounded-lg text-left transition-all ${
-          selectedZone === "dedicated"
-            ? "bg-primary text-primary-foreground"
-            : "bg-card hover:bg-card/80"
-        }`}
-      >
-        <p className="font-semibold text-sm">2 Hours Free</p>
-        <p
-          className={`text-xs mt-1 ${
-            selectedZone === "dedicated"
-              ? "text-primary-foreground/80"
-              : "text-muted-foreground"
-          }`}
-        >
-          Meeting room credits
-        </p>
-      </button>
-    </div>
-  </div>
-)
-
+            <button
+              onClick={() => setSelectedZone("dedicated")}
+              className={`p-3 rounded-lg text-left transition-all ${
+                selectedZone === "dedicated"
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-card hover:bg-card/80"
+              }`}
+            >
+              <p className="font-semibold text-sm">2 Hours Free</p>
+              <p
+                className={`text-xs mt-1 ${
+                  selectedZone === "dedicated"
+                    ? "text-primary-foreground/80"
+                    : "text-muted-foreground"
+                }`}
+              >
+                Meeting room credits
+              </p>
+            </button>
+          </div>
+        </div>
+      ),
     },
   ];
+
+  // Scroll to slide
+  const scrollToSlide = (index: number) => {
+    if (scrollContainerRef.current) {
+      const cardWidth = scrollContainerRef.current.offsetWidth;
+      scrollContainerRef.current.scrollTo({
+        left: cardWidth * index,
+        behavior: 'smooth'
+      });
+      setCurrentSlide(index);
+    }
+  };
+
+  // Handle scroll event to update current slide
+  const handleScroll = () => {
+    if (scrollContainerRef.current && isMobile) {
+      const cardWidth = scrollContainerRef.current.offsetWidth;
+      const scrollLeft = scrollContainerRef.current.scrollLeft;
+      const newSlide = Math.round(scrollLeft / cardWidth);
+      setCurrentSlide(newSlide);
+    }
+  };
 
   return (
     <section id="features" className="py-20 bg-secondary">
       <div className="container mx-auto px-4">
         {/* Section Header */}
-        <div className="text-center mb-16">
+        <div className="text-center mb-12 md:mb-16">
           <h2 className="text-3xl md:text-4xl font-bold text-foreground mb-4">
             The Plug & Play Promise
           </h2>
@@ -151,33 +186,96 @@ const Features = () => {
             Everything you need to work smarter, not harder. We handle the
             details so you can focus on what matters.
           </p>
+          
+          {/* Mobile Swipe Hint */}
+          {isMobile && (
+            <div className="mt-6 flex items-center justify-center gap-2 text-sm text-muted-foreground animate-pulse">
+              <ChevronLeft className="w-4 h-4" />
+              <span>Swipe to explore</span>
+              <ChevronRight className="w-4 h-4" />
+            </div>
+          )}
         </div>
 
-        {/* Features Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 max-w-5xl mx-auto">
-          {features.map((feature, index) => (
-            <Card
-              key={index}
-              className="bg-card border-border hover:shadow-lg transition-shadow"
-            >
-              <CardContent className="p-6">
-                <div className="flex items-start gap-4">
-                  <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                    <feature.icon className="w-6 h-6 text-primary" />
+        {/* Desktop Grid / Mobile Swiper */}
+        <div className="relative max-w-5xl mx-auto">
+          
+          {/* Mobile: Swipeable Cards */}
+          <div 
+            ref={scrollContainerRef}
+            onScroll={handleScroll}
+            className="md:hidden flex overflow-x-auto snap-x snap-mandatory scrollbar-hide gap-4 pb-2"
+            style={{ scrollbarWidth: 'none', msOverflowStyle: 'none' }}
+          >
+            {features.map((feature, index) => (
+              <Card
+                key={index}
+                className="flex-shrink-0 w-full snap-center bg-card border-border shadow-lg"
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <feature.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-foreground mb-2">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {feature.description}
+                      </p>
+                    </div>
                   </div>
-                  <div className="flex-1">
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
-                      {feature.title}
-                    </h3>
-                    <p className="text-muted-foreground">
-                      {feature.description}
-                    </p>
+                  {feature.visual}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Desktop: Grid */}
+          <div className="hidden md:grid grid-cols-1 md:grid-cols-2 gap-6">
+            {features.map((feature, index) => (
+              <Card
+                key={index}
+                className="bg-card border-border hover:shadow-lg transition-shadow"
+              >
+                <CardContent className="p-6">
+                  <div className="flex items-start gap-4">
+                    <div className="w-12 h-12 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                      <feature.icon className="w-6 h-6 text-primary" />
+                    </div>
+                    <div className="flex-1">
+                      <h3 className="text-xl font-semibold text-foreground mb-2">
+                        {feature.title}
+                      </h3>
+                      <p className="text-muted-foreground">
+                        {feature.description}
+                      </p>
+                    </div>
                   </div>
-                </div>
-                {feature.visual}
-              </CardContent>
-            </Card>
-          ))}
+                  {feature.visual}
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+
+          {/* Mobile: Dot Indicators */}
+          {isMobile && (
+            <div className="flex justify-center gap-2 mt-6">
+              {features.map((_, index) => (
+                <button
+                  key={index}
+                  onClick={() => scrollToSlide(index)}
+                  className={`h-2 rounded-full transition-all duration-300 ${
+                    currentSlide === index 
+                      ? 'w-8 bg-primary' 
+                      : 'w-2 bg-muted-foreground/30'
+                  }`}
+                  aria-label={`Go to slide ${index + 1}`}
+                />
+              ))}
+            </div>
+          )}
         </div>
       </div>
     </section>

@@ -1,7 +1,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Check, Coffee, Lock, Monitor, Users, Zap } from "lucide-react";
+import { Check, Monitor, Users, Zap } from "lucide-react";
 
 const Pricing = () => {
   const regularSeats = [
@@ -34,12 +34,12 @@ const Pricing = () => {
 
   return (
     <section 
-      id="pricing" // ✅ ADDED THIS - Critical for smooth scroll
+      id="pricing"
       className="py-24 bg-background text-foreground font-poppins"
     >
       <div className="container mx-auto px-4 max-w-6xl">
         
-        {/* DESIGNER NOTE: Header uses centered alignment for authority and clarity */}
+        {/* Header */}
         <div className="text-center mb-20">
           <Badge variant="outline" className="mb-4 border-primary text-primary px-4 py-1">
             Flexible Workspace Rates
@@ -52,14 +52,14 @@ const Pricing = () => {
           </p>
         </div>
 
-        {/* SECTION 1: THE CORE OFFERING (REGULAR SEATS) */}
+        {/* SECTION 1: REGULAR SEATS */}
         <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-24">
           {regularSeats.map((plan, i) => (
             <Card key={i} className={`relative flex flex-col border-2 transition-all duration-300 ${
               plan.highlighted ? "border-primary shadow-[0_0_30px_rgba(255,107,0,0.15)] scale-105 z-10" : "border-border hover:border-primary/50"
             }`}>
               {plan.highlighted && (
-                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-primary-foreground px-4 py-1 text-xs font-bold rounded-full flex items-center gap-1 uppercase">
+                <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white px-4 py-1 text-xs font-bold rounded-full flex items-center gap-1 uppercase">
                   <Zap className="w-3 h-3" /> Most Popular
                 </div>
               )}
@@ -84,9 +84,14 @@ const Pricing = () => {
                     ))}
                   </ul>
                 </div>
-                <Button className={`w-full mt-10 py-6 text-md font-bold uppercase transition-transform active:scale-95 ${
-                  plan.highlighted ? "bg-primary hover:bg-primary/90" : "bg-secondary hover:bg-secondary/80"
-                }`}>
+                {/* ✅ FIXED BUTTONS - Now with proper contrast */}
+                <Button 
+                  className={`w-full mt-10 py-6 text-md font-bold uppercase transition-transform active:scale-95 ${
+                    plan.highlighted 
+                      ? "bg-primary hover:bg-primary/90 text-white" 
+                      : "bg-slate-900 hover:bg-slate-800 text-white"
+                  }`}
+                >
                   {plan.cta}
                 </Button>
               </CardContent>
@@ -94,7 +99,7 @@ const Pricing = () => {
           ))}
         </div>
 
-        {/* SECTION 2: PRIVATE & COLLABORATIVE (HORIZONTAL CARD DESIGN) */}
+        {/* SECTION 2: PRIVATE SPACES */}
         <div className="mb-24">
           <div className="flex items-center gap-4 mb-10">
             <h3 className="text-2xl font-bold uppercase tracking-wide shrink-0">Private Spaces</h3>
@@ -126,7 +131,7 @@ const Pricing = () => {
           </div>
         </div>
 
-        {/* SECTION 3: ADVANCED MEMBERSHIP (THE RECURRING REVENUE BLOCK) */}
+        {/* SECTION 3: MEMBERSHIP */}
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-muted/40 p-8 md:p-12 rounded-[2rem] border border-border">
           <div className="lg:col-span-4 space-y-6">
             <h3 className="text-3xl font-black uppercase leading-none">Early Bird <br /><span className="text-primary">Membership</span></h3>
