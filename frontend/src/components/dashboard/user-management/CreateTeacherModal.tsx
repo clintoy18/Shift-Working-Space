@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { X, Book, Copy } from "lucide-react";
+import { X, Book, Copy, Mail } from "lucide-react";
 import { createNewUserAdmin } from "@services";
 import type { IUser } from "@interfaces";
 import SelectField from "components/common/SelectedField";
@@ -21,6 +21,7 @@ export default function CreateUserModal({
     firstName: "",
     middleName: "",
     lastName: "",
+    email: "",              // ✅ ADDED EMAIL
     program: "",
     password: "",
     confirmPassword: "",
@@ -44,14 +45,22 @@ export default function CreateUserModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // Validation
+    // ✅ UPDATED VALIDATION - Include email
     if (
       !formData.firstName ||
       !formData.lastName ||
+      !formData.email ||      // ✅ Added email validation
       !formData.password ||
-      (formData.role === "Student" && !formData.program)
+      (formData.role === "Shifty" && !formData.program)
     ) {
       showError("Please fill in all required fields");
+      return;
+    }
+
+    // ✅ Email validation
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      showError("Please enter a valid email address");
       return;
     }
 
@@ -67,8 +76,12 @@ export default function CreateUserModal({
         FirstName: formData.firstName,
         MiddleName: formData.middleName,
         LastName: formData.lastName,
-        Role: formData.role.toString() as IUser["Role"],
+        Email: formData.email,                    // ✅ ADDED EMAIL
+        Role: formData.role as IUser["Role"],
+        MembershipType: "Regular",                // ✅ ADDED DEFAULT VALUES
+        MembershipStatus: "Active",               // ✅ ADDED DEFAULT VALUES
         CreatedTime: new Date().toISOString(),
+        IsDeleted: false,                         // ✅ ADDED DEFAULT VALUE
         Password: formData.password,
         ConfirmPassword: formData.confirmPassword,
       };
@@ -79,7 +92,7 @@ export default function CreateUserModal({
       if (typeof response === "string") {
         userId = response;
       } else if (typeof response === "object" && response !== null) {
-        userId = response.userId ?? "";
+        userId = response.userId || response.UserId || "";
       }
 
       if (!userId) throw new Error("No User ID returned from server");
@@ -92,12 +105,14 @@ export default function CreateUserModal({
         firstName: "",
         middleName: "",
         lastName: "",
+        email: "",           // ✅ Reset email
         program: "",
         password: "",
         confirmPassword: "",
-        role: "Teacher",
+        role: "Cashier",
       });
     } catch (err: any) {
+      console.error("Create user error:", err);
       showError(err.response?.data?.message || err.message || "Failed to create user");
     } finally {
       setLoading(false);
@@ -115,9 +130,8 @@ export default function CreateUserModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       {showSuccessModal ? (
-        // SUCCESS MODAL - Matching ViewEnrolledStudentsModal design
+        // SUCCESS MODAL
         <div className="bg-white rounded-lg max-w-sm w-full max-h-[90vh] flex flex-col">
-          {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
             <h3 className="text-xl font-semibold text-gray-900">User Created Successfully!</h3>
             <button
@@ -129,7 +143,6 @@ export default function CreateUserModal({
             </button>
           </div>
 
-          {/* Content */}
           <div className="flex-1 overflow-hidden flex flex-col p-6">
             <div className="flex flex-col items-center text-center mb-6">
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
@@ -161,7 +174,6 @@ export default function CreateUserModal({
               </div>
             </div>
 
-            {/* Action Button */}
             <div className="mt-6 pt-4 border-t">
               <button
                 onClick={handleCloseSuccessModal}
@@ -173,9 +185,8 @@ export default function CreateUserModal({
           </div>
         </div>
       ) : (
-        // FORM MODAL - Matching ViewEnrolledStudentsModal design
+        // FORM MODAL
         <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] flex flex-col">
-          {/* Header */}
           <div className="flex items-center justify-between p-6 border-b">
             <h2 className="text-xl font-semibold text-gray-900">Create New User</h2>
             <button
@@ -187,9 +198,9 @@ export default function CreateUserModal({
             </button>
           </div>
 
-          {/* Form */}
           <form onSubmit={handleSubmit} className="flex-1 overflow-hidden flex flex-col">
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
+              
               {/* Name fields */}
               <div className="space-y-4">
                 <div>
@@ -201,11 +212,12 @@ export default function CreateUserModal({
                     name="firstName"
                     value={formData.firstName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                     required
                     disabled={loading}
                   />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Middle Name
@@ -215,10 +227,11 @@ export default function CreateUserModal({
                     name="middleName"
                     value={formData.middleName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                     disabled={loading}
                   />
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Last Name <span className="text-red-500">*</span>
@@ -228,7 +241,29 @@ export default function CreateUserModal({
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleChange}
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent"
+                    required
+                    disabled={loading}
+                  />
+                </div>
+              </div>
+
+              {/* ✅ EMAIL FIELD - ADDED */}
+              <div>
+                <label className="block text-sm font-medium text-gray-700 mb-2">
+                  Email <span className="text-red-500">*</span>
+                </label>
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                    <Mail size={16} className="text-gray-400" />
+                  </div>
+                  <input
+                    type="email"
+                    name="email"
+                    value={formData.email}
+                    onChange={handleChange}
+                    placeholder="user@example.com"
+                    className="w-full pl-10 pr-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                     required
                     disabled={loading}
                   />
@@ -244,7 +279,7 @@ export default function CreateUserModal({
                   name="role"
                   value={formData.role}
                   onChange={handleChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                   required
                   disabled={loading}
                 >
@@ -252,25 +287,6 @@ export default function CreateUserModal({
                   <option value="Shifty">Shifty</option>
                 </select>
               </div>
-
-              {/* Program */}
-              {/* {formData.role === "Shifty" && (
-                <SelectField
-                  id="program"
-                  label="Program"
-                  value={formData.program}
-                  onChange={handleChange}
-                  required
-                  error=""
-                  icon={<Book size={16} className="text-gray-500" />}
-                  options={[
-                    { value: "BSIT", label: "BSIT" },
-                    { value: "BSCS", label: "BSCS" },
-                    { value: "BSEd", label: "BSEd" },
-                    { value: "BSBA", label: "BSBA" },
-                  ]}
-                />
-              )} */}
 
               {/* Password */}
               <div className="space-y-4">
@@ -284,11 +300,14 @@ export default function CreateUserModal({
                     value={formData.password}
                     onChange={handleChange}
                     placeholder="Enter password"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                     required
                     disabled={loading}
+                    minLength={6}
                   />
+                  <p className="text-xs text-gray-500 mt-1">Minimum 6 characters</p>
                 </div>
+
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
                     Confirm Password <span className="text-red-500">*</span>
@@ -299,7 +318,7 @@ export default function CreateUserModal({
                     value={formData.confirmPassword}
                     onChange={handleChange}
                     placeholder="Confirm password"
-                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent"
+                    className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-orange-400 focus:border-transparent"
                     required
                     disabled={loading}
                   />
@@ -320,7 +339,7 @@ export default function CreateUserModal({
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 font-medium"
                   disabled={loading}
                 >
                   {loading ? "Creating..." : "Create User"}

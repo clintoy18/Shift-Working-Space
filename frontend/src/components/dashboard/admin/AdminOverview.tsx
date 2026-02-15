@@ -1,10 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { Users, BookOpen, GraduationCap, UserCog, BriefcaseBusiness, TrendingUp, Activity } from "lucide-react";
-import Card from "../../common/Card";
 import RecentUsers from "./overview/RecentUsers";
 import { getRecentUsers, fetchStats } from "@services";
 import type { IUser, IDashboardStats } from "@interfaces";
-import FullPageSpinner, { InlineSpinner } from "../../common/LoadingSpinnerPage";
 import { parseNumericRole } from "../../../utils/roleUtils";
 
 const AdminOverview = () => {
@@ -54,7 +52,7 @@ const AdminOverview = () => {
       {
         title: "Total Users",
         icon: Users,
-        value: dashboardStats.userStats.totalUsers.toString(),
+        value:  dashboardStats.userStats.totalUsers.toString(),
         description: `${dashboardStats.userStats.totalAdmins} admin(s)`,
         color: "blue",
         trend: "+12%"
