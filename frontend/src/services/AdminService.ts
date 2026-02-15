@@ -2,8 +2,8 @@ import { admin } from "../lib/api";
 import type { IUser } from "@interfaces";
 
 const roleMap: { [key: string]: number } = {
-  Student: 0,
-  Teacher: 1,
+  Shifty: 0,
+  Cashier: 1,
   Admin: 2,
 };
 

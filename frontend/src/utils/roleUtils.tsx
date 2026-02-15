@@ -1,11 +1,7 @@
 import Profile from '../components/dashboard/Profile';
-// import Overview from '../components/dashboard/student/Overview';
 import AdminOverView from '../components/dashboard/admin/AdminOverview';
-// import Subjects from '../components/dashboard/admin/Subjects';
 import UserTable from '../components/dashboard/user-management/Table';
-// import { ManageStudents } from '../components/dashboard/teacher/ManageStudents';
-import { StudentCourse } from "../components/dashboard/student/StudentCourse";
-// import TeacherOverview from '../components/dashboard/teacher/TeacherOverview';
+import { CustomerDashboard } from "../components/dashboard/customer/CustomerDashboard";
 
 export type Role = 'Shifty' | 'Cashier' | 'Admin';
 
@@ -25,7 +21,7 @@ export type UserId = string;
 
 export const studentTabs = (studentUserId?: string) => [
   // { label: "Overview", content: <Overview studentUserId={studentUserId} /> },
-  { label: "Subjects", content: <StudentCourse studentUserId={studentUserId} /> },
+  { label: "Dashboard", content: <CustomerDashboard studentUserId={studentUserId} /> },
   // { label: "My Grades", content: <Grade studentUserId={studentUserId} /> },
   { label: "Profile", content: <Profile /> },
 ];
@@ -59,7 +55,7 @@ export function getRoleConfig(role: Role, studentUserId?: string) {
     case "Shifty":
       return {
         tabs: studentTabs(studentUserId), // pass studentUserId here
-        description: "View your subjects, grades, and progress tracking.",
+        description: "View your check in history and progress tracking.",
       };
   }
 }

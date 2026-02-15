@@ -7,6 +7,7 @@ import Testimonials from '../components/landing/Testimonials';
 import FAQ from '../components/landing/FAQ';
 import LeadCapture from '../components/landing/LeadCapture';
 import Footer from '../components/landing/Footer';      
+import LocationMap from '../components/landing/LocationMap';
 
 
 const Landing = () => {
@@ -17,6 +18,7 @@ const Landing = () => {
       <Features />
       <SeatMap />
       <Pricing />
+      <LocationMap/>
       <Testimonials />
       {/* <Location /> */}
       <FAQ />
