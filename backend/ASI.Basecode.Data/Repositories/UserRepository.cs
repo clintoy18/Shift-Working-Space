@@ -123,5 +123,23 @@ namespace ASI.Basecode.Data.Repositories
                 EF.Property<string>(e, idPropertyName).ToLower() == id.ToLower() &&
                 !EF.Property<bool>(e, "IsDeleted"));
         }
+
+        //public IEnumerable<User> GetCountOfActiveUsers()
+        //{
+        //    return GetDbSet<User>()
+        //        .Where(u => !u.IsDeleted).ToList();
+        //}
+
+        //public IEnumerable<User> GetCountOfTotalUsers()
+        //{
+        //    return GetDbSet<User>().ToList();
+        //}
+
+        //public IEnumerable<User> GetCountOfActiveCashier(string role)
+        //{
+        //    return GetDbSet<User>()
+        //    .Where(u => !u.IsDeleted && u.Role == UserRole.Cashier).ToList();
+        //}
+
     }
 }
