@@ -21,7 +21,9 @@ export type UserId = string;
 
 export const studentTabs = (studentUserId?: string) => [
   // { label: "Overview", content: <Overview studentUserId={studentUserId} /> },
-  { label: "Dashboard", content: <CustomerDashboard studentUserId={studentUserId} /> },
+  { label: "Dashboard", content: <CustomerDashboard 
+    // studentUserId={studentUserId}
+   /> },
   // { label: "My Grades", content: <Grade studentUserId={studentUserId} /> },
   { label: "Profile", content: <Profile /> },
 ];
@@ -50,7 +52,7 @@ export function getRoleConfig(role: Role, studentUserId?: string) {
     case "Cashier":
       return {
         tabs: teacherTabs,
-        description: "Manage your subjects, grade students, and track their progress.",
+        description: "Manage check-ins, reservations and payments",
       };
     case "Shifty":
       return {
