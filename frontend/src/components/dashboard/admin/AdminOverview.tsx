@@ -50,7 +50,7 @@ const AdminOverview = () => {
         title: "Total Users",
         icon: Users,
         value:  dashboardStats.userStats.totalUsers.toString(),
-        description: `${dashboardStats.userStats.totalAdmins} admin(s)`,
+        description: `${dashboardStats.userStats.totalUsers} user(s)`,
         color: "blue",
         trend: "+12%"
       },
@@ -58,7 +58,7 @@ const AdminOverview = () => {
         title: "Total Members",
         icon: Users,
         value: dashboardStats.userStats.totalStudents.toString(),
-        description: "Total members",
+        description: `${dashboardStats.userStats.totalStudents} otal member(s)`,
         color: "emerald",
         trend: "+8%"
       },
@@ -66,7 +66,7 @@ const AdminOverview = () => {
         title: "Total Cashiers",
         icon: CreditCard,
         value: dashboardStats.userStats.totalTeachers.toString(),
-        description: "Active cashiers",
+        description: `${dashboardStats.userStats.totalTeachers} total cashier(s)`,
         color: "purple",
         trend: "+5%"
       },
