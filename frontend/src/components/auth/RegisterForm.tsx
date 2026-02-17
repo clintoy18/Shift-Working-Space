@@ -15,6 +15,7 @@ const RegisterForm = ({
   error?: string
 }) => {
   const [formData, setFormData] = useState<IRegisterRequest>({
+    userId: '',
     firstName: '',
     middleName: '',
     lastName: '',

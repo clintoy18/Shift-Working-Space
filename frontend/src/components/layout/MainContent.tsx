@@ -1,16 +1,14 @@
-import Tabs from '../navigation/Tabs';
-import { getRoleConfig } from '../../utils/roleUtils';
-import { useAuth } from '../../context/AuthContext';
-import type { Role } from '../../utils/roleUtils';
-import ExportPDFDropdown from '../common/ExportPDFDropdown';
+import Tabs from "../navigation/Tabs";
+import { getRoleConfig } from "../../utils/roleUtils";
+import { useAuth } from "../../context/AuthContext";
+import type { Role } from "../../utils/roleUtils";
+import ExportPDFDropdown from "../common/ExportPDFDropdown";
 
 const MainContent = () => {
   const { user } = useAuth();
-  const role: Role = user.Role;
-  const studentUserId = user?.UserId;
+  const role: Role = user.Role || "Shifty";
 
-  const { tabs, description } = getRoleConfig(role, studentUserId);
-
+  const { tabs, description } = getRoleConfig(role);
   return (
     <main className="w-full px-6 py-4">
       <header className="mb-6">
@@ -24,8 +22,8 @@ const MainContent = () => {
             </p>
           </div>
 
-          {role === 'Admin' && (
-            <ExportPDFDropdown roles={['Admin', 'Teacher', 'Student', null]} />
+          {role === "Admin" && (
+            <ExportPDFDropdown roles={["Admin", "Teacher", "Student", null]} />
           )}
         </div>
       </header>
