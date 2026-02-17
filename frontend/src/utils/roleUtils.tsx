@@ -19,12 +19,11 @@ export const ROLE_TO_NUMBER: Record<Role, number> = {
 };
 export type UserId = string;
 
-export const studentTabs = (studentUserId?: string) => [
-  // { label: "Overview", content: <Overview studentUserId={studentUserId} /> },
-  { label: "Dashboard", content: <CustomerDashboard 
-    // studentUserId={studentUserId}
-   /> },
-  // { label: "My Grades", content: <Grade studentUserId={studentUserId} /> },
+export const studentTabs = (shiftyUserId?: string) => [
+  {
+    label: "Dashboard",
+    content: <CustomerDashboard shiftyUserId={shiftyUserId} />,
+  },
   { label: "Profile", content: <Profile /> },
 ];
 
@@ -42,22 +41,30 @@ export const adminTabs = [
 ];
 
 
-export function getRoleConfig(role: Role, studentUserId?: string) {
+export function getRoleConfig(role: Role, shiftyUserId?: string) {
   switch (role) {
     case "Admin":
       return {
         tabs: adminTabs,
         description: "Manage users, oversee reports, and configure settings.",
       };
+
     case "Cashier":
       return {
         tabs: teacherTabs,
         description: "Manage check-ins, reservations and payments",
       };
-    case "Shifty":
+
+      case "Shifty":
       return {
-        tabs: studentTabs(studentUserId), // pass studentUserId here
-        description: "View your check in history and progress tracking.",
+        tabs: studentTabs(shiftyUserId),
+        description: "View your check-in history and progress tracking.",
+      };
+
+    default:
+      return {
+        tabs: [],
+        description: "No role configuration found.",
       };
   }
 }

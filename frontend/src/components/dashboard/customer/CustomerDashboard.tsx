@@ -1,7 +1,10 @@
 import React from "react";
 import { Construction, Rocket, Clock, History, BarChart3 } from "lucide-react";
 
-export const CustomerDashboard: React.FC = () => {
+interface CustomerDashboardProps {
+  shiftyUserId?: string;
+}
+export const CustomerDashboard: React.FC<CustomerDashboardProps> = ({ shiftyUserId: _shiftyUserId }) => {
   return (
     <div className="min-h-screen px-4 sm:px-6 lg:px-8 py-8 sm:py-12 lg:py-16">
       <div className="max-w-6xl mx-auto">

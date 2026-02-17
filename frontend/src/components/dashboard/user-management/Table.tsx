@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { fetchAllUsersAdmin } from "@services";
-import { parseNumericRole } from "../../../utils/roleUtils";
+// import { parseNumericRole } from "../../../utils/roleUtils";
 import type { IUser } from "@interfaces";
 import CreateTeacherModal from "./CreateTeacherModal";
 import UpdateUserModal from "./UpdateUserModal";
