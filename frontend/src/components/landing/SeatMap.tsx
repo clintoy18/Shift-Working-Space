@@ -427,7 +427,6 @@ const ShiftFloorPlanFinal = () => {
  * Displays seat with status, label, and interactive tooltip
  */
 const SeatNode = ({ 
-  id, 
   isOccupied, 
   label, 
   seatData 
