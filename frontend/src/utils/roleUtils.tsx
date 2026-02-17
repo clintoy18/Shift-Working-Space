@@ -52,7 +52,7 @@ export function getRoleConfig(role: Role, shiftyUserId?: string) {
     case "Cashier":
       return {
         tabs: teacherTabs,
-        description: "Manage cashier operations and reports.",
+        description: "Manage check-ins, reservations and payments",
       };
 
       case "Shifty":
