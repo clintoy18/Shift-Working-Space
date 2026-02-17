@@ -1,11 +1,14 @@
-import React, { useEffect, useState } from "react";
-import { Users, BookOpen, GraduationCap, UserCog, BriefcaseBusiness, TrendingUp, Activity } from "lucide-react";
-import Card from "../../common/Card";
+import { useEffect, useState } from "react";
+import { 
+  Users,        
+  CreditCard,   
+  TrendingUp,   
+  Activity     
+} from "lucide-react";
+
 import RecentUsers from "./overview/RecentUsers";
 import { getRecentUsers, fetchStats } from "@services";
 import type { IUser, IDashboardStats } from "@interfaces";
-import FullPageSpinner, { InlineSpinner } from "../../common/LoadingSpinnerPage";
-import { parseNumericRole } from "../../../utils/roleUtils";
 
 const AdminOverview = () => {
   const [users, setUsers] = useState<IUser[]>([])
@@ -24,27 +27,19 @@ const AdminOverview = () => {
           trend: null
         },
         {
-          title: "Total Students",
-          icon: GraduationCap,
+          title: "Total Members",
+          icon: Users,
           value: "0",
           description: "Loading...",
           color: "emerald",
           trend: null
         },
         {
-          title: "Total Teachers",
-          icon: UserCog,
+          title: "Total Cashiers",
+          icon: CreditCard,
           value: "0",
           description: "Loading...",
           color: "purple",
-          trend: null
-        },
-        {
-          title: "Total Courses",
-          icon: BookOpen,
-          value: "0",
-          description: "Loading...",
-          color: "amber",
           trend: null
         },
       ];
@@ -54,35 +49,28 @@ const AdminOverview = () => {
       {
         title: "Total Users",
         icon: Users,
-        value: dashboardStats.userStats.totalUsers.toString(),
-        description: `${dashboardStats.userStats.totalAdmins} admin(s)`,
+        value:  dashboardStats.userStats.totalUsers.toString(),
+        description: `${dashboardStats.userStats.totalUsers} user(s)`,
         color: "blue",
         trend: "+12%"
       },
       {
-        title: "Total Students",
-        icon: GraduationCap,
+        title: "Total Members",
+        icon: Users,
         value: dashboardStats.userStats.totalStudents.toString(),
-        description: "Enrolled students",
+        description: `${dashboardStats.userStats.totalStudents} otal member(s)`,
         color: "emerald",
         trend: "+8%"
       },
       {
-        title: "Total Teachers",
-        icon: UserCog,
+        title: "Total Cashiers",
+        icon: CreditCard,
         value: dashboardStats.userStats.totalTeachers.toString(),
-        description: "Active teachers",
+        description: `${dashboardStats.userStats.totalTeachers} total cashier(s)`,
         color: "purple",
         trend: "+5%"
       },
-      {
-        title: "Total Courses",
-        icon: BookOpen,
-        value: dashboardStats.totalCourses.toString(),
-        description: "Available courses",
-        color: "amber",
-        trend: "+15%"
-      },
+     
     ];
   };
 
@@ -99,7 +87,7 @@ const AdminOverview = () => {
 
         const parsedUsers: IUser[] = rawData
           .map((user) => {
-            const role = parseNumericRole(user.role)
+            const role =user.role
             if (role === null) {
               console.warn("Unknown role value:", user.Role, "for user", user.UserId);
               return null;
@@ -109,7 +97,7 @@ const AdminOverview = () => {
               FirstName: user.firstName,
               LastName: user.lastName,
               MiddleName: user.middleName,
-              Program: user.program,
+              Email: user.email,
               UserId: user.userId,
               CreatedTime: user.createdTime,
               Role: role

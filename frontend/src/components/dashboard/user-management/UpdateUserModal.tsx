@@ -1,8 +1,7 @@
 import React, { useState, useEffect } from "react";
-import { X, Book } from "lucide-react";
+import { X,  } from "lucide-react";
 import { updateUserAdmin } from "@services";
 import type { IUser } from "@interfaces";
-import SelectField from "components/common/SelectedField";
 import { useToast } from "../../../context/ToastContext";
 
 interface UpdateUserModalProps {
@@ -24,7 +23,7 @@ export default function UpdateUserModal({
     firstName: "",
     middleName: "",
     lastName: "",
-    program: "",
+    email: "",
     password: "",
     confirmPassword: "",
   });
@@ -37,14 +36,16 @@ export default function UpdateUserModal({
         firstName: user.FirstName,
         middleName: user.MiddleName,
         lastName: user.LastName,
-        program: user.Program,
+        email: user.Email,
         password: "",
         confirmPassword: "",
       });
     }
   }, [user]);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>,
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value,
@@ -57,7 +58,7 @@ export default function UpdateUserModal({
     if (!user) return;
 
     // Validation
-    if (!formData.firstName || !formData.lastName || !formData.program) {
+    if (!formData.firstName || !formData.lastName || !formData.email) {
       showError("Please fill in all required fields");
       return;
     }
@@ -76,7 +77,7 @@ export default function UpdateUserModal({
         FirstName: formData.firstName,
         MiddleName: formData.middleName,
         LastName: formData.lastName,
-        Program: formData.program,
+        Email: formData.email,
         Role: user.Role,
       };
 
@@ -115,7 +116,10 @@ export default function UpdateUserModal({
         </div>
 
         {/* Form */}
-        <form onSubmit={handleSubmit} className="flex-1 overflow-hidden flex flex-col">
+        <form
+          onSubmit={handleSubmit}
+          className="flex-1 overflow-hidden flex flex-col"
+        >
           <div className="flex-1 overflow-y-auto p-6 space-y-4">
             {/* User ID */}
             <div>
@@ -191,24 +195,21 @@ export default function UpdateUserModal({
               </div>
             </div>
 
-            {/* Program: only editable if role is Student */}
-            {user.Role === "Student" && (
-              <SelectField
-                id="program"
-                label="Program"
-                value={formData.program}
+            {/* Email */}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-2">
+                Email <span className="text-red-500">*</span>
+              </label>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
                 onChange={handleChange}
+                className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-gray-400 focus:border-transparent"
                 required
-                icon={<Book size={16} className="text-gray-500"/>}
-                error=""
-                options={[
-                  { value: "BSIT", label: "BSIT" },
-                  { value: "BSCS", label: "BSCS" },
-                  { value: "BSEd", label: "BSEd" },
-                  { value: "BSBA", label: "BSBA" },
-                ]}
+                disabled={loading}
               />
-            )}
+            </div>
 
             {/* Password Section */}
             <div className="pt-4 border-t">

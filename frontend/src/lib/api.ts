@@ -1,10 +1,11 @@
 import axios from "axios";
+import type { AxiosInstance } from "axios";
 
-const baseUrl = "http://localhost:54927"; // url sa backend
-const apiUrl = `${baseUrl}/api`;
+// ✅ ENV BASE URL
+const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:54927/api";
 
-// Create a function to add interceptors to any axios instance
-const addAuthInterceptor = (instance) => {
+// Add auth interceptor
+const addAuthInterceptor = (instance: AxiosInstance): AxiosInstance => {
   instance.interceptors.request.use((config) => {
     const token = sessionStorage.getItem("accessToken");
     if (token) {
@@ -13,13 +14,10 @@ const addAuthInterceptor = (instance) => {
     return config;
   });
 
-  // Optional: Add response interceptor for token refresh or error handling
   instance.interceptors.response.use(
     (response) => response,
     (error) => {
-      // Handle auth errors globally
       if (error.response?.status === 401) {
-        // Redirect to login or refresh token
         console.log("Unauthorized, redirecting to login...");
       }
       return Promise.reject(error);
@@ -29,45 +27,14 @@ const addAuthInterceptor = (instance) => {
   return instance;
 };
 
+// ✅ Main API
 export const api = addAuthInterceptor(
-  axios.create({
-    baseURL: apiUrl,
-  })
+  axios.create({ baseURL: apiUrl })
 );
 
-export const auth = addAuthInterceptor(
-  axios.create({
-    baseURL: `${apiUrl}/auth`,
-  })
-);
-
-export const admin = addAuthInterceptor(
-  axios.create({
-    baseURL: `${apiUrl}/admin`,
-  })
-);
-
-export const studentCourse = addAuthInterceptor(
-  axios.create({
-    baseURL: `${apiUrl}/student-course`,
-  })
-);
-
-export const course = addAuthInterceptor(
-  axios.create({
-    baseURL: `${apiUrl}/course`,
-  })
-);
-
-// ✅ ADD THESE
-export const teacher = addAuthInterceptor(
-  axios.create({
-    baseURL: `${apiUrl}/teacher`,
-  })
-);
-
-export const feedback = addAuthInterceptor(
-  axios.create({
-    baseURL: `${apiUrl}/feedback`,
-  })
-);
+// Feature APIs
+export const seat = addAuthInterceptor(axios.create({ baseURL: `${apiUrl}/seat` }));
+export const auth = addAuthInterceptor(axios.create({ baseURL: `${apiUrl}/auth` }));
+export const admin = addAuthInterceptor(axios.create({ baseURL: `${apiUrl}/admin` }));
+export const course = addAuthInterceptor(axios.create({ baseURL: `${apiUrl}/course` }));
+export const stats = addAuthInterceptor(axios.create({ baseURL: `${apiUrl}/stats` }));

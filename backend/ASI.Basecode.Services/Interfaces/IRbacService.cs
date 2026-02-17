@@ -9,6 +9,6 @@ namespace ASI.Basecode.Services.Interfaces
         public bool IsTeacher(string userId);
         public bool IsStudent(string userId);
         public bool IsAdmin(string userId);
-        public UserRoles GetUserRole(string userId);
+        public UserRole GetUserRole(string userId);
     }
 }

@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useEffect, useRef } from "react";
+import { useState, useMemo, useEffect, useRef } from "react";
 import {
   useReactTable,
   getCoreRowModel,
@@ -20,7 +20,7 @@ import {
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { fetchAllUsersAdmin } from "@services";
-import { parseNumericRole } from "../../../utils/roleUtils";
+// import { parseNumericRole } from "../../../utils/roleUtils";
 import type { IUser } from "@interfaces";
 import CreateTeacherModal from "./CreateTeacherModal";
 import UpdateUserModal from "./UpdateUserModal";
@@ -134,7 +134,7 @@ export default function UserTable() {
       const rawData = await fetchAllUsersAdmin();
       const parsedUsers: IUser[] = rawData
         .map((user: any) => {
-          const role = parseNumericRole(user.role);
+          const role = user.role;
           if (role === null) {
             console.warn("Unknown role value:", user.role, "for user", user.userId);
             return null;
@@ -187,10 +187,9 @@ export default function UserTable() {
 
       const matchesSearch =
         fullName.toLowerCase().includes(globalFilter.toLowerCase()) ||
-        user.UserId.toLowerCase().includes(globalFilter.toLowerCase()) ||
-        user.Program.toLowerCase().includes(globalFilter.toLowerCase());
+        user.UserId.toLowerCase().includes(globalFilter.toLowerCase());
       const matchesRole = roleFilter === "All" || user.Role === roleFilter;
-      return matchesSearch && matchesRole;
+      return matchesSearch && matchesRole;  
     });
   }, [users, globalFilter, roleFilter]);
 
@@ -212,12 +211,6 @@ export default function UserTable() {
         <div className="text-gray-600 text-sm">{info.getValue()}</div>
       ),
     }),
-    columnHelper.accessor("Program", {
-      header: "Program",
-      cell: (info) => (
-        <div className="text-gray-600 text-sm">{info.getValue()}</div>
-      ),
-    }),
     columnHelper.accessor("Role", {
       header: "Role",
       cell: (info) => {
@@ -225,7 +218,7 @@ export default function UserTable() {
         const roleStyle =
           role === "Admin"
             ? "bg-red-100 text-red-700 border-red-200"
-            : role === "Teacher"
+            : role === "Cashier"
               ? "bg-blue-100 text-blue-700 border-blue-200"
               : "bg-green-100 text-green-700 border-green-200";
         return (
@@ -320,8 +313,8 @@ export default function UserTable() {
         >
           <option value="All">All Roles</option>
           <option value="Admin">Admin</option>
-          <option value="Teacher">Teacher</option>
-          <option value="Student">Student</option>
+          <option value="Cashier">Cashier</option>
+          <option value="Student">Shifty</option>
         </select>
       </div>
 

@@ -30,30 +30,58 @@ namespace ASI.Basecode.Services.Services
             _mapper = mapper;
             _repository = repository;
         }
-
-        public LoginResult AuthenticateUser(string userId, string password)
+        //changed userId to userIdentifier to allow accepth both id and email and for clarity
+        public LoginResult AuthenticateUser(string userIdentifier, string password)
         {
+            if (string.IsNullOrWhiteSpace(userIdentifier) || string.IsNullOrWhiteSpace(password))
+            {
+                return LoginResult.Failed;
+            }
+
+            userIdentifier = userIdentifier.Trim();
             var passwordKey = PasswordManager.EncryptPassword(password);
+
             var user = _repository.GetUsers()
-                .Where(x =>
-                    x.UserId == userId &&
+                .Where(x => !x.IsDeleted &&
+                    (x.Email.ToLower() == userIdentifier.ToLower() || //case sensitive
+                     x.UserId.ToLower() == userIdentifier.ToLower()) &&
                     x.HashedPassword == passwordKey)
                 .FirstOrDefault();
 
             return user != null ? LoginResult.Success : LoginResult.Failed;
         }
 
-        public User FetchUser(string userId)
+        public User FetchUser(string userIdentifier)
         {
-            if (_repository.UserExists(userId))
+            if (string.IsNullOrWhiteSpace(userIdentifier))
             {
-                return _repository.GetUser(userId);
+                return null;
             }
-            else
-            {
-                throw new InvalidDataException(Resources.Messages.Errors.UserNotExist);
-            }
+
+            userIdentifier = userIdentifier.Trim();
+
+            return _repository.GetUsers()
+                .Where(x => !x.IsDeleted &&
+                    (x.Email.ToLower() == userIdentifier.ToLower() ||
+                     x.UserId.ToLower() == userIdentifier.ToLower()))
+                .FirstOrDefault();
         }
+
+        //if the AuthenticateUser be async it can cause more workaround
+        public async Task<LoginResult> AuthenticateUserAsync(string userId, string password)
+        {
+            var passwordKey = PasswordManager.EncryptPassword(password);
+
+            var user = await _repository.GetUsers()
+                .Where(x => !x.IsDeleted &&
+                    (x.Email == userId || x.UserId == userId) &&
+                    x.HashedPassword == passwordKey)
+                .FirstOrDefaultAsync();
+
+            return user != null ? LoginResult.Success : LoginResult.Failed;
+        }
+
+       
 
         public User? FetchUserEvenIfNull(string userId)
         {
@@ -94,12 +122,12 @@ namespace ASI.Basecode.Services.Services
             // First user is always Admin
             bool isFirstUser = !_repository.GetUsers().Any();
 
-            UserRoles role;
+            UserRole role;
             string prefix;
 
             if (isFirstUser)
             {
-                role = UserRoles.Admin;
+                role = UserRole.Admin;
                 prefix = "ADM";
             }
             else
@@ -107,8 +135,8 @@ namespace ASI.Basecode.Services.Services
                 role = model.Role;
                 prefix = role switch
                 {
-                    UserRoles.Cashier => "CSH",
-                    UserRoles.Shifty => "SHFT",
+                    UserRole.Cashier => "CSH",
+                    UserRole.Shifty => "SHFT",
                     _ => throw new ArgumentException("Invalid role")
                 };
             }
@@ -200,13 +228,13 @@ namespace ASI.Basecode.Services.Services
             return new UserStatisticsViewModel
             {
                 TotalUsers = users.Count,
-                TotalStudents = users.Count(u => u.Role == UserRoles.Shifty),
-                TotalTeachers = users.Count(u => u.Role == UserRoles.Cashier),
-                TotalAdmins = users.Count(u => u.Role == UserRoles.Admin)
+                TotalStudents = users.Count(u => u.Role == UserRole.Shifty),
+                TotalTeachers = users.Count(u => u.Role == UserRole.Cashier),
+                TotalAdmins = users.Count(u => u.Role == UserRole.Admin)
             };
         }
 
-        public List<User> GetUsersByRole(UserRoles role)
+        public List<User> GetUsersByRole(UserRole role)
         {
             return _repository.GetUsers()
                 .Where(u => u.Role == role)

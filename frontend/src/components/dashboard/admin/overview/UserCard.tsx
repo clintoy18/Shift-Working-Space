@@ -1,15 +1,15 @@
 import React from "react";
-import { User, Shield, GraduationCap } from "lucide-react";
+import { User, Shield, CreditCard } from "lucide-react";
 import type { IUser } from "@interfaces";
 
 const roleConfig: Record<IUser["Role"], { color: string; icon: React.ReactNode }> = {
-  Student: {
+  Shifty: {
     color: "bg-green-50 text-green-700 border-green-200",
     icon: <User className="w-4 h-4 text-green-600" />
   },
-  Teacher: {
+  Cashier: {
     color: "bg-blue-50 text-blue-700 border-blue-200",
-    icon: <GraduationCap className="w-4 h-4 text-blue-600" />
+    icon: <CreditCard className="w-4 h-4 text-blue-600" />
   },
   Admin: {
     color: "bg-red-50 text-red-700 border-red-200",

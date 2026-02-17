@@ -72,11 +72,11 @@ namespace ASI.Basecode.WebApp.Controllers
                 return BadRequest(new { message = "Request is null" });
             }
 
-            var loginResult = _userService.AuthenticateUser(request.UserId, request.Password);
+            var loginResult = _userService.AuthenticateUser(request.UserIdentifier, request.Password);
 
             if (loginResult == LoginResult.Success)
             {
-                var user = _userService.FetchUser(request.UserId);
+                var user = _userService.FetchUser(request.UserIdentifier);
 
                 if (user == null)
                 {

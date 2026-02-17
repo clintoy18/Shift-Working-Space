@@ -98,7 +98,7 @@ namespace ASI.Basecode.Services.Services
          DashboardStatsViewModel dashboardStats,
          List<UserViewAdminModel> users,
          List<CourseViewModel> courses,
-         UserRoles? roleFilter = null)
+         UserRole? roleFilter = null)
         {
             if (dashboardStats == null) throw new ArgumentNullException(nameof(dashboardStats));
             if (users == null) throw new ArgumentNullException(nameof(users));
@@ -150,12 +150,12 @@ namespace ASI.Basecode.Services.Services
 
                 // Students
                 gfx.DrawRoundedRectangle(cardColor, margin + cardWidth + cardGap, cardY, cardWidth, cardHeight, 8, 8);
-                gfx.DrawString($"Students: {users.Count(u => u.Role == UserRoles.Shifty)}",
+                gfx.DrawString($"Students: {users.Count(u => u.Role == UserRole.Shifty)}",
                     sectionFont, primaryColor, new XPoint(margin + cardWidth + cardGap + 10, cardY + 35));
 
                 // Teachers
                 gfx.DrawRoundedRectangle(cardColor, margin + 2 * (cardWidth + cardGap), cardY, cardWidth, cardHeight, 8, 8);
-                gfx.DrawString($"Teachers: {users.Count(u => u.Role == UserRoles.Cashier)}",
+                gfx.DrawString($"Teachers: {users.Count(u => u.Role == UserRole.Cashier)}",
                     sectionFont, primaryColor, new XPoint(margin + 2 * (cardWidth + cardGap) + 10, cardY + 35));
 
                 y += cardHeight + 50;
@@ -201,7 +201,6 @@ namespace ASI.Basecode.Services.Services
 
                     gfx.DrawString(user.UserId ?? "-", textFont, XBrushes.Black, new XPoint(margin + 10, y + 16));
                     gfx.DrawString($"{user.FirstName} {user.LastName}", textFont, XBrushes.Black, new XPoint(margin + colWidthsUsers[0] + 10, y + 16));
-                    gfx.DrawString(user.Program ?? "-", textFont, XBrushes.Black, new XPoint(margin + colWidthsUsers[0] + colWidthsUsers[1] + 10, y + 16));
                     gfx.DrawString(user.Role.ToString(), textFont, XBrushes.Black, new XPoint(margin + colWidthsUsers[0] + colWidthsUsers[1] + colWidthsUsers[2] + 10, y + 16));
 
                     y += rowHeight;

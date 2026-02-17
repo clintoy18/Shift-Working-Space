@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { X, AlertTriangle } from "lucide-react";
 import { deleteUserAdmin } from "@services";
 import type { IUser } from "@interfaces";
@@ -87,10 +87,6 @@ export default function DeleteUserModal({
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Role:</span>
                 <span className="font-medium text-gray-900">{user.Role}</span>
-              </div>
-              <div className="flex justify-between text-sm">
-                <span className="text-gray-600">Program:</span>
-                <span className="font-medium text-gray-900">{user.Program}</span>
               </div>
             </div>
           </div>

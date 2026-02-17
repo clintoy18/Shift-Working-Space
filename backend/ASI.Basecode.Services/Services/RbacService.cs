@@ -16,7 +16,7 @@ namespace ASI.Basecode.Services.Services
             _userRepository = userRepository;
         }
 
-        public UserRoles GetUserRole(string userId)
+        public UserRole GetUserRole(string userId)
         {
             var user = _userRepository.GetUser(userId);
 
@@ -31,19 +31,19 @@ namespace ASI.Basecode.Services.Services
         public bool IsTeacher(string userId)
         {
             var role = GetUserRole(userId);
-            return role == UserRoles.Cashier;
+            return role == UserRole.Cashier;
         }
 
         public bool IsStudent(string userId)
         {
             var role = GetUserRole(userId);
-            return role == UserRoles.Shifty;
+            return role == UserRole.Shifty;
         }
 
         public bool IsAdmin(string userId)
         {
             var role = GetUserRole(userId);
-            return role == UserRoles.Admin;
+            return role == UserRole.Admin;
         }
     }
 }

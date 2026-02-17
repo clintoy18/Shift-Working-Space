@@ -1,66 +1,70 @@
 import Profile from '../components/dashboard/Profile';
-import Overview from '../components/dashboard/student/Overview';
 import AdminOverView from '../components/dashboard/admin/AdminOverview';
-import Subjects from '../components/dashboard/admin/Subjects';
 import UserTable from '../components/dashboard/user-management/Table';
-import { Grade } from '../components/dashboard/student/Grade';
-import { ManageStudents } from '../components/dashboard/teacher/ManageStudents';
-import { StudentCourse } from "../components/dashboard/student/StudentCourse";
-import TeacherOverview from '../components/dashboard/teacher/TeacherOverview';
+import { CustomerDashboard } from "../components/dashboard/customer/CustomerDashboard";
 
-export type Role = 'Student' | 'Teacher' | 'Admin';
+export type Role = 'Shifty' | 'Cashier' | 'Admin';
 
 // Map backend numeric roles to Role strings
 const NUMERIC_ROLE_MAP: Record<number, Role | undefined> = {
-    0: 'Student',
-    1: 'Teacher',
+    0: 'Shifty',
+    1: 'Cashier',
     2: 'Admin',
 };
 
 export const ROLE_TO_NUMBER: Record<Role, number> = {
-    Student: 0,
-    Teacher: 1,
+    Shifty: 0,
+    Cashier: 1,
     Admin: 2,
 };
 export type UserId = string;
 
-export const studentTabs = (studentUserId?: string) => [
-  { label: "Overview", content: <Overview studentUserId={studentUserId} /> },
-  { label: "Subjects", content: <StudentCourse studentUserId={studentUserId} /> },
-  { label: "My Grades", content: <Grade studentUserId={studentUserId} /> },
+export const studentTabs = (shiftyUserId?: string) => [
+  {
+    label: "Dashboard",
+    content: <CustomerDashboard shiftyUserId={shiftyUserId} />,
+  },
   { label: "Profile", content: <Profile /> },
 ];
 
 export const teacherTabs = [
-    { label: "My Subjects", content: <TeacherOverview /> },
-    { label: "Manage Students", content: <ManageStudents /> },
+    // { label: "My Subjects", content: <TeacherOverview /> },
+    // { label: "Manage Students", content: <ManageStudents /> },
     { label: "Profile", content: <Profile /> },
 ];
 
 export const adminTabs = [
     { label: "Overview", content: <AdminOverView /> },
     { label: "Users", content: <UserTable /> },
-    { label: "Courses", content: <Subjects /> },
+    // { label: "Courses", content: <Subjects /> },
     { label: "Profile", content: <Profile /> },
 ];
 
 
-export function getRoleConfig(role: Role, studentUserId?: string) {
+export function getRoleConfig(role: Role, shiftyUserId?: string) {
   switch (role) {
     case "Admin":
       return {
         tabs: adminTabs,
         description: "Manage users, oversee reports, and configure settings.",
       };
-    case "Teacher":
+
+    case "Cashier":
       return {
         tabs: teacherTabs,
-        description: "Manage your subjects, grade students, and track their progress.",
+        description: "Manage check-ins, reservations and payments",
       };
-    case "Student":
+
+      case "Shifty":
       return {
-        tabs: studentTabs(studentUserId), // pass studentUserId here
-        description: "View your subjects, grades, and progress tracking.",
+        tabs: studentTabs(shiftyUserId),
+        description: "View your check-in history and progress tracking.",
+      };
+
+    default:
+      return {
+        tabs: [],
+        description: "No role configuration found.",
       };
   }
 }
