@@ -6,19 +6,20 @@ import { AlertCircle, ArrowLeft, ShieldCheck, Loader2 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
-  const [userIdentifier, setUserIdentifier] = useState("");
+  // ✅ Changed state name to match backend expectation
+  const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    onLogin({ userIdentifier, password });
+    // ✅ Now passes { email, password } directly
+    onLogin({ email, password });
   };
 
   return (
     <Card className="w-full max-w-md shadow-lg border-muted mx-auto">
       <CardContent className="p-8">
-        {/* Header */}
         <div className="mb-10 text-center">
           <div className="inline-flex h-12 w-12 bg-primary rounded-xl items-center justify-center mb-4 shadow-lg shadow-primary/20">
             <ShieldCheck className="text-primary-foreground h-7 w-7" />
@@ -32,23 +33,21 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-6">
-          {/* User Identifier Field - UPDATED */}
           <div className="space-y-2">
             <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground ml-1">
-              Email or User ID
+              Email Address
             </label>
             <Input
-              id="userIdentifier"
-              type="text"
-              value={userIdentifier}
-              onChange={(e) => setUserIdentifier(e.target.value)}
-              placeholder="Enter your email or user ID"
+              id="email"
+              type="email"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="name@example.com"
               required
               className="h-11 focus-visible:ring-primary transition-all"
             />
           </div>
 
-          {/* Password Field */}
           <div className="space-y-2">
             <div className="flex justify-between items-center px-1">
               <label className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
@@ -72,7 +71,6 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
             />
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="bg-red-50 border border-red-200 rounded-lg p-3 flex gap-2 items-start animate-in fade-in zoom-in duration-200">
               <AlertCircle className="h-5 w-5 text-red-600 flex-shrink-0 mt-0.5" />
@@ -80,7 +78,6 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
             </div>
           )}
 
-          {/* Submit Button */}
           <Button
             type="submit"
             disabled={isLoading}
@@ -97,12 +94,9 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
           </Button>
         </form>
 
-        {/* Footer Navigation */}
         <div className="mt-8 pt-6 border-t border-muted">
           <button
-            onClick={() => {
-              navigate("/");
-            }}
+            onClick={() => navigate("/")}
             type="button"
             className="group flex items-center justify-center w-full gap-2 text-sm text-muted-foreground hover:text-foreground transition-colors"
           >

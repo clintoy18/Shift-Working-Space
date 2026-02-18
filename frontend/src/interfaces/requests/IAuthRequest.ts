@@ -1,17 +1,17 @@
 export interface ILoginRequest {
-    userIdentifier: string;
+    // Your backend controller destructures { email, password }
+    email: string; 
     password: string;
 }
 
 export interface IRegisterRequest {
-    userId: string;
+    // ✅ userId is REMOVED: Backend now generates this as a MongoDB ObjectId
     firstName: string;
-    middleName: string;
+    middleName?: string; // Optional in backend schema
     lastName: string;
-    email : string;
+    email: string;
     password: string;
-    confirmPassword: string;
-    // program: string;
+    confirmPassword: string; // Used for frontend validation logic
 }
 
 export interface IForgotPasswordRequest {

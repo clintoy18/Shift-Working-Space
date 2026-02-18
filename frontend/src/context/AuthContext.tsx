@@ -6,7 +6,12 @@ import {
   registerStudent,
   fetchUser,
 } from "@services";
-import type { IAuthContext, ILoginRequest, IRegisterRequest, IUser } from "@interfaces";
+import type {
+  IAuthContext,
+  ILoginRequest,
+  IRegisterRequest,
+  IUser,
+} from "@interfaces";
 
 type TNullableUser = IUser | null;
 
@@ -19,22 +24,11 @@ export const AuthProvider = ({ children }) => {
   const handleFetchUser = async () => {
     try {
       const data = await fetchUser();
-      const transformedUser: IUser = {
-        UserId: data.userId,
-        FirstName: data.firstName,
-        LastName: data.lastName,
-        Email: data.email,
-        Role: data.role,
-        MiddleName: data.middleName,
-        CreatedTime: data.createdTime,
-        MembershipType: data.membershipType,
-        MembershipStatus: data.membershipStatus,
-        MembershipStart: data.membershipStart,
-        MembershipEnd: data.membershipEnd,
-        IsDeleted: data.isDeleted,
-      };
-      setUser(transformedUser);
-      return transformedUser;
+
+      // ✅ Since your IUser interface now matches the Backend JSON (camelCase),
+      // we no longer need to manually map every field. Just pass the data!
+      setUser(data);
+      return data;
     } catch (error) {
       console.error("Failed to fetch user: ", error);
       setUser(null);
@@ -44,8 +38,13 @@ export const AuthProvider = ({ children }) => {
 
   const handleLogin = async (credentials: ILoginRequest) => {
     try {
-      await loginUser(credentials);
-      await handleFetchUser();
+      const data = await loginUser(credentials);
+
+      // 'data' is the object you showed me: { token, user: { id, fullName, role } }
+      // We set the user state directly using the 'user' object from the response
+      setUser(data.user);
+
+      return data;
     } catch (error) {
       console.error("Failed to login user: ", error);
       throw error;
@@ -54,22 +53,18 @@ export const AuthProvider = ({ children }) => {
 
   const handleRegister = async (credentials: IRegisterRequest) => {
     try {
-      // handles registration and returns generated userId
       const data = await registerStudent(credentials);
 
-      const { userId } = data;
-      return userId;
-
+      // ✅ Return the 'id' (from the new MongoDB structure)
+      return data.id;
     } catch (error: any) {
       console.error("Failed to register user:", error);
-      // If backend returned an error message
       if (error.response?.data?.message) {
         throw new Error(error.response.data.message);
       }
       throw new Error("Registration failed");
     }
   };
-
 
   const handleLogout = () => {
     logoutUser();
@@ -78,13 +73,12 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      const isToken = isAccessTokenInSession();
-      if (isToken) {
+      if (isAccessTokenInSession()) {
         await handleFetchUser();
       } else {
         setUser(null);
       }
-      setIsLoading(false)
+      setIsLoading(false);
     };
 
     checkAuth();
@@ -109,6 +103,5 @@ export const useAuth = (): IAuthContext => {
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-
   return context;
 };

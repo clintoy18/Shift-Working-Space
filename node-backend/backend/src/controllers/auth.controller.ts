@@ -96,3 +96,19 @@ export const login = async (req: Request, res: Response): Promise<void> => {
     res.status(500).json({ message: "Server error" });
   }
 };
+
+export const getMe = async (req: Request, res: Response): Promise<void> => {
+  try {
+    // req.user.id comes from the decoded JWT in your authenticate middleware
+    const user = await User.findById(req.user.id);
+
+    if (!user || user.isDeleted) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    res.status(200).json(user); // This returns the clean 'id', 'email', etc.
+  } catch (err) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
