@@ -32,11 +32,11 @@ export default function UpdateUserModal({
   useEffect(() => {
     if (user) {
       setFormData({
-        userId: user.UserId,
-        firstName: user.FirstName,
-        middleName: user.MiddleName,
-        lastName: user.LastName,
-        email: user.Email,
+        userId: user.id,
+        firstName: user.firstName,
+        middleName: user.middleName,
+        lastName: user.lastName,
+        email: user.email,
         password: "",
         confirmPassword: "",
       });
@@ -73,12 +73,11 @@ export default function UpdateUserModal({
 
     try {
       const updateData: any = {
-        UserId: formData.userId,
-        FirstName: formData.firstName,
-        MiddleName: formData.middleName,
-        LastName: formData.lastName,
-        Email: formData.email,
-        Role: user.Role,
+        firstName: formData.firstName,
+        middleName: formData.middleName,
+        lastName: formData.lastName,
+        email: formData.email,
+        role: user.role,
       };
 
       // Only include password if it's been changed
@@ -142,7 +141,7 @@ export default function UpdateUserModal({
               </label>
               <input
                 type="text"
-                value={user.Role}
+                value={user.role}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg bg-gray-50 cursor-not-allowed"
                 disabled
               />
