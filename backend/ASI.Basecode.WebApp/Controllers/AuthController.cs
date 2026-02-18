@@ -252,7 +252,7 @@ namespace ASI.Basecode.WebApp.Controllers
                 FirstName = request.FirstName,
                 MiddleName = request.MiddleName,
                 LastName = request.LastName,
-                Program = request.Program,
+                Email = request.Email,
                 Password = request.Password, // optional; if null/empty, existing password is preserved
                 Role = role
             };

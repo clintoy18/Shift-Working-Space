@@ -145,7 +145,7 @@ export default function UserTable() {
             FirstName: user.firstName,
             MiddleName: user.middleName,
             LastName: user.lastName,
-            Program: user.program,
+            Email: user.email,
             Role: role,
             CreatedTime: user.createdTime
           };
@@ -314,7 +314,7 @@ export default function UserTable() {
           <option value="All">All Roles</option>
           <option value="Admin">Admin</option>
           <option value="Cashier">Cashier</option>
-          <option value="Student">Shifty</option>
+          <option value="Shifty">Shifty</option>
         </select>
       </div>
 

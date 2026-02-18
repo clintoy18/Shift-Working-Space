@@ -35,8 +35,9 @@ namespace ASI.Basecode.Services.ServiceModels
         [Compare("Password", ErrorMessage = "Password and Confirmation Password must match.")]
         public string? ConfirmPassword { get; set; }
 
-        [StringLength(100, ErrorMessage = "This field must not exceed 50 characters.")]
-        public string? Program { get; set; }
+        [EmailAddress(ErrorMessage = "Invalid email address format.")]
+        [StringLength(150, ErrorMessage = "Email cannot exceed 150 characters.")]
+        public string Email { get; set; } = null!;
 
         [Required(ErrorMessage = "Role is required.")]
         [EnumDataType(typeof(UserRole), ErrorMessage = "Please select a valid role.")]

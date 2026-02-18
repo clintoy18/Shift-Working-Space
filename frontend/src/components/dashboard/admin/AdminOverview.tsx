@@ -27,7 +27,7 @@ const AdminOverview = () => {
           trend: null
         },
         {
-          title: "Total Members",
+          title: "Total Shifty(s)",
           icon: Users,
           value: "0",
           description: "Loading...",
@@ -55,10 +55,10 @@ const AdminOverview = () => {
         trend: "+12%"
       },
       {
-        title: "Total Members",
+        title: "Total Shifty(s)",
         icon: Users,
         value: dashboardStats.userStats.totalStudents.toString(),
-        description: `${dashboardStats.userStats.totalStudents} otal member(s)`,
+        description: `${dashboardStats.userStats.totalStudents} otal shifty(s)`,
         color: "emerald",
         trend: "+8%"
       },
