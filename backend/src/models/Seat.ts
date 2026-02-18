@@ -19,8 +19,16 @@ const SeatSchema = new Schema(
     seatNumber: { type: String, required: true, unique: true },
     seatCode: { type: String, required: true, unique: true },
     displayLabel: { type: String, required: true },
-    seatType: { type: String, enum: ["regular", "premium"], default: "regular" },
-    status: { type: String, enum: ["available", "occupied", "reserved", "maintenance"], default: "available" },
+    seatType: {
+      type: String,
+      enum: ["regular", "premium"],
+      default: "regular",
+    },
+    status: {
+      type: String,
+      enum: ["available", "occupied", "reserved", "maintenance"],
+      default: "available",
+    },
     location: { type: String, required: true },
     zoneType: { type: String, required: true },
     hourlyRate: { type: Number, required: true },
@@ -28,9 +36,9 @@ const SeatSchema = new Schema(
     isActive: { type: Boolean, default: true },
     isDeleted: { type: Boolean, default: false },
   },
-  { 
+  {
     timestamps: true,
-    toJSON: { 
+    toJSON: {
       virtuals: true,
       // ✅ Use 'any' for ret to avoid the complex Mongoose FlatRecord mismatch
       transform: (_doc, ret: any) => {
@@ -38,9 +46,9 @@ const SeatSchema = new Schema(
         delete ret._id;
         delete ret.__v;
         return ret;
-      }
-    }
-  }
+      },
+    },
+  },
 );
 
 export default mongoose.model<ISeat>("Seat", SeatSchema);
