@@ -5,6 +5,7 @@ import express from "express";
 import cors from "cors";
 import authRoutes from "./routes/auth.route";
 import adminRoutes from "./routes/admin.route";
+import seatRoutes from "./routes/seat.routes";
 import { connectDB } from "./config/db";
 
 const app = express();
@@ -26,6 +27,8 @@ app.use(express.json());
 // --- Mount Clean Routes ---
 app.use("/api/auth", authRoutes);   // Handles login/register/validate
 app.use("/api/admin", adminRoutes); // Handles user management/dashboard
+app.use("/api/seat", seatRoutes ); // Handles user management/dashboard
+
 
 // --- Database Connection & Server Start ---
 connectDB().then(() => {
