@@ -7,7 +7,7 @@ const RecentUsers: React.FC<{ users: IUser[] }> = ({ users }) => {
   return (
       <>
         {users.map((user) => (
-          <UserCard key={user.UserId} user={user} />
+          <UserCard key={user.id} user={user} />
         ))}
       </>
   );

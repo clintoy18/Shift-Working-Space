@@ -71,16 +71,18 @@ export default function CreateUserModal({
     setLoading(true);
     try {
       const newUser: IUser & { Password: string; ConfirmPassword: string } = {
-        UserId: "",
-        FirstName: formData.firstName,
-        MiddleName: formData.middleName,
-        LastName: formData.lastName,
-        Email: formData.email,                    // ✅ ADDED EMAIL
-        Role: formData.role as IUser["Role"],
-        MembershipType: "Regular",                // ✅ ADDED DEFAULT VALUES
-        MembershipStatus: "Active",               // ✅ ADDED DEFAULT VALUES
-        CreatedTime: new Date().toISOString(),
-        IsDeleted: false,                         // ✅ ADDED DEFAULT VALUE
+        id: "",
+        firstName: formData.firstName,
+        middleName: formData.middleName,
+        fullName: formData.middleName,
+        lastName: formData.lastName,
+        email: formData.email,                    // ✅ ADDED EMAIL
+        role: formData.role as IUser["role"],
+        membershipType: "Regular",                // ✅ ADDED DEFAULT VALUES
+        membershipStatus: "Active",               // ✅ ADDED DEFAULT VALUES
+        createdAt: new Date().toISOString(),
+        isDeleted: false,       
+        isVerified: true,                  // ✅ ADDED DEFAULT VALUE
         Password: formData.password,
         ConfirmPassword: formData.confirmPassword,
       };

@@ -18,7 +18,7 @@ export const fetchAllUsersAdmin = async () => {
 };
 
 export const createNewUserAdmin = async (newUser: IUser) => {
-  const roleNumber = roleMap[newUser.Role];
+  const roleNumber = roleMap[newUser.role];
 
   const response = await admin.post("/user/create", {
     ...newUser,
@@ -28,9 +28,9 @@ export const createNewUserAdmin = async (newUser: IUser) => {
 };
 
 export const updateUserAdmin = async (user: TUserWithOptionalPassword) => {
-  const roleNumber = roleMap[user.Role];
+  const roleNumber = roleMap[user.role];
 
-  const response = await admin.put(`/user/update/${user.UserId}`, {
+  const response = await admin.put(`/user/update/${user.id}`, {
     ...user,
     Role: roleNumber,
   });

@@ -46,7 +46,7 @@ const ActionDropdown = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
-        const dropdown = document.getElementById(`dropdown-${user.UserId}`);
+        const dropdown = document.getElementById(`dropdown-${user.id}`);
         if (dropdown && !dropdown.contains(event.target as Node)) {
           setIsOpen(false);
         }
@@ -55,7 +55,7 @@ const ActionDropdown = ({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [user.UserId]);
+  }, [user.id]);
 
   const handleToggle = () => {
     if (!isOpen && buttonRef.current) {
@@ -87,7 +87,7 @@ const ActionDropdown = ({
       {isOpen &&
         createPortal(
           <div
-            id={`dropdown-${user.UserId}`}
+            id={`dropdown-${user.id}`}
             style={{
               position: 'absolute',
               top: `${position.top}px`,
@@ -181,14 +181,14 @@ export default function UserTable() {
 
   const filteredData = useMemo(() => {
     return users.filter((user) => {
-      const fullName = [user.FirstName, user.MiddleName, user.LastName]
+      const fullName = [user.firstName, user.middleName, user.lastName]
         .filter(Boolean)
         .join(" ");
 
       const matchesSearch =
         fullName.toLowerCase().includes(globalFilter.toLowerCase()) ||
-        user.UserId.toLowerCase().includes(globalFilter.toLowerCase());
-      const matchesRole = roleFilter === "All" || user.Role === roleFilter;
+        user.id.toLowerCase().includes(globalFilter.toLowerCase());
+      const matchesRole = roleFilter === "All" || user.role === roleFilter;
       return matchesSearch && matchesRole;  
     });
   }, [users, globalFilter, roleFilter]);
@@ -199,26 +199,26 @@ export default function UserTable() {
       header: "Name",
       cell: (info) => {
         const user = info.row.original;
-        const fullName = [user.FirstName, user.MiddleName, user.LastName]
+        const fullName = [user.firstName, user.middleName, user.lastName]
           .filter(Boolean)
           .join(" ");
         return <div className="font-medium text-gray-900">{fullName}</div>;
       },
     }),
-    columnHelper.accessor("UserId", {
+    columnHelper.accessor("id", {
       header: "User ID",
       cell: (info) => (
         <div className="text-gray-600 text-sm">{info.getValue()}</div>
       ),
     }),
-    columnHelper.accessor("Role", {
-      header: "Role",
+    columnHelper.accessor("role", {
+      header: "role",
       cell: (info) => {
         const role = info.getValue();
         const roleStyle =
-          role === "Admin"
+          role === "admin"
             ? "bg-red-100 text-red-700 border-red-200"
-            : role === "Cashier"
+            : role === "cashier"
               ? "bg-blue-100 text-blue-700 border-blue-200"
               : "bg-green-100 text-green-700 border-green-200";
         return (
@@ -230,7 +230,7 @@ export default function UserTable() {
         );
       },
     }),
-    columnHelper.accessor("CreatedTime", {
+    columnHelper.accessor("createdAt", {
       header: "Joined",
       cell: (info) => (
         <div className="text-gray-500 text-sm">

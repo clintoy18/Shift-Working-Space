@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Key, CreditCard, LayoutGrid, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Clock, Key,  LayoutGrid,  ChevronLeft, ChevronRight } from "lucide-react";
 
 const Features = () => {
   const [selectedZone, setSelectedZone] = useState<"hot" | "dedicated">("hot");
