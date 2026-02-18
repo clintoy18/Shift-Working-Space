@@ -13,18 +13,19 @@ const RegisterPage: React.FC = () => {
   const [isLoading, setIsLoading] = React.useState(false);
 
   const onRegister = async (credentials: IRegisterRequest) => {
-    setIsLoading(true);
-    try {
-      await handleRegister(credentials);
-      success('Account created! Please sign in.');
-      navigate("/login");
-    } catch (err) {
-      error("Registration failed. Please try again.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
+  setIsLoading(true);
+  try {
+    await handleRegister(credentials);
+    success('Account created! Please sign in.');
+    navigate("/login");
+  } catch (err: any) {
+    // ✅ Extract actual backend error message
+    const errorMsg = err.response?.data?.message || "Registration failed. Please try again.";
+    error(errorMsg);
+  } finally {
+    setIsLoading(false);
+  }
+};
   return (
     <AuthLayout 
       title="Create your workspace." 

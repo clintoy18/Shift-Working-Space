@@ -4,9 +4,9 @@ import User from "../models/User";
 import { generateToken } from "../utils/jwt";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { email, password, firstName, middleName, lastName, role } = req.body;
+  // ✅ 1. ADD 'role' HERE
+  const { email, password, firstName, lastName, role } = req.body;
 
-  // Simple validation (removed contactNo and notes)
   if (!email || !password || !firstName || !lastName) {
     res.status(400).json({ message: "Required fields are missing" });
     return;
@@ -28,10 +28,10 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       email,
       password: hashedPassword,
       firstName,
-      middleName,
       lastName,
-      role: isFirstUser ? "admin" : (role || "shifty"),
-      isVerified: isFirstUser ? true : false 
+      role: isFirstUser ? "admin" : (role || "shifty"), 
+      // isVerified: isFirstUser ? true : false commented out as of now
+      isVerified: true
     });
     
     await newUser.save();
@@ -40,6 +40,7 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       user: newUser 
     });
   } catch (err) {
+    console.error("REGISTRATION ERROR:", err); // ✅ Always log the error for debugging!
     res.status(500).json({ message: "Registration failed" });
   }
 };
