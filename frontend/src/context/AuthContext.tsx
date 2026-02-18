@@ -6,12 +6,7 @@ import {
   registerStudent,
   fetchUser,
 } from "@services";
-import type {
-  IAuthContext,
-  ILoginRequest,
-  IRegisterRequest,
-  IUser,
-} from "@interfaces";
+import type { IAuthContext, ILoginRequest, IRegisterRequest, IUser } from "@interfaces";
 
 type TNullableUser = IUser | null;
 
@@ -21,30 +16,46 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState<TNullableUser>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // ✅ Updated to match Node.js/Mongoose camelCase fields
   const handleFetchUser = async () => {
-    try {
-      const data = await fetchUser();
+  try {
+    const data = await fetchUser();
+    
+    const transformedUser: IUser = {
+      id: data.id || data._id,
+      email: data.email,
+      firstName: data.firstName,
+      middleName: data.middleName, 
+      lastName: data.lastName,
+      fullName: data.fullName,     
+      role: data.role,             // 'admin' | 'shifty' | 'cashier'
+      membershipType: data.membershipType || 'None',
+      membershipStatus: data.membershipStatus || 'Inactive',
+      isVerified: data.isVerified,
+      isDeleted: data.isDeleted,
+      createdAt: data.createdAt,  
+      updatedAt: data.updatedAt,
+    };
 
-      // ✅ Since your IUser interface now matches the Backend JSON (camelCase),
-      // we no longer need to manually map every field. Just pass the data!
-      setUser(data);
-      return data;
-    } catch (error) {
-      console.error("Failed to fetch user: ", error);
-      setUser(null);
-      return null;
-    }
-  };
+    setUser(transformedUser);
+    return transformedUser;
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+    setUser(null);
+    return null;
+  }
+};
 
   const handleLogin = async (credentials: ILoginRequest) => {
     try {
-      const data = await loginUser(credentials);
-
-      // 'data' is the object you showed me: { token, user: { id, fullName, role } }
-      // We set the user state directly using the 'user' object from the response
-      setUser(data.user);
-
-      return data;
+      // 1. Login sets the token in session/cookies via AuthService
+      const response = await loginUser(credentials);
+      
+      // 2. We can either use the user data returned directly from login 
+      // or fetch fresh data. Let's fetch to be safe.
+      await handleFetchUser();
+      
+      return response; // Return full response so LoginPage can see the role for navigation
     } catch (error) {
       console.error("Failed to login user: ", error);
       throw error;
@@ -53,16 +64,15 @@ export const AuthProvider = ({ children }) => {
 
   const handleRegister = async (credentials: IRegisterRequest) => {
     try {
+      //  returns the full user object, not just a string ID
       const data = await registerStudent(credentials);
-
-      // ✅ Return the 'id' (from the new MongoDB structure)
-      return data.id;
+      
+      // Return the internal ID (Node uses _id)
+      return data.user?.id || data.user?._id;
     } catch (error: any) {
       console.error("Failed to register user:", error);
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
-      }
-      throw new Error("Registration failed");
+      const message = error.response?.data?.message || "Registration failed";
+      throw new Error(message);
     }
   };
 
@@ -73,7 +83,8 @@ export const AuthProvider = ({ children }) => {
 
   useEffect(() => {
     const checkAuth = async () => {
-      if (isAccessTokenInSession()) {
+      const isToken = isAccessTokenInSession();
+      if (isToken) {
         await handleFetchUser();
       } else {
         setUser(null);
