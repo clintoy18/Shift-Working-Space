@@ -1,5 +1,4 @@
 import express from "express";
-// ✅ Add getMe to the list of imports below
 import { login, register, getMe } from "../controllers/auth.controller"; 
 import { authenticate } from "../middleware/auth.middleware";
 

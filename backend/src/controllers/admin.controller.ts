@@ -1,363 +1,249 @@
-// import { Request, Response } from "express";
-// import User from "../models/User";
+// controllers/adminController.ts
+import { Request, Response } from "express";
+import User from "../models/User";
+import bcrypt from "bcryptjs";
+import { isValidObjectId } from "mongoose";
 
-// export const approveResponder = async (
-//   req: Request,
-//   res: Response
-// ): Promise<void> => {
-//   const { userId } = req.params; // or req.body depending on how you send it
+// ─── Shared lookup helper ─────────────────────────────────────────────────────
 
-//   try {
-//     const user = await User.findById(userId);
+const findActiveUser = (identifier: string) => {
+  const query = isValidObjectId(identifier)
+    ? { $or: [{ _id: identifier }, { email: identifier }], isDeleted: false }
+    : { email: identifier, isDeleted: false };
 
-//     if (!user) {
-//       res.status(404).json({ message: "User not found" });
-//       return;
-//     }
+  return User.findOne(query);
+};
 
-//     if (user.isVerified) {
-//       res.status(400).json({ message: "User is already approved" });
-//       return;
-//     }
+// ─── CREATE USER ──────────────────────────────────────────────────────────────
 
-//     user.isVerified = true;
-//     await user.save();
+export const createUser = async (req: Request, res: Response): Promise<void> => {
+  const { email, password, firstName, lastName, middleName, role, membershipType, membershipStatus } = req.body;
 
-//     res.status(200).json({
-//       message: "User approved successfully",
-//       user: {
-//         id: user._id,
-//         email: user.email,
-//         fullName: user.fullName,
-//         role: user.role,
-//         isVerified: user.isVerified,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Error approving user:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+  if (!email || !password || !firstName || !lastName || !role) {
+    res.status(400).json({ message: "Required fields are missing." });
+    return;
+  }
 
-// export const verifyEmergencyRequest = async (req: Request, res: Response) => {
-//   try {
-//     const { id } = req.params;
+  const validRoles = ["shifty", "cashier", "admin"];
+  if (!validRoles.includes(role)) {
+    res.status(400).json({ message: `Invalid role. Must be one of: ${validRoles.join(", ")}` });
+    return;
+  }
 
-//     // Find and update the emergency to set isVerified = true
-//     const emergency = await Emergency.findByIdAndUpdate(
-//       id,
-//       { isVerified: true, updatedAt: new Date() },
-//       { new: true, runValidators: false } // skip other required field validations
-//     );
+  try {
+    const existing = await User.findOne({ email, isDeleted: false });
+    if (existing) {
+      res.status(400).json({ message: "A user with this email already exists." });
+      return;
+    }
 
-//     if (!emergency) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Emergency request not found",
-//       });
-//     }
+    const hashedPassword = await bcrypt.hash(password, 12);
 
-//     res.json({
-//       success: true,
-//       message: "Emergency verified successfully",
-//       data: {
-//         id: emergency._id,
-//         placename: emergency.placename,
-//         needs: emergency.needs,
-//         isVerified: emergency.isVerified,
-//         updatedAt: emergency.updatedAt,
-//       },
-//     });
-//   } catch (error: any) {
-//     console.error("Error verifying emergency:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: error.message,
-//     });
-//   }
-// };
+    const newUser = new User({
+      email,
+      password: hashedPassword,
+      firstName,
+      middleName,
+      lastName,
+      role,
+      membershipType:   membershipType   ?? "None",
+      membershipStatus: membershipStatus ?? "Inactive",
+      isVerified: true, // admin-created users skip verification
+      isDeleted: false,
+    });
 
-// // fetch Responders -uverified first, then verified
-// export const fetchResponders = async (req: Request, res: Response): Promise<void> => {
-//   try {
-//     const page = Math.max(Number(req.query.page) || 1, 1);
-//     const limit = Math.min(Number(req.query.limit) || 20, 100);
-//     const skip = (page - 1) * limit;
+    await newUser.save();
 
-//     const query = { role: "respondent" };
-//     const total = await User.countDocuments(query);
+    res.status(200).json({
+      userId: newUser.id,
+      message: "User created successfully.",
+    });
+  } catch (err) {
+    console.error("Error creating user:", err);
+    res.status(500).json({ message: "An internal server error has occurred." });
+  }
+};
 
-//     const responders = await User.find(query)
-//       .select("-password")
-//       .sort({ isVerified: 1, createdAt: -1 }) // unverified first
-//       .skip(skip)
-//       .limit(limit)
-//       .lean();
+// ─── UPDATE USER ──────────────────────────────────────────────────────────────
 
-//     res.status(200).json({
-//       success: true,
-//       page,
-//       limit,
-//       total,
-//       totalPages: Math.ceil(total / limit),
-//       data: responders || [],
-//     });
-//   } catch (error) {
-//     console.error("❌ Error fetching responders:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "An unexpected error occurred while fetching responders.",
-//       data: [],
-//     });
-//   }
-// };
+export const updateUser = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = req.params;
+  const { firstName, middleName, lastName, role, password, membershipType, membershipStatus } = req.body;
 
-// //reject responders
-// export const rejectResponders = async (
-//   req: Request,
-//   res: Response
-// ): Promise<void> => {
-//   const { userId } = req.params; // or req.body depending on how you send it
+  if (!userId) {
+    res.status(400).json({ message: "User ID is required." });
+    return;
+  }
 
-//   try {
-//     const user = await User.findById(userId);
+  if (req.body.userId && req.body.userId !== userId) {
+    res.status(400).json({ message: "User ID in route does not match User ID in request body." });
+    return;
+  }
 
-//     if (!user) {
-//       res.status(404).json({ message: "User not found" });
-//       return;
-//     }
+  if (role) {
+    const validRoles = ["shifty", "cashier", "admin"];
+    if (!validRoles.includes(role)) {
+      res.status(400).json({ message: `Invalid role. Must be one of: ${validRoles.join(", ")}` });
+      return;
+    }
+  }
 
-//     if (user.isVerified) {
-//       res.status(400).json({ message: "User is rejected already" });
-//       return;
-//     }
+  try {
+    const user = await findActiveUser(userId);
 
-//     user.isVerified = false;
-//     await user.save();
+    if (!user) {
+      res.status(404).json({ message: "User not found." });
+      return;
+    }
 
-//     res.status(200).json({
-//       message: "User approved successfully",
-//       user: {
-//         id: user._id,
-//         email: user.email,
-//         fullName: user.fullName,
-//         role: user.role,
-//         isVerified: user.isVerified,
-//       },
-//     });
-//   } catch (error) {
-//     console.error("Error approving user:", error);
-//     res.status(500).json({ message: "Server error" });
-//   }
-// };
+    if (firstName)              user.firstName        = firstName;
+    if (middleName !== undefined) user.middleName      = middleName;
+    if (lastName)               user.lastName         = lastName;
+    if (role)                   user.role             = role;
+    if (membershipType)         user.membershipType   = membershipType;
+    if (membershipStatus)       user.membershipStatus = membershipStatus;
 
-// // Emergencies CRUD
+    if (password && password.trim() !== "") {
+      user.password = await bcrypt.hash(password, 12);
+    }
 
-// export const fetchEmergencies = async (req: Request, res: Response): Promise<void> => {
-//   try {
-//     const page = Math.max(Number(req.query.page) || 1, 1);
-//     const limit = Math.min(Number(req.query.limit) || 20, 100);
-//     const skip = (page - 1) * limit;
+    await user.save();
 
-//     // Optional filters
-//     const status = typeof req.query.status === "string" ? req.query.status.trim() : undefined;
-//     const urgencyLevel = typeof req.query.urgencyLevel === "string" ? req.query.urgencyLevel.trim() : undefined;
+    res.status(200).json({ message: "User updated successfully." });
+  } catch (err) {
+    console.error("Error updating user:", err);
+    res.status(500).json({ message: "An internal server error has occurred." });
+  }
+};
 
-//     // Optional: last 24 hours filter
-//     const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000);
+// ─── DELETE USER (soft delete) ────────────────────────────────────────────────
 
-//     const query: Record<string, any> = {
-//       createdAt: { $gte: twentyFourHoursAgo },
-//       $or: [
-//         { dataQualityIssues: { $exists: false } },
-//         { dataQualityIssues: "OK" },
-//       ],
-//     };
+export const deleteUser = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = req.params;
 
-//     if (status) query.status = status;
-//     if (urgencyLevel) query.urgencyLevel = urgencyLevel;
+  if (!userId) {
+    res.status(400).json({ message: "User ID is required." });
+    return;
+  }
 
-//     const sortCriteria = {
-//       isVerified: "asc",
-//       createdAt: "desc",
-//     } as const;
-    
-//     const [emergencies, total] = await Promise.all([
-//       Emergency.find(query)
-//         .sort(sortCriteria)
-//         .skip(skip)
-//         .limit(limit)
-//         .select("-__v")
-//         .lean(),
-//       Emergency.countDocuments(query),
-//     ]);
+  try {
+    const user = await findActiveUser(userId);
 
-//     res.status(200).json({
-//       success: true,
-//       page,
-//       limit,
-//       total,
-//       totalPages: Math.ceil(total / limit),
-//       data: emergencies || [],
-//     });
-//   } catch (error) {
-//     console.error("❌ Error fetching emergencies:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "An unexpected error occurred while fetching emergencies.",
-//       data: [],
-//     });
-//   }
-// };
+    if (!user) {
+      res.status(404).json({ message: "User not found." });
+      return;
+    }
 
-// // get emergency by id
-// export const getEmergencyById = async (req: Request, res: Response) => {
-//   try {
-//     const { id } = req.params;
-//     const emergency = await Emergency.findById(id);
+    user.isDeleted = true;
+    await user.save();
 
-//     if (!emergency) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Emergency request not found",
-//       });
-//     }
+    res.status(200).json({ message: "User deleted successfully." });
+  } catch (err) {
+    console.error("Error deleting user:", err);
+    res.status(500).json({ message: "An internal server error has occurred." });
+  }
+};
 
-//     res.json({
-//       success: true,
-//       data: emergency,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching emergency:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Server error",
-//     });
-//   }
-// };
+// ─── GET SINGLE USER ──────────────────────────────────────────────────────────
 
-// // Fetch count of emergencies grouped by city/municipality
-// export const fetchEmergencyCountByCity = async (
-//   req: Request,
-//   res: Response
-// ) => {
-//   try {
-//     const page = parseInt(req.query.page as string) || 1;
-//     const limit = parseInt(req.query.limit as string) || 20;
-//     const skip = (page - 1) * limit;
+export const getUser = async (req: Request, res: Response): Promise<void> => {
+  const { userId } = req.params;
 
-//     const results = await Emergency.aggregate([
-//       {
-//         $match: {
-//           $or: [
-//             { dataQualityIssues: { $exists: false } },
-//             { dataQualityIssues: "OK" },
-//           ],
-//         },
-//       },
-//       {
-//         $project: {
-//           city: {
-//             $arrayElemAt: [{ $split: ["$placename", ", "] }, 2],
-//           },
-//         },
-//       },
-//       {
-//         $group: {
-//           _id: "$city",
-//           count: { $sum: 1 },
-//         },
-//       },
-//       { $sort: { count: -1 } },
-//       { $skip: skip },
-//       { $limit: limit },
-//     ]);
+  if (!userId) {
+    res.status(400).json({ message: "User ID is required." });
+    return;
+  }
 
-//     const formatted = results.map((r) => ({
-//       city: r._id || "Unknown",
-//       count: r.count,
-//     }));
+  try {
+    const user = await findActiveUser(userId);
 
-//     // For total count of unique cities
-//     const totalCitiesAgg = await Emergency.aggregate([
-//       {
-//         $match: {
-//           $or: [
-//             { dataQualityIssues: { $exists: false } },
-//             { dataQualityIssues: "OK" },
-//           ],
-//         },
-//       },
-//       {
-//         $project: {
-//           city: { $arrayElemAt: [{ $split: ["$placename", ", "] }, 2] },
-//         },
-//       },
-//       {
-//         $group: { _id: "$city" },
-//       },
-//       { $count: "total" },
-//     ]);
+    if (!user) {
+      res.status(404).json({ message: "User not found." });
+      return;
+    }
 
-//     const total = totalCitiesAgg[0]?.total || 0;
+    res.status(200).json(user); // password auto-stripped by toJSON transform
+  } catch (err) {
+    console.error("Error fetching user:", err);
+    res.status(500).json({ message: "An internal server error has occurred." });
+  }
+};
 
-//     res.json({
-//       success: true,
-//       page,
-//       limit,
-//       total,
-//       totalPages: Math.ceil(total / limit),
-//       data: formatted,
-//     });
-//   } catch (error) {
-//     console.error("Error fetching emergency counts by city:", error);
-//     res.status(500).json({
-//       success: false,
-//       message: "Server error while fetching emergency counts by city",
-//     });
-//   }
-// };
+// ─── GET ALL USERS ────────────────────────────────────────────────────────────
 
-// export const deleteEmergencyById = async (req: Request, res: Response) => {
-//   try {
-//     const { id } = req.params;
-//     const emergency = await Emergency.findOneAndDelete({ id });
+export const getAllUsers = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const users = await User.find({ isDeleted: false });
+    res.status(200).json(users); // password auto-stripped by toJSON transform
+  } catch (err) {
+    console.error("Error fetching users:", err);
+    res.status(500).json({ message: "An internal server error has occurred." });
+  }
+};
 
-//     if (!emergency) {
-//       return res.status(404).json({
-//         success: false,
-//         message: "Emergency request not found",
-//       });
-//     }
+// ─── GET USERS BY ROLE ────────────────────────────────────────────────────────
 
-//     res.json({ success: true, message: "Emergency request deleted" });
-//   } catch (error) {
-//     console.error("Error deleting emergency:", error);
-//     res.status(500).json({ success: false, message: "Server error" });
-//   }
-// };
+export const getUsersByRole = async (req: Request, res: Response): Promise<void> => {
+  const { role } = req.query;
 
-// export const unverifyEmergency = async (req: Request, res: Response) => {
-//   const { id } = req.params;
+  if (!role) {
+    res.status(400).json({ message: "Role query param is required." });
+    return;
+  }
 
-//   try {
-//     // Find the emergency by its _id
-//     const emergency = await Emergency.findOne({ id: id });
+  const validRoles = ["shifty", "cashier", "admin"];
+  if (!validRoles.includes(role as string)) {
+    res.status(400).json({ message: `Invalid role. Must be one of: ${validRoles.join(", ")}` });
+    return;
+  }
 
-//     if (!emergency) {
-//       return res
-//         .status(404)
-//         .json({ success: false, message: "Emergency not found" });
-//     }
+  try {
+    const users = await User.find({ role, isDeleted: false });
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Error fetching users by role:", err);
+    res.status(500).json({ message: "An internal server error has occurred." });
+  }
+};
 
-//     // Update the field manually
-//     emergency.isVerified = false;
+// ─── GET RECENT USERS ─────────────────────────────────────────────────────────
 
-//     // Save the updated document
-//     const updatedEmergency = await emergency.save();
+export const getRecentUsers = async (req: Request, res: Response): Promise<void> => {
+  const count = parseInt(req.query.count as string) || 5;
 
-//     res.json({ success: true, data: updatedEmergency });
-//   } catch (err) {
-//     res.status(500).json({ success: false, message: err });
-//   }
-// };
+  try {
+    const users = await User.find({ isDeleted: false })
+      .sort({ createdAt: -1 }) // mongoose timestamps field
+      .limit(count);
+
+    if (!users || users.length === 0) {
+      res.status(404).json({ message: "No users found." });
+      return;
+    }
+
+    res.status(200).json(users);
+  } catch (err) {
+    console.error("Error fetching recent users:", err);
+    res.status(500).json({ message: "An internal server error has occurred." });
+  }
+};
+
+// ─── DASHBOARD STATS ──────────────────────────────────────────────────────────
+
+export const getDashboardStats = async (req: Request, res: Response): Promise<void> => {
+  try {
+    const [total, admins, cashiers, shifties] = await Promise.all([
+      User.countDocuments({ isDeleted: false }),
+      User.countDocuments({ role: "admin",   isDeleted: false }),
+      User.countDocuments({ role: "cashier", isDeleted: false }),
+      User.countDocuments({ role: "shifty",  isDeleted: false }),
+    ]);
+
+    res.status(200).json({
+      userStats: { total, admins, cashiers, shifties },
+    });
+  } catch (err) {
+    console.error("Error fetching dashboard stats:", err);
+    res.status(500).json({ message: "An internal server error has occurred." });
+  }
+};
