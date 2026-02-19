@@ -1,8 +1,8 @@
 import { Button } from "@/components/ui/button";
 import { MapPin, Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-import { fetchStats } from "@services/StatsService";
-import { useEffect, useState } from "react"; // ✅ IMPORT HOOKS
+// import { fetchStats } from "@services/StatsService";
+// import { useEffect, useState } from "react"; // ✅ IMPORT HOOKS
 
 const Hero = () => {
   const navigate = useNavigate();
