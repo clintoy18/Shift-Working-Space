@@ -114,3 +114,34 @@ export const getMe = async (req: Request, res: Response): Promise<void> => {
   }
 };
 
+
+export const updateMe = async (req: Request, res: Response): Promise<void> => {
+  const { firstName, middleName, lastName, password } = req.body;
+
+  try {
+    const user = await User.findById(req.user.id);
+
+    if (!user || user.isDeleted) {
+      res.status(404).json({ message: "User not found" });
+      return;
+    }
+
+    if (firstName)              user.firstName  = firstName;
+    if (middleName !== undefined) user.middleName = middleName;
+    if (lastName)               user.lastName   = lastName;
+
+    if (password && password.trim() !== "") {
+      user.password = await bcrypt.hash(password, 12);
+    }
+
+    await user.save();
+
+    res.status(200).json({
+      message: "Profile updated successfully.",
+      user,   // password auto-stripped by toJSON transform
+    });
+  } catch (err) {
+    console.error("Update profile error:", err);
+    res.status(500).json({ message: "Server error" });
+  }
+};
