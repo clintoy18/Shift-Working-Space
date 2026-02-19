@@ -20,7 +20,6 @@ import {
 } from "lucide-react";
 import { createPortal } from "react-dom";
 import { fetchAllUsersAdmin } from "@services";
-// import { parseNumericRole } from "../../../utils/roleUtils";
 import type { IUser } from "@interfaces";
 import CreateTeacherModal from "./CreateTeacherModal";
 import UpdateUserModal from "./UpdateUserModal";
@@ -29,7 +28,6 @@ import { InlineSpinner } from "../../../components/common/LoadingSpinnerPage";
 
 const columnHelper = createColumnHelper<IUser>();
 
-// Dropdown Menu Component with Positioning
 const ActionDropdown = ({ 
   user, 
   onEdit, 
@@ -46,7 +44,7 @@ const ActionDropdown = ({
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
       if (buttonRef.current && !buttonRef.current.contains(event.target as Node)) {
-        const dropdown = document.getElementById(`dropdown-${user.UserId}`);
+        const dropdown = document.getElementById(`dropdown-${user.id}`);
         if (dropdown && !dropdown.contains(event.target as Node)) {
           setIsOpen(false);
         }
@@ -55,14 +53,14 @@ const ActionDropdown = ({
 
     document.addEventListener("mousedown", handleClickOutside);
     return () => document.removeEventListener("mousedown", handleClickOutside);
-  }, [user.UserId]);
+  }, [user.id]);
 
   const handleToggle = () => {
     if (!isOpen && buttonRef.current) {
       const rect = buttonRef.current.getBoundingClientRect();
       setPosition({
         top: rect.bottom + window.scrollY,
-        left: rect.right + window.scrollX - 144, // 144px = w-36 (9rem = 144px)
+        left: rect.right + window.scrollX - 144,
       });
     }
     setIsOpen(!isOpen);
@@ -87,9 +85,9 @@ const ActionDropdown = ({
       {isOpen &&
         createPortal(
           <div
-            id={`dropdown-${user.UserId}`}
+            id={`dropdown-${user.id}`}
             style={{
-              position: 'absolute',
+              position: "absolute",
               top: `${position.top}px`,
               left: `${position.left}px`,
             }}
@@ -122,7 +120,6 @@ export default function UserTable() {
   const [globalFilter, setGlobalFilter] = useState("");
   const [roleFilter, setRoleFilter] = useState("All");
 
-  // Modal states
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false);
   const [isUpdateModalOpen, setIsUpdateModalOpen] = useState(false);
   const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
@@ -132,29 +129,34 @@ export default function UserTable() {
     setLoading(true);
     try {
       const rawData = await fetchAllUsersAdmin();
+
       const parsedUsers: IUser[] = rawData
-        .map((user: any) => {
-          const role = user.role;
-          if (role === null) {
-            console.warn("Unknown role value:", user.role, "for user", user.userId);
+        .map((user: any): IUser | null => {
+          if (!user.role) {
+            console.warn("Missing role for user:", user.id);
             return null;
           }
 
           return {
-            UserId: user.userId,
-            FirstName: user.firstName,
-            MiddleName: user.middleName,
-            LastName: user.lastName,
-            Program: user.program,
-            Role: role,
-            CreatedTime: user.createdTime
+            id:               user.id,
+            email:            user.email,
+            firstName:        user.firstName,
+            middleName:       user.middleName,
+            lastName:         user.lastName,
+            fullName:         user.fullName,
+            role:             user.role,
+            membershipType:   user.membershipType,
+            membershipStatus: user.membershipStatus,
+            isVerified:       user.isVerified,
+            isDeleted:        user.isDeleted,
+            createdAt:        user.createdAt,
           };
         })
         .filter((user): user is IUser => user !== null);
 
       setUsers(parsedUsers);
     } catch (error) {
-      console.error('Error fetching users:', error);
+      console.error("Error fetching users:", error);
     } finally {
       setLoading(false);
     }
@@ -164,7 +166,6 @@ export default function UserTable() {
     fetchUsers();
   }, []);
 
-  // Modal handlers
   const handleOpenUpdate = (user: IUser) => {
     setSelectedUser(user);
     setIsUpdateModalOpen(true);
@@ -176,20 +177,22 @@ export default function UserTable() {
   };
 
   const handleModalSuccess = () => {
-    fetchUsers(); // Refresh the user list
+    fetchUsers();
   };
 
   const filteredData = useMemo(() => {
     return users.filter((user) => {
-      const fullName = [user.FirstName, user.MiddleName, user.LastName]
-        .filter(Boolean)
-        .join(" ");
-
       const matchesSearch =
-        fullName.toLowerCase().includes(globalFilter.toLowerCase()) ||
-        user.UserId.toLowerCase().includes(globalFilter.toLowerCase());
-      const matchesRole = roleFilter === "All" || user.Role === roleFilter;
-      return matchesSearch && matchesRole;  
+        user.fullName.toLowerCase().includes(globalFilter.toLowerCase()) ||
+        user.id.toLowerCase().includes(globalFilter.toLowerCase()) ||
+        user.email.toLowerCase().includes(globalFilter.toLowerCase());
+
+      // role filter is lowercase in DB, dropdown values need to match
+      const matchesRole =
+        roleFilter === "All" ||
+        user.role === roleFilter.toLowerCase();
+
+      return matchesSearch && matchesRole;
     });
   }, [users, globalFilter, roleFilter]);
 
@@ -197,40 +200,51 @@ export default function UserTable() {
     columnHelper.display({
       id: "name",
       header: "Name",
-      cell: (info) => {
-        const user = info.row.original;
-        const fullName = [user.FirstName, user.MiddleName, user.LastName]
-          .filter(Boolean)
-          .join(" ");
-        return <div className="font-medium text-gray-900">{fullName}</div>;
-      },
+      cell: (info) => (
+        <div className="font-medium text-gray-900">
+          {info.row.original.fullName}
+        </div>
+      ),
     }),
-    columnHelper.accessor("UserId", {
-      header: "User ID",
+    columnHelper.accessor("email", {
+      header: "Email",
       cell: (info) => (
         <div className="text-gray-600 text-sm">{info.getValue()}</div>
       ),
     }),
-    columnHelper.accessor("Role", {
+    columnHelper.accessor("role", {
       header: "Role",
       cell: (info) => {
         const role = info.getValue();
         const roleStyle =
-          role === "Admin"
+          role === "admin"
             ? "bg-red-100 text-red-700 border-red-200"
-            : role === "Cashier"
-              ? "bg-blue-100 text-blue-700 border-blue-200"
-              : "bg-green-100 text-green-700 border-green-200";
+            : role === "cashier"
+            ? "bg-blue-100 text-blue-700 border-blue-200"
+            : "bg-green-100 text-green-700 border-green-200";
         return (
-          <span
-            className={`px-2 py-1 rounded-full text-xs font-medium border ${roleStyle}`}
-          >
+          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${roleStyle}`}>
             {role}
           </span>
         );
       },
     }),
-    columnHelper.accessor("CreatedTime", {
+    columnHelper.accessor("membershipStatus", {
+      header: "Membership",
+      cell: (info) => {
+        const status = info.getValue();
+        const style =
+          status === "Active"
+            ? "bg-emerald-100 text-emerald-700 border-emerald-200"
+            : "bg-gray-100 text-gray-600 border-gray-200";
+        return (
+          <span className={`px-2 py-1 rounded-full text-xs font-medium border ${style}`}>
+            {status}
+          </span>
+        );
+      },
+    }),
+    columnHelper.accessor("createdAt", {
       header: "Joined",
       cell: (info) => (
         <div className="text-gray-500 text-sm">
@@ -241,7 +255,7 @@ export default function UserTable() {
     {
       id: "actions",
       header: "Actions",
-      cell: (info) => {
+      cell: (info: any) => {
         const user = info.row.original;
         return (
           <ActionDropdown
@@ -257,17 +271,13 @@ export default function UserTable() {
   const table = useReactTable({
     data: filteredData,
     columns,
-    state: {
-      globalFilter,
-    },
+    state: { globalFilter },
     onGlobalFilterChange: setGlobalFilter,
     getCoreRowModel: getCoreRowModel(),
     getFilteredRowModel: getFilteredRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
     initialState: {
-      pagination: {
-        pageSize: 5,
-      },
+      pagination: { pageSize: 5 },
     },
   });
 
@@ -276,9 +286,7 @@ export default function UserTable() {
       {/* Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-4">
         <div>
-          <h2 className="text-lg font-semibold text-gray-900">
-            User Management
-          </h2>
+          <h2 className="text-lg font-semibold text-gray-900">User Management</h2>
           <p className="text-gray-500 text-sm mt-1">View and manage all users</p>
         </div>
         <button
@@ -299,7 +307,7 @@ export default function UserTable() {
           />
           <input
             type="text"
-            placeholder="Search users..."
+            placeholder="Search by name, email, or ID..."
             className="w-full pl-9 pr-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-gray-400 focus:border-transparent"
             value={globalFilter}
             onChange={(e) => setGlobalFilter(e.target.value)}
@@ -312,9 +320,9 @@ export default function UserTable() {
           className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-gray-400 focus:border-transparent"
         >
           <option value="All">All Roles</option>
-          <option value="Admin">Admin</option>
-          <option value="Cashier">Cashier</option>
-          <option value="Student">Shifty</option>
+          <option value="admin">Admin</option>
+          <option value="cashier">Cashier</option>
+          <option value="shifty">Shifty</option>
         </select>
       </div>
 
@@ -329,10 +337,7 @@ export default function UserTable() {
                     key={header.id}
                     className="text-left px-3 py-3 font-medium text-gray-700 text-sm border-b"
                   >
-                    {flexRender(
-                      header.column.columnDef.header,
-                      header.getContext()
-                    )}
+                    {flexRender(header.column.columnDef.header, header.getContext())}
                   </th>
                 ))}
               </tr>
@@ -353,10 +358,7 @@ export default function UserTable() {
                 <tr key={row.id} className="hover:bg-gray-50 transition-colors">
                   {row.getVisibleCells().map((cell) => (
                     <td key={cell.id} className="px-3 py-3 border-b text-sm">
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext()
-                      )}
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
                     </td>
                   ))}
                 </tr>
@@ -374,12 +376,10 @@ export default function UserTable() {
 
       {/* Pagination */}
       <div className="flex flex-col sm:flex-row items-center justify-between gap-3 mt-4 pt-4 border-t border-gray-200">
-        {/* Page Info */}
         <div className="flex items-center gap-2 text-sm text-gray-600">
           <span>Page</span>
           <strong>
-            {table.getState().pagination.pageIndex + 1} of{" "}
-            {table.getPageCount()}
+            {table.getState().pagination.pageIndex + 1} of {table.getPageCount()}
           </strong>
           <span className="hidden sm:inline">•</span>
           <span className="hidden sm:inline">
@@ -387,7 +387,6 @@ export default function UserTable() {
           </span>
         </div>
 
-        {/* Pagination Buttons */}
         <div className="flex items-center gap-1">
           <button
             onClick={() => table.setPageIndex(0)}
@@ -405,12 +404,9 @@ export default function UserTable() {
           >
             <ChevronLeft size={16} />
           </button>
-          <div className="flex items-center gap-1 mx-2">
-            <span className="text-sm text-gray-600 px-2">
-              {table.getState().pagination.pageIndex + 1} /{" "}
-              {table.getPageCount()}
-            </span>
-          </div>
+          <span className="text-sm text-gray-600 px-2">
+            {table.getState().pagination.pageIndex + 1} / {table.getPageCount()}
+          </span>
           <button
             onClick={() => table.nextPage()}
             disabled={!table.getCanNextPage()}
@@ -429,11 +425,8 @@ export default function UserTable() {
           </button>
         </div>
 
-        {/* Page Size Selector */}
         <div className="flex items-center gap-2 text-sm">
-          <label htmlFor="pageSize" className="text-gray-600">
-            Rows:
-          </label>
+          <label htmlFor="pageSize" className="text-gray-600">Rows:</label>
           <select
             id="pageSize"
             value={table.getState().pagination.pageSize}
@@ -441,9 +434,7 @@ export default function UserTable() {
             className="border border-gray-300 rounded px-2 py-1 text-sm focus:ring-2 focus:ring-gray-400"
           >
             {[5, 10, 20, 50].map((pageSize) => (
-              <option key={pageSize} value={pageSize}>
-                {pageSize}
-              </option>
+              <option key={pageSize} value={pageSize}>{pageSize}</option>
             ))}
           </select>
         </div>
@@ -455,14 +446,12 @@ export default function UserTable() {
         onClose={() => setIsCreateModalOpen(false)}
         onSuccess={handleModalSuccess}
       />
-
       <UpdateUserModal
         isOpen={isUpdateModalOpen}
         onClose={() => setIsUpdateModalOpen(false)}
         onSuccess={handleModalSuccess}
         user={selectedUser}
       />
-
       <DeleteUserModal
         isOpen={isDeleteModalOpen}
         onClose={() => setIsDeleteModalOpen(false)}

@@ -2,7 +2,7 @@ import axios from "axios";
 import type { AxiosInstance } from "axios";
 
 // ✅ ENV BASE URL
-const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:54927/api";
+const apiUrl = import.meta.env.VITE_API_URL || "http://localhost:5000/api";
 
 // Add auth interceptor
 const addAuthInterceptor = (instance: AxiosInstance): AxiosInstance => {

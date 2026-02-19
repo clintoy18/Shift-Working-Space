@@ -1,9 +1,10 @@
-import React, { useState } from 'react';
+import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle, ArrowLeft, UserCircle, Loader2 } from "lucide-react";
 import type { IRegisterRequest } from '@interfaces';
+import { useNavigate } from "react-router-dom";
 
 const RegisterForm = ({
   onRegister,
@@ -14,8 +15,9 @@ const RegisterForm = ({
   isLoading?: boolean,
   error?: string
 }) => {
+  const navigate = useNavigate();
+  // ✅ Removed userId - matched to IRegisterRequest
   const [formData, setFormData] = useState<IRegisterRequest>({
-    userId: '',
     firstName: '',
     middleName: '',
     lastName: '',
@@ -65,7 +67,6 @@ const RegisterForm = ({
   return (
     <Card className="w-full max-w-xl shadow-2xl bg-card/50 backdrop-blur-md mx-auto">
       <CardContent className="p-8">
-        {/* Header */}
         <div className="mb-10 text-center">
           <div className="inline-flex h-12 w-12 bg-primary rounded-xl items-center justify-center mb-4 shadow-lg shadow-primary/20">
             <UserCircle className="text-primary-foreground h-8 w-8" />
@@ -75,7 +76,6 @@ const RegisterForm = ({
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-8">
-          {/* Personal Info Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary/80 ml-1">
               <span className="w-8 h-[1px] bg-primary/30"></span>
@@ -92,7 +92,6 @@ const RegisterForm = ({
                   placeholder="John" 
                   className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.firstName ? "border-destructive ring-destructive/20" : "border-muted-foreground/20"}`} 
                 />
-                {formErrors.firstName && <p className="text-[10px] text-destructive font-medium ml-1">{formErrors.firstName}</p>}
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Middle Name</label>
@@ -113,11 +112,9 @@ const RegisterForm = ({
                   placeholder="Smith" 
                   className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.lastName ? "border-destructive ring-destructive/20" : "border-muted-foreground/20"}`} 
                 />
-                {formErrors.lastName && <p className="text-[10px] text-destructive font-medium ml-1">{formErrors.lastName}</p>}
               </div>
             </div>
 
-            {/* Email Field */}
             <div className="space-y-1.5">
               <label className="text-xs font-semibold text-muted-foreground ml-1">Email Address</label>
               <Input 
@@ -128,11 +125,9 @@ const RegisterForm = ({
                 placeholder="john.smith@example.com" 
                 className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.email ? "border-destructive ring-destructive/20" : "border-muted-foreground/20"}`} 
               />
-              {formErrors.email && <p className="text-[10px] text-destructive font-medium ml-1">{formErrors.email}</p>}
             </div>
           </div>
 
-          {/* Security Section */}
           <div className="space-y-4">
             <div className="flex items-center gap-2 text-xs font-bold uppercase tracking-widest text-primary/80 ml-1">
               <span className="w-8 h-[1px] bg-primary/30"></span>
@@ -150,7 +145,6 @@ const RegisterForm = ({
                   placeholder="••••••••" 
                   className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.password ? "border-destructive" : "border-muted-foreground/20"}`} 
                 />
-                {formErrors.password && <p className="text-[10px] text-destructive font-medium ml-1">{formErrors.password}</p>}
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Confirm Password</label>
@@ -162,12 +156,10 @@ const RegisterForm = ({
                   placeholder="••••••••" 
                   className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.confirmPassword ? "border-destructive" : "border-muted-foreground/20"}`} 
                 />
-                {formErrors.confirmPassword && <p className="text-[10px] text-destructive font-medium ml-1">{formErrors.confirmPassword}</p>}
               </div>
             </div>
           </div>
 
-          {/* Error Message */}
           {error && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex gap-3 items-center animate-in slide-in-from-top-2 duration-300">
               <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0" />
@@ -189,8 +181,8 @@ const RegisterForm = ({
           </Button>
         </form>
 
-        {/* Footer */}
         <button
+          onClick={() => navigate("/login")}
           type="button"
           className="w-full mt-8 py-2 flex items-center justify-center gap-2 text-sm text-muted-foreground hover:text-foreground transition-all group"
         >

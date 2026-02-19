@@ -6,7 +6,7 @@ import ExportPDFDropdown from "../common/ExportPDFDropdown";
 
 const MainContent = () => {
   const { user } = useAuth();
-  const role: Role = user.Role || "Shifty";
+  const role: Role = user.role || "shifty";
 
   const { tabs, description } = getRoleConfig(role);
   return (
@@ -22,8 +22,8 @@ const MainContent = () => {
             </p>
           </div>
 
-          {role === "Admin" && (
-            <ExportPDFDropdown roles={["Admin", "Teacher", "Student", null]} />
+          {role === "admin" && (
+            <ExportPDFDropdown roles={["admin", "cashier", "shifty", null]} />
           )}
         </div>
       </header>

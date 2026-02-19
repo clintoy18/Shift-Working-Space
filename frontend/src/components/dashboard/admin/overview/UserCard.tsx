@@ -2,26 +2,26 @@ import React from "react";
 import { User, Shield, CreditCard } from "lucide-react";
 import type { IUser } from "@interfaces";
 
-const roleConfig: Record<IUser["Role"], { color: string; icon: React.ReactNode }> = {
-  Shifty: {
+const roleConfig: Record<IUser["role"], { color: string; icon: React.ReactNode }> = {
+  shifty: {
     color: "bg-green-50 text-green-700 border-green-200",
     icon: <User className="w-4 h-4 text-green-600" />
   },
-  Cashier: {
+  cashier: {
     color: "bg-blue-50 text-blue-700 border-blue-200",
     icon: <CreditCard className="w-4 h-4 text-blue-600" />
   },
-  Admin: {
+  admin: {
     color: "bg-red-50 text-red-700 border-red-200",
     icon: <Shield className="w-4 h-4 text-red-600" />
   },
 };
 
 const UserCard: React.FC<{ user: IUser }> = ({ user }) => {
-  const { color, icon } = roleConfig[user.Role];
+  const { color, icon } = roleConfig[user.role];
 
   // Construct full name (handle missing middle name gracefully)
-  const fullName = [user.FirstName, user.MiddleName, user.LastName]
+  const fullName = [user.firstName, user.middleName, user.lastName]
     .filter(Boolean)
     .join(" ");
 
@@ -40,10 +40,10 @@ const UserCard: React.FC<{ user: IUser }> = ({ user }) => {
       {/* Role & Date */}
       <div className="flex items-center justify-between sm:justify-end gap-2 sm:gap-3">
         <span className={`px-2.5 py-1 text-xs font-medium rounded-full border ${color} whitespace-nowrap`}>
-          {user.Role}
+          {user.role}
         </span>
         <span className="text-xs sm:text-sm text-gray-400 whitespace-nowrap">
-          {new Date(user.CreatedTime).toLocaleDateString()}
+          {new Date(user.createdAt).toLocaleDateString()}
         </span>
       </div>
     </div>

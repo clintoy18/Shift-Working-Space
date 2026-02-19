@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
-import { Clock, Key, CreditCard, LayoutGrid, Check, ChevronLeft, ChevronRight } from "lucide-react";
+import { Clock, Key,  LayoutGrid,  ChevronLeft, ChevronRight } from "lucide-react";
 
 const Features = () => {
   const [selectedZone, setSelectedZone] = useState<"hot" | "dedicated">("hot");
@@ -75,30 +75,30 @@ const Features = () => {
         </div>
       ),
     },
-    {
-      icon: CreditCard,
-      title: "Free Wifi",
-      description:
-        "Enjoy fast, reliable, and unlimited Wi-Fi at no extra cost, included with every visit.",
-      visual: (
-        <div className="mt-4 p-4 bg-secondary rounded-lg">
-          <div className="space-y-2">
-            <div className="flex items-center justify-between p-2 bg-card rounded">
-              <span className="text-sm">Monthly Desk</span>
-              <span className="text-sm font-semibold text-primary">₱5,999</span>
-            </div>
-            <div className="flex items-center justify-between p-2 bg-card rounded">
-              <span className="text-sm">Meeting Room (2hr)</span>
-              <span className="text-sm font-semibold text-primary">₱540</span>
-            </div>
-            <div className="flex items-center gap-2 p-2 bg-primary/10 rounded text-primary text-sm">
-              <Check className="w-4 h-4" />
-              <span>Always included</span>
-            </div>
-          </div>
-        </div>
-      ),
-    },
+    // {
+    //   icon: CreditCard,
+    //   title: "Free Wifi",
+    //   description:
+    //     "Enjoy fast, reliable, and unlimited Wi-Fi at no extra cost, included with every visit.",
+    //   visual: (
+    //     <div className="mt-4 p-4 bg-secondary rounded-lg">
+    //       <div className="space-y-2">
+    //         <div className="flex items-center justify-between p-2 bg-card rounded">
+    //           <span className="text-sm">Monthly Desk</span>
+    //           <span className="text-sm font-semibold text-primary">₱5,999</span>
+    //         </div>
+    //         <div className="flex items-center justify-between p-2 bg-card rounded">
+    //           <span className="text-sm">Meeting Room (2hr)</span>
+    //           <span className="text-sm font-semibold text-primary">₱540</span>
+    //         </div>
+    //         <div className="flex items-center gap-2 p-2 bg-primary/10 rounded text-primary text-sm">
+    //           <Check className="w-4 h-4" />
+    //           <span>Always included</span>
+    //         </div>
+    //       </div>
+    //     </div>
+    //   ),
+    // },
     {
       icon: LayoutGrid,
       title: "Membership Discounts",
