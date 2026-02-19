@@ -11,8 +11,6 @@ router.post("/login", login);
 // This works now!
 router.get("/me", authenticate, getMe);
 
-// Optional: If your frontend still uses /validate, keep it, 
-// otherwise /me is usually enough.
 router.get("/validate", authenticate, (req, res) => {
     res.json({ valid: true, user: req.user });
 });

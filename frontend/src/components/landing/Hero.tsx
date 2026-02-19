@@ -7,21 +7,21 @@ import { useEffect, useState } from "react"; // ✅ IMPORT HOOKS
 const Hero = () => {
   const navigate = useNavigate();
 
-  // ✅ STATE FOR STATS
-  const [stats, setStats] = useState({
-    totalSeats: 0,
-    totalMembers: 0,
-  });
+  // // ✅ STATE FOR STATS
+  // const [stats, setStats] = useState({
+  //   totalSeats: 0,
+  //   totalMembers: 0,
+  // });
 
-  // ✅ FETCH STATS ON LOAD
-  useEffect(() => {
-    const loadStats = async () => {
-      const data = await fetchStats();
-      setStats(data);
-    };
+  // // ✅ FETCH STATS ON LOAD
+  // useEffect(() => {
+  //   const loadStats = async () => {
+  //     const data = await fetchStats();
+  //     setStats(data);
+  //   };
 
-    loadStats();
-  }, []);
+  //   loadStats();
+  // }, []);
 
   return (
     <section
@@ -44,15 +44,15 @@ const Hero = () => {
         <div className="max-w-4xl mx-auto text-center">
 
           {/* 🔥 DYNAMIC AVAILABILITY BADGE */}
-          <div className="inline-flex items-center gap-2 bg-orange-500/20 backdrop-blur-md border border-orange-500/40 rounded-full px-5 py-2.5 mb-8 shadow-lg">
-            <span className="relative flex h-3 w-3">
+          {/* <div className="inline-flex items-center gap-2 bg-orange-500/20 backdrop-blur-md border border-orange-500/40 rounded-full px-5 py-2.5 mb-8 shadow-lg"> */}
+            {/* <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-400"></span>
             </span>
             <span className="text-white text-sm font-bold">
               {stats.totalSeats || 12} desks available — visit our space.
             </span>
-          </div>
+          </div> */}
 
           {/* Headline */}
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white mb-6 leading-[1.1] tracking-tight">
@@ -100,9 +100,10 @@ const Hero = () => {
               </div>
               <div className="text-left">
                 <p className="text-3xl font-black text-white">
-                  {stats.totalMembers
+                  {/* {stats.totalMembers
                     ? stats.totalMembers.toLocaleString()
-                    : "500+"}
+                    : "500+"} */}
+                    20+
                 </p>
                 <p className="text-slate-300 text-sm font-medium">
                   Active Members
