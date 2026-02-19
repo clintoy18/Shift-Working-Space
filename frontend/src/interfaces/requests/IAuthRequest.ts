@@ -1,25 +1,51 @@
 export interface ILoginRequest {
-    // Your backend controller destructures { email, password }
-    email: string; 
-    password: string;
+  email:    string;
+  password: string;
 }
 
 export interface IRegisterRequest {
-    // ✅ userId is REMOVED: Backend now generates this as a MongoDB ObjectId
-    firstName: string;
-    middleName?: string; // Optional in backend schema
-    lastName: string;
-    email: string;
-    password: string;
-    confirmPassword: string; // Used for frontend validation logic
+  firstName:       string;
+  middleName?:     string;
+  lastName:        string;
+  email:           string;
+  password:        string;
+  confirmPassword: string;
 }
 
 export interface IForgotPasswordRequest {
-    email: string;
+  email: string;
 }
 
 export interface IResetPasswordRequest {
-    token: string;
-    newPassword: string;
-    confirmPassword: string;
+  token:           string;
+  newPassword:     string;
+  confirmPassword: string;
+}
+
+export interface ICreateAdminUserRequest {
+  firstName:         string;
+  middleName?:       string;
+  lastName:          string;
+  email:             string;
+  password:          string;
+  role:              "shifty" | "cashier" | "admin";
+  membershipType?:   string;
+  membershipStatus?: string;
+}
+
+export interface IUpdateUserRequest {
+  firstName?:        string;
+  middleName?:       string;
+  lastName?:         string;
+  role?:             "shifty" | "cashier" | "admin";
+  password?:         string;
+  membershipType?:   string;
+  membershipStatus?: string;
+}
+
+export interface IUpdateMeRequest {
+  firstName?:  string;
+  middleName?: string;
+  lastName?:   string;
+  password?:   string;
 }

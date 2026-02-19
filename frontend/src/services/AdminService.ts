@@ -1,5 +1,5 @@
 import { admin } from "../lib/api";
-import type { IUser } from "@interfaces";
+import type { ICreateAdminUserRequest, IUser } from "@interfaces";
 
 const roleMap: { [key: string]: number } = {
   Shifty: 0,
@@ -17,7 +17,7 @@ export const fetchAllUsersAdmin = async () => {
   return response.data;
 };
 
-export const createNewUserAdmin = async (newUser: IUser) => {
+export const createNewUserAdmin = async (newUser: ICreateAdminUserRequest) => {
   const roleNumber = roleMap[newUser.role];
 
   const response = await admin.post("/user/create", {
