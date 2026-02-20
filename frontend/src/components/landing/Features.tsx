@@ -31,13 +31,12 @@ const amenities = [
     icon: Coffee,
     title: "Complimentary Beverage",
     description:
-      "We are not just an empty coworking space but a cafe. Your stay here entitles you to a complimentary drink — either a brewed coffee or iced tea. You can also choose to buy other handcrafted beverages such as frappes, and shakes."
-  },
+      "More than a workspace — SHIFT is home to a café next door. Every visit includes a complimentary brewed coffee or iced tea, and when you're craving something more, Motto Café is right beside us serving handcrafted frappes, shakes, and more."  },
   {
     icon: Users,
     title: "Conference Room",
     description:
-      "This is for your meetings that need some privacy and we added perks with it too: unlimited brewed coffee and iced tea for eight pax, projector, whiteboard, and two plates of fries."
+      "This is for your meetings that need some privacy and we added perks with it too: unlimited brewed coffee and iced tea for eight pax, projector and whiteboard."
   },
   {
     icon: LayoutGrid,

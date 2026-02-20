@@ -42,10 +42,9 @@ const Hero = () => {
       {/* Content */}
       <div className="relative z-10 container mx-auto px-4 py-20">
         <div className="max-w-4xl mx-auto text-center">
-
           {/* 🔥 DYNAMIC AVAILABILITY BADGE */}
           {/* <div className="inline-flex items-center gap-2 bg-orange-500/20 backdrop-blur-md border border-orange-500/40 rounded-full px-5 py-2.5 mb-8 shadow-lg"> */}
-            {/* <span className="relative flex h-3 w-3">
+          {/* <span className="relative flex h-3 w-3">
               <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-orange-400 opacity-75"></span>
               <span className="relative inline-flex rounded-full h-3 w-3 bg-orange-400"></span>
             </span>
@@ -85,7 +84,11 @@ const Hero = () => {
             <Button
               size="lg"
               variant="outline"
-              onClick={() => navigate("/floor-plan")}
+              onClick={() =>
+                document
+                  .getElementById("pricing")
+                  ?.scrollIntoView({ behavior: "smooth" })
+              }
               className="border-2 border-white/40 bg-white/5 backdrop-blur-sm text-white hover:bg-white/15 font-semibold text-lg px-10 py-7 h-auto"
             >
               Explore Seats
@@ -103,7 +106,7 @@ const Hero = () => {
                   {/* {stats.totalMembers
                     ? stats.totalMembers.toLocaleString()
                     : "500+"} */}
-                    20+
+                  20+
                 </p>
                 <p className="text-slate-300 text-sm font-medium">
                   Active Members
