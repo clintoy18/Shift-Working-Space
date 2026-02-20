@@ -24,7 +24,7 @@ router.get   ("/user/:userId",        ...adminOnly, getUser);
 router.get   ("/user",                ...adminOnly, getAllUsers);
 
 // ─── Filters & Stats ──────────────────────────────────────────────────────────
-router.get("/getUsersByRole",  ...adminOnly, getUsersByRole);
-router.get("/dashboard-stats",  getDashboardStats);
+router.get("/getUsersByRole", ...adminOnly, getUsersByRole);
+router.get("/dashboard-stats", ...adminOnly, getDashboardStats);
 
 export default router;

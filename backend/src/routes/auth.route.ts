@@ -1,11 +1,13 @@
 import express from "express";
-import { login, register, getMe, updateMe  } from "../controllers/auth.controller"; 
+import { login, register, getMe, updateMe } from "../controllers/auth.controller";
 import { authenticate } from "../middleware/auth.middleware";
+import { authLimiter } from "../middleware/rateLimiter.middleware";
 
 const router = express.Router();
 
-router.post("/register", register);
-router.post("/login", login);
+// Apply rate limiting to authentication endpoints
+router.post("/register", authLimiter, register);
+router.post("/login", authLimiter, login);
 
 // This works now!
 router.get("/me", authenticate, getMe);
