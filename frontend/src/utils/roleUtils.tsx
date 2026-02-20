@@ -3,23 +3,13 @@ import AdminOverView from '../components/dashboard/admin/AdminOverview';
 import UserTable from '../components/dashboard/user-management/Table';
 import { CustomerDashboard } from "../components/dashboard/customer/CustomerDashboard";
 
-export type Role = 'Shifty' | 'Cashier' | 'Admin';
+// ✅ 1. Match your Node.js backend lowercase strings
+export type Role = 'shifty' | 'cashier' | 'admin';
 
-// Map backend numeric roles to Role strings
-const NUMERIC_ROLE_MAP: Record<number, Role | undefined> = {
-    0: 'Shifty',
-    1: 'Cashier',
-    2: 'Admin',
-};
-
-export const ROLE_TO_NUMBER: Record<Role, number> = {
-    Shifty: 0,
-    Cashier: 1,
-    Admin: 2,
-};
 export type UserId = string;
 
-export const studentTabs = (shiftyUserId?: string) => [
+// ✅ 2. Cleaned up tab definitions (Removed "Student/Teacher" legacy names)
+export const shiftyTabs = (shiftyUserId?: string) => [
   {
     label: "Dashboard",
     content: <CustomerDashboard shiftyUserId={shiftyUserId} />,
@@ -27,37 +17,35 @@ export const studentTabs = (shiftyUserId?: string) => [
   { label: "Profile", content: <Profile /> },
 ];
 
-export const teacherTabs = [
-    // { label: "My Subjects", content: <TeacherOverview /> },
-    // { label: "Manage Students", content: <ManageStudents /> },
-    { label: "Profile", content: <Profile /> },
+export const cashierTabs = [
+  { label: "Overview", content: <Profile /> }, // Add Cashier specific components here
+  { label: "Profile", content: <Profile /> },
 ];
 
 export const adminTabs = [
-    { label: "Overview", content: <AdminOverView /> },
-    { label: "Users", content: <UserTable /> },
-    // { label: "Courses", content: <Subjects /> },
-    { label: "Profile", content: <Profile /> },
+  { label: "Overview", content: <AdminOverView /> },
+  { label: "Users", content: <UserTable /> },
+  { label: "Profile", content: <Profile /> },
 ];
 
-
+// ✅ 3. Updated switch case to use lowercase roles
 export function getRoleConfig(role: Role, shiftyUserId?: string) {
   switch (role) {
-    case "Admin":
+    case "admin":
       return {
         tabs: adminTabs,
         description: "Manage users, oversee reports, and configure settings.",
       };
 
-    case "Cashier":
+    case "cashier":
       return {
-        tabs: teacherTabs,
-        description: "Manage check-ins, reservations and payments",
+        tabs: cashierTabs,
+        description: "Manage check-ins, reservations and payments.",
       };
 
-      case "Shifty":
+    case "shifty":
       return {
-        tabs: studentTabs(shiftyUserId),
+        tabs: shiftyTabs(shiftyUserId),
         description: "View your check-in history and progress tracking.",
       };
 
@@ -69,24 +57,17 @@ export function getRoleConfig(role: Role, shiftyUserId?: string) {
   }
 }
 
+// ✅ 4. Updated validation logic
 export const isValidRole = (role: string): role is Role => {
-    return ['Student', 'Teacher', 'Admin'].includes(role as Role);
+  return ['shifty', 'cashier', 'admin'].includes(role.toLowerCase() as Role);
 };
 
 export function parseRole(maybeRole: string): Role | null {
-    if (isValidRole(maybeRole)) {
-        return maybeRole; // TypeScript now knows this is a valid Role
-    }
-    return null; // or throw an error, depending on your needs
+  const normalized = maybeRole?.toLowerCase();
+  if (isValidRole(normalized)) {
+    return normalized as Role;
+  }
+  return null;
 }
 
-// Convert a numeric role (from API) to Role type
-export function parseNumericRole(roleNum: unknown): Role | null {
-    // Ensure it's a number
-    if (typeof roleNum !== 'number' || !Number.isInteger(roleNum)) {
-        return null;
-    }
-
-    const role = NUMERIC_ROLE_MAP[roleNum];
-    return role ?? null;
-}
+// ✅ 5. Removed parseNumericRole (Unless your Node backend specifically sends 0, 1, 2)

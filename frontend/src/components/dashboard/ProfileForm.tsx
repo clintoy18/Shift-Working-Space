@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import TextInputField from "../common/TextInputField";
 import Button from "../common/Button";
 import { User, FileText, Lock, Edit3, Save, X, Shield } from "lucide-react";
@@ -8,16 +8,15 @@ import { type IUser } from "@interfaces";
 import { useToast } from "../../context/ToastContext";
 
 const ProfileForm = () => {
-  const { user } = useAuth();
+  const { user, handleFetchUser } = useAuth(); // ✅ Added handleFetchUser to refresh state
   const { success, error, info } = useToast();
 
-  // Initialize form with individual name parts
   const [formData, setFormData] = useState({
-    firstName: user.FirstName || "",
-    middleName: user.MiddleName || "",
-    lastName: user.LastName || "",
-    role: user.Role || "",
-    email: user.Email || "",
+    firstName: user?.firstName || "",
+    middleName: user?.middleName || "",
+    lastName: user?.lastName || "",
+    role: user?.role || "",
+    email: user?.email || "",
     password: "",
     confirmPassword: "",
   });
@@ -25,6 +24,20 @@ const ProfileForm = () => {
   const [isEditing, setIsEditing] = useState<boolean>(false);
   const [loading, setLoading] = useState(false);
   const [passwordError, setPasswordError] = useState<string | null>(null);
+
+  // ✅ Keep form in sync if user context updates elsewhere
+  useEffect(() => {
+    if (user && !isEditing) {
+      setFormData((prev) => ({
+        ...prev,
+        firstName: user.firstName,
+        middleName: user.middleName || "",
+        lastName: user.lastName,
+        role: user.role,
+        email: user.email,
+      }));
+    }
+  }, [user, isEditing]);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -41,11 +54,11 @@ const ProfileForm = () => {
 
   const handleCancel = () => {
     setFormData({
-      firstName: user.FirstName || "",
-      middleName: user.MiddleName || "",
-      lastName: user.LastName || "",
-      role: user.Role || "",
-      email: user.Email || "",
+      firstName: user?.firstName || "",
+      middleName: user?.middleName || "",
+      lastName: user?.lastName || "",
+      role: user?.role || "",
+      email: user?.email || "",
       password: "",
       confirmPassword: ""
     });
@@ -66,17 +79,21 @@ const ProfileForm = () => {
     setLoading(true);
     
     try {
+      if (!user) throw new Error("User session not found.");
+
       const userData: IUser = {
-        UserId: user.UserId,
-        FirstName: formData.firstName,
-        MiddleName: formData.middleName,
-        LastName: formData.lastName,
-        Role: user.Role,
-        Email: user.Email,
-        MembershipType : user.MembershipType, 
-        MembershipStatus : user.MembershipStatus,
-        IsDeleted: user.IsDeleted,
-        CreatedTime: user.CreatedTime
+        id: user.id,
+        firstName: formData.firstName,
+        middleName: formData.middleName,
+        lastName: formData.lastName,
+        fullName: `${formData.firstName} ${formData.lastName}`,
+        role: user.role,
+        email: user.email,
+        membershipType: user.membershipType, 
+        membershipStatus: user.membershipStatus,
+        isDeleted: user.isDeleted,
+        isVerified: user.isVerified,
+        createdAt: user.createdAt
       };
       
       await updateSelf(
@@ -85,7 +102,11 @@ const ProfileForm = () => {
         formData.confirmPassword || undefined
       );
       
+      // ✅ Refresh the global user state so the UI updates everywhere
+      await handleFetchUser();
+      
       setIsEditing(false);
+      setFormData(prev => ({ ...prev, password: "", confirmPassword: "" }));
       success("Profile updated successfully!");
       
     } catch (err) {
@@ -99,34 +120,33 @@ const ProfileForm = () => {
     }
   };
 
-  const fullName = [formData.firstName, formData.middleName, formData.lastName]
+  const displayFullName = [formData.firstName, formData.middleName, formData.lastName]
     .filter(Boolean)
     .join(" ");
 
   return (
-    <div className="max-w-4xl mx-auto">
+    <div className="max-w-4xl mx-auto p-4">
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Left Sidebar - Profile Overview */}
         <div className="lg:col-span-1">
           <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm sticky top-6">
             <div className="text-center">
-              {/* ✅ Orange Gradient Avatar */}
               <div className="w-20 h-20 bg-gradient-to-br from-orange-500 to-orange-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <User className="w-8 h-8 text-white" />
               </div>
-              <h3 className="text-lg font-heading font-semibold text-slate-800 mb-1">{fullName}</h3>
+              <h3 className="text-lg font-heading font-semibold text-slate-800 mb-1">
+                {displayFullName || "Loading..."}
+              </h3>
               
-              {/* ✅ Orange Accent Role Badge */}
               <div className="inline-flex items-center gap-1.5 bg-orange-50 px-3 py-1 rounded-full border border-orange-200">
                 <Shield className="w-3 h-3 text-orange-600" />
-                <span className="text-xs font-medium text-orange-700">{formData.role}</span>
+                <span className="text-xs font-medium text-orange-700 capitalize">{formData.role}</span>
               </div>
               
-              {/* ✅ Orange Security Badge */}
               <div className="mt-6 p-4 bg-orange-50 rounded-lg border border-orange-200">
                 <div className="flex items-center gap-2 text-sm text-orange-700">
                   <Lock className="w-4 h-4" />
-                  <span>Your information is secure and encrypted</span>
+                  <span className="text-left text-xs">Your information is secure and encrypted</span>
                 </div>
               </div>
             </div>
@@ -137,7 +157,6 @@ const ProfileForm = () => {
         <div className="lg:col-span-2">
           <form onSubmit={handleUpdate} className="space-y-6">
             <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-              {/* Form Header */}
               <div className="flex items-center justify-between mb-6">
                 <div>
                   <h3 className="text-lg font-heading font-semibold text-slate-800">Personal Information</h3>
@@ -154,7 +173,6 @@ const ProfileForm = () => {
                 )}
               </div>
 
-              {/* Name Fields */}
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-6">
                 <TextInputField
                   id="firstName"
@@ -170,7 +188,7 @@ const ProfileForm = () => {
                   label="Middle Name"
                   value={formData.middleName}
                   onChange={handleInputChange}
-                  placeholder="Middle name (optional)"
+                  placeholder="Optional"
                   disabled={!isEditing}
                   icon={<User className="w-4 h-4" />}
                 />
@@ -185,27 +203,23 @@ const ProfileForm = () => {
                 />
               </div>
 
-              {/* Role Field */}
               <TextInputField
-                id="role"
-                label="Role"
-                value={formData.role}
+                id="email"
+                label="Email Address"
+                value={formData.email}
                 onChange={handleInputChange}
-                placeholder="Student, Teacher, Admin"
-                disabled={true}
+                disabled={true} // Email should generally be read-only for security
                 icon={<FileText className="w-4 h-4" />}
               />
             </div>
 
-            {/* Password Section */}
             {isEditing && (
-              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm">
-                {/* ✅ Orange Accent Bar */}
+              <div className="bg-white rounded-xl border border-slate-200 p-6 shadow-sm animate-in fade-in slide-in-from-top-4 duration-300">
                 <div className="flex items-center gap-3 mb-6">
-                  <div className="w-2 h-6 bg-orange-500 rounded-full"></div>
+                  <div className="w-1.5 h-6 bg-orange-500 rounded-full"></div>
                   <div>
                     <h3 className="text-lg font-heading font-semibold text-slate-800">Security Settings</h3>
-                    <p className="text-sm text-slate-600 mt-1">Update your password for account security</p>
+                    <p className="text-sm text-slate-600 mt-1">Leave blank to keep your current password</p>
                   </div>
                 </div>
 
@@ -215,11 +229,8 @@ const ProfileForm = () => {
                     label="New Password"
                     type="password"
                     value={formData.password}
-                    onChange={(e) => {
-                      handleInputChange(e);
-                      if (passwordError) setPasswordError(null);
-                    }}
-                    placeholder="Leave blank to keep current"
+                    onChange={handleInputChange}
+                    placeholder="••••••••"
                     icon={<Lock className="w-4 h-4" />}
                   />
                   <TextInputField
@@ -227,20 +238,17 @@ const ProfileForm = () => {
                     label="Confirm Password"
                     type="password"
                     value={formData.confirmPassword}
-                    onChange={(e) => {
-                      handleInputChange(e);
-                      if (passwordError) setPasswordError(null);
-                    }}
-                    placeholder="Confirm new password"
+                    onChange={handleInputChange}
+                    placeholder="••••••••"
                     icon={<Lock className="w-4 h-4" />}
                   />
                 </div>
+                {passwordError && <p className="text-xs text-red-500 mt-2 ml-1">{passwordError}</p>}
               </div>
             )}
 
-            {/* Action Buttons */}
             {isEditing && (
-              <div className="flex flex-col sm:flex-row gap-3 pt-4 border-t border-slate-200">
+              <div className="flex flex-col sm:flex-row gap-3 pt-4">
                 <Button
                   onClick={handleCancel}
                   type="button"
@@ -248,15 +256,13 @@ const ProfileForm = () => {
                   variant="outline"
                   icon={<X className="w-4 h-4" />}
                   className="flex-1 py-3 border-slate-300 text-slate-700 hover:bg-slate-50"
+                  disabled={loading}
                 />
-                {/* ✅ Orange Save Button */}
                 <Button
                   type="submit"
                   label={loading ? "Saving..." : "Save Changes"}
                   icon={loading ? null : <Save className="w-4 h-4" />}
-                  className={`flex-1 py-3 bg-orange-600 text-white hover:bg-orange-700 transition-all shadow-lg hover:shadow-xl ${
-                    loading ? 'disabled:bg-orange-400' : ''
-                  }`}
+                  className="flex-1 py-3 bg-orange-600 text-white hover:bg-orange-700 shadow-lg"
                   disabled={loading}
                 />
               </div>

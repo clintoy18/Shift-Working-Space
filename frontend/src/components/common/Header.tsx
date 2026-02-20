@@ -10,9 +10,8 @@ const Header = () => {
   const [showMobileMenu, setShowMobileMenu] = useState(false);
   const navigate = useNavigate();
 
-  const name = `${user.FirstName} ${user.MiddleName} ${user.LastName}`;
-  const role = user.Role;
-
+  const name = `${user.fullName} `;
+  const role = user.role
   const handleLogoutHandler = () => {
     handleLogout();
     navigate('/');

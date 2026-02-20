@@ -16,36 +16,46 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState<TNullableUser>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
 
+  // ✅ Updated to match Node.js/Mongoose camelCase fields
   const handleFetchUser = async () => {
-    try {
-      const data = await fetchUser();
-      const transformedUser: IUser = {
-        UserId: data.userId,
-        FirstName: data.firstName,
-        LastName: data.lastName,
-        Email: data.email,
-        Role: data.role,
-        MiddleName: data.middleName,
-        CreatedTime: data.createdTime,
-        MembershipType: data.membershipType,
-        MembershipStatus: data.membershipStatus,
-        MembershipStart: data.membershipStart,
-        MembershipEnd: data.membershipEnd,
-        IsDeleted: data.isDeleted,
-      };
-      setUser(transformedUser);
-      return transformedUser;
-    } catch (error) {
-      console.error("Failed to fetch user: ", error);
-      setUser(null);
-      return null;
-    }
-  };
+  try {
+    const data = await fetchUser();
+    
+    const transformedUser: IUser = {
+      id: data.id || data._id,
+      email: data.email,
+      firstName: data.firstName,
+      middleName: data.middleName, 
+      lastName: data.lastName,
+      fullName: data.fullName,     
+      role: data.role,             // 'admin' | 'shifty' | 'cashier'
+      membershipType: data.membershipType || 'None',
+      membershipStatus: data.membershipStatus || 'Inactive',
+      isVerified: data.isVerified,
+      isDeleted: data.isDeleted,
+      createdAt: data.createdAt,  
+      updatedAt: data.updatedAt,
+    };
+
+    setUser(transformedUser);
+    return transformedUser;
+  } catch (error) {
+    console.error("Failed to fetch user:", error);
+    setUser(null);
+    return null;
+  }
+};
 
   const handleLogin = async (credentials: ILoginRequest) => {
     try {
-      await loginUser(credentials);
+      // 1. Login sets the token in session/cookies via AuthService
+      const response = await loginUser(credentials);
+      
+      // 2. We can either use the user data returned directly from login 
+      // or fetch fresh data. Let's fetch to be safe.
       await handleFetchUser();
+      
+      return response; // Return full response so LoginPage can see the role for navigation
     } catch (error) {
       console.error("Failed to login user: ", error);
       throw error;
@@ -54,22 +64,17 @@ export const AuthProvider = ({ children }) => {
 
   const handleRegister = async (credentials: IRegisterRequest) => {
     try {
-      // handles registration and returns generated userId
+      //  returns the full user object, not just a string ID
       const data = await registerStudent(credentials);
-
-      const { userId } = data;
-      return userId;
-
+      
+      // Return the internal ID (Node uses _id)
+      return data.user?.id || data.user?._id;
     } catch (error: any) {
       console.error("Failed to register user:", error);
-      // If backend returned an error message
-      if (error.response?.data?.message) {
-        throw new Error(error.response.data.message);
-      }
-      throw new Error("Registration failed");
+      const message = error.response?.data?.message || "Registration failed";
+      throw new Error(message);
     }
   };
-
 
   const handleLogout = () => {
     logoutUser();
@@ -84,7 +89,7 @@ export const AuthProvider = ({ children }) => {
       } else {
         setUser(null);
       }
-      setIsLoading(false)
+      setIsLoading(false);
     };
 
     checkAuth();
@@ -109,6 +114,5 @@ export const useAuth = (): IAuthContext => {
   if (context === undefined) {
     throw new Error("useAuth must be used within an AuthProvider");
   }
-
   return context;
 };

@@ -1,4 +1,4 @@
-import React from 'react';
+import React from "react";
 import { useNavigate } from "react-router-dom";
 import AuthLayout from "../../pages/AuthLayout";
 import LoginForm from "../../components/auth/LoginForm";
@@ -15,24 +15,26 @@ const LoginPage: React.FC = () => {
   const onLogin = async (credentials: ILoginRequest) => {
     setIsLoading(true);
     try {
+      // credentials is now { email, password }
       await handleLogin(credentials);
-      success('Welcome back to Shift');
+      success("Welcome back to Shift");
       navigate("/dashboard", { replace: true });
-    } catch (err) {
-      error("Login failed. Please check your credentials.");
+    } catch (err: any) {
+      // Pull the specific error from backend if it exists
+      const errorMessage =
+        err.response?.data?.message || "Invalid email or password.";
+      error(errorMessage);
     } finally {
       setIsLoading(false);
     }
   };
 
   return (
-    <AuthLayout 
-      title="Welcome back." 
+    <AuthLayout
+      title="Welcome back."
       subtitle="Enter your credentials to access your workspace."
     >
       <LoginForm onLogin={onLogin} isLoading={isLoading} />
-      
-      
     </AuthLayout>
   );
 };

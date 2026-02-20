@@ -26,7 +26,7 @@ export default function DeleteUserModal({
     setError("");
 
     try {
-      await deleteUserAdmin(user.UserId);
+      await deleteUserAdmin(user.id);
       onSuccess();
       onClose();
     } catch (err: any) {
@@ -38,7 +38,7 @@ export default function DeleteUserModal({
 
   if (!isOpen || !user) return null;
 
-  const fullName = [user.FirstName, user.MiddleName, user.LastName]
+  const fullName = [user.firstName, user.middleName, user.lastName]
     .filter(Boolean)
     .join(" ");
 
@@ -78,7 +78,7 @@ export default function DeleteUserModal({
             <div className="bg-gray-50 p-4 rounded-lg space-y-2">
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">User ID:</span>
-                <span className="font-medium text-gray-900">{user.UserId}</span>
+                <span className="font-medium text-gray-900">{user.id}</span>
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Name:</span>
@@ -86,7 +86,7 @@ export default function DeleteUserModal({
               </div>
               <div className="flex justify-between text-sm">
                 <span className="text-gray-600">Role:</span>
-                <span className="font-medium text-gray-900">{user.Role}</span>
+                <span className="font-medium text-gray-900">{user.role}</span>
               </div>
             </div>
           </div>

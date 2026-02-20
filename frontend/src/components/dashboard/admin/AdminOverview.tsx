@@ -27,7 +27,7 @@ const AdminOverview = () => {
           trend: null
         },
         {
-          title: "Total Members",
+          title: "Total Shifty(s)",
           icon: Users,
           value: "0",
           description: "Loading...",
@@ -49,28 +49,27 @@ const AdminOverview = () => {
       {
         title: "Total Users",
         icon: Users,
-        value:  dashboardStats.userStats.totalUsers.toString(),
-        description: `${dashboardStats.userStats.totalUsers} user(s)`,
+        value: dashboardStats.userStats.total.toString(),
+        description: `${dashboardStats.userStats.total} user(s)`,
         color: "blue",
         trend: "+12%"
       },
       {
-        title: "Total Members",
+        title: "Total Shifty(s)",
         icon: Users,
-        value: dashboardStats.userStats.totalStudents.toString(),
-        description: `${dashboardStats.userStats.totalStudents} otal member(s)`,
+        value: dashboardStats.userStats.shifties.toString(),
+        description: `${dashboardStats.userStats.shifties} total shifty(s)`,
         color: "emerald",
         trend: "+8%"
       },
       {
         title: "Total Cashiers",
         icon: CreditCard,
-        value: dashboardStats.userStats.totalTeachers.toString(),
-        description: `${dashboardStats.userStats.totalTeachers} total cashier(s)`,
+        value: dashboardStats.userStats.cashiers.toString(),
+        description: `${dashboardStats.userStats.cashiers} total cashier(s)`,
         color: "purple",
         trend: "+5%"
       },
-     
     ];
   };
 
@@ -86,24 +85,29 @@ const AdminOverview = () => {
         setDashboardStats(stats)
 
         const parsedUsers: IUser[] = rawData
-          .map((user) => {
-            const role =user.role
-            if (role === null) {
-              console.warn("Unknown role value:", user.Role, "for user", user.UserId);
+          .map((user: any) => {
+            if (!user.role) {
+              console.warn("Unknown role for user:", user.id);
               return null;
             }
 
             return {
-              FirstName: user.firstName,
-              LastName: user.lastName,
-              MiddleName: user.middleName,
-              Email: user.email,
-              UserId: user.userId,
-              CreatedTime: user.createdTime,
-              Role: role
-            }
+              id:         user.id,
+              firstName:  user.firstName,
+              lastName:   user.lastName,
+              middleName: user.middleName,
+              fullName:   user.fullName,
+              email:      user.email,
+              role:       user.role,
+              membershipType:   user.membershipType,
+              membershipStatus: user.membershipStatus,
+              isVerified: user.isVerified,
+              isDeleted: user.isDeleted,
+              createdAt:  user.createdAt,
+            } satisfies IUser;
           })
           .filter((user): user is IUser => user !== null)
+
         setUsers(parsedUsers)
       } catch (error) {
         console.error('Error fetching dashboard data: ', error)
@@ -195,12 +199,11 @@ const AdminOverview = () => {
                 <p className="text-xs sm:text-sm text-slate-500 leading-relaxed sm:leading-normal">{stat.description}</p>
               </div>
 
-              {/* Progress bar for visual interest */}
               <div className="mt-3 sm:mt-4 md:mt-5 w-full bg-slate-100 rounded-full h-1.5">
                 <div 
                   className={`h-1.5 rounded-full ${colors.icon} transition-all duration-1000 ease-out`}
                   style={{ 
-                    width: `${Math.min(100, (parseInt(stat.value) / Math.max(...getStatsData().map(s => parseInt(s.value)))) * 100)}%` 
+                    width: `${Math.min(100, (parseInt(stat.value) / Math.max(...getStatsData().map(s => parseInt(s.value) || 1))) * 100)}%` 
                   }}
                 ></div>
               </div>
@@ -225,4 +228,4 @@ const AdminOverview = () => {
   );
 };
 
-export default AdminOverview; 
+export default AdminOverview;

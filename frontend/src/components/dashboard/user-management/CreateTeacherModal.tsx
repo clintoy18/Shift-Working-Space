@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { X, Book, Copy, Mail } from "lucide-react";
 import { createNewUserAdmin } from "@services";
-import type { IUser } from "@interfaces";
+import type { IUser, ICreateAdminUserRequest } from "@interfaces";
 import { useToast } from "../../../context/ToastContext";
 
 interface CreateUserModalProps {
@@ -17,14 +17,13 @@ export default function CreateUserModal({
 }: CreateUserModalProps) {
   const { success, error: showError } = useToast();
   const [formData, setFormData] = useState({
-    firstName: "",
-    middleName: "",
-    lastName: "",
-    email: "",              // ✅ ADDED EMAIL
-    program: "",
-    password: "",
+    firstName:       "",
+    middleName:      "",
+    lastName:        "",
+    email:           "",
+    password:        "",
     confirmPassword: "",
-    role: "Cashier",
+    role:            "cashier" as IUser["role"],
   });
   const [loading, setLoading] = useState(false);
   const [generatedUserId, setGeneratedUserId] = useState("");
@@ -44,19 +43,11 @@ export default function CreateUserModal({
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
 
-    // ✅ UPDATED VALIDATION - Include email
-    if (
-      !formData.firstName ||
-      !formData.lastName ||
-      !formData.email ||      // ✅ Added email validation
-      !formData.password ||
-      (formData.role === "Shifty" && !formData.program)
-    ) {
+    if (!formData.firstName || !formData.lastName || !formData.email || !formData.password) {
       showError("Please fill in all required fields");
       return;
     }
 
-    // ✅ Email validation
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       showError("Please enter a valid email address");
@@ -68,47 +59,40 @@ export default function CreateUserModal({
       return;
     }
 
+    if (formData.password.length < 6) {
+      showError("Password must be at least 6 characters");
+      return;
+    }
+
     setLoading(true);
     try {
-      const newUser: IUser & { Password: string; ConfirmPassword: string } = {
-        UserId: "",
-        FirstName: formData.firstName,
-        MiddleName: formData.middleName,
-        LastName: formData.lastName,
-        Email: formData.email,                    // ✅ ADDED EMAIL
-        Role: formData.role as IUser["Role"],
-        MembershipType: "Regular",                // ✅ ADDED DEFAULT VALUES
-        MembershipStatus: "Active",               // ✅ ADDED DEFAULT VALUES
-        CreatedTime: new Date().toISOString(),
-        IsDeleted: false,                         // ✅ ADDED DEFAULT VALUE
-        Password: formData.password,
-        ConfirmPassword: formData.confirmPassword,
+      const payload: ICreateAdminUserRequest = {
+        firstName:        formData.firstName,
+        middleName:       formData.middleName || undefined,
+        lastName:         formData.lastName,
+        email:            formData.email,
+        password:         formData.password,
+        role:             formData.role,
+        membershipType:   "None",
+        membershipStatus: "Inactive",
       };
 
-      const response = await createNewUserAdmin(newUser);
+      const response = await createNewUserAdmin(payload);
 
-      let userId = "";
-      if (typeof response === "string") {
-        userId = response;
-      } else if (typeof response === "object" && response !== null) {
-        userId = response.userId || response.UserId || "";
-      }
-
+      const userId = response?.userId ?? "";
       if (!userId) throw new Error("No User ID returned from server");
 
       setGeneratedUserId(userId);
       setShowSuccessModal(true);
 
-      // Reset form
       setFormData({
-        firstName: "",
-        middleName: "",
-        lastName: "",
-        email: "",           // ✅ Reset email
-        program: "",
-        password: "",
+        firstName:       "",
+        middleName:      "",
+        lastName:        "",
+        email:           "",
+        password:        "",
         confirmPassword: "",
-        role: "Cashier",
+        role:            "cashier",
       });
     } catch (err: any) {
       console.error("Create user error:", err);
@@ -129,7 +113,7 @@ export default function CreateUserModal({
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50 p-4">
       {showSuccessModal ? (
-        // SUCCESS MODAL
+        // ─── SUCCESS MODAL ────────────────────────────────────────────────────
         <div className="bg-white rounded-lg max-w-sm w-full max-h-[90vh] flex flex-col">
           <div className="flex items-center justify-between p-6 border-b">
             <h3 className="text-xl font-semibold text-gray-900">User Created Successfully!</h3>
@@ -147,9 +131,7 @@ export default function CreateUserModal({
               <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mb-4">
                 <Book className="w-8 h-8 text-green-600" />
               </div>
-              <p className="text-gray-600 mb-2">
-                The user has been successfully created.
-              </p>
+              <p className="text-gray-600 mb-2">The user has been successfully created.</p>
               <p className="text-sm text-gray-500">
                 Please save the generated User ID for future reference.
               </p>
@@ -184,7 +166,7 @@ export default function CreateUserModal({
           </div>
         </div>
       ) : (
-        // FORM MODAL
+        // ─── FORM MODAL ───────────────────────────────────────────────────────
         <div className="bg-white rounded-lg max-w-md w-full max-h-[90vh] flex flex-col">
           <div className="flex items-center justify-between p-6 border-b">
             <h2 className="text-xl font-semibold text-gray-900">Create New User</h2>
@@ -199,8 +181,8 @@ export default function CreateUserModal({
 
           <form onSubmit={handleSubmit} className="flex-1 overflow-hidden flex flex-col">
             <div className="flex-1 overflow-y-auto p-6 space-y-4">
-              
-              {/* Name fields */}
+
+              {/* Name Fields */}
               <div className="space-y-4">
                 <div>
                   <label className="block text-sm font-medium text-gray-700 mb-2">
@@ -247,7 +229,7 @@ export default function CreateUserModal({
                 </div>
               </div>
 
-              {/* ✅ EMAIL FIELD - ADDED */}
+              {/* Email */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Email <span className="text-red-500">*</span>
@@ -282,8 +264,8 @@ export default function CreateUserModal({
                   required
                   disabled={loading}
                 >
-                  <option value="Cashier">Cashier</option>
-                  <option value="Shifty">Shifty</option>
+                  <option value="cashier">Cashier</option>
+                  <option value="shifty">Shifty</option>
                 </select>
               </div>
 
