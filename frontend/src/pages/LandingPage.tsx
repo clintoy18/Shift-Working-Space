@@ -5,7 +5,7 @@ import SeatMap from '../components/landing/SeatMap';
 import Pricing from '../components/landing/Pricing';
 import Testimonials from '../components/landing/Testimonials';  
 import FAQ from '../components/landing/FAQ';
-import LeadCapture from '../components/landing/LeadCapture';
+// import LeadCapture from '../components/landing/LeadCapture';
 import Footer from '../components/landing/Footer';      
 import LocationMap from '../components/landing/LocationMap';
 
@@ -22,7 +22,7 @@ const Landing = () => {
       <Testimonials />
       {/* <Location /> */}
       <FAQ />
-      <LeadCapture />
+      {/* <LeadCapture /> */}
       <Footer />
     </div>
   );
