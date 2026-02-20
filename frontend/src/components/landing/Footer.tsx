@@ -24,7 +24,7 @@ const Footer = () => {
   const socialLinks = [
     { icon: Twitter, href: "#", label: "Twitter" },
     { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Instagram, href: "#", label: "Instagram" },
+    { icon: Instagram, href: "https://www.instagram.com/shiftworkingspace.co/", label: "Instagram" },
     { icon: Facebook, href: "#", label: "Facebook" },
   ];
 
