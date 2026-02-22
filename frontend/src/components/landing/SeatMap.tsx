@@ -41,12 +41,12 @@ const ShiftFloorPlanFinal = () => {
 
   const isSeatOccupied = (seatCode: string): boolean => {
     const seat = getSeatByCode(seatCode);
-    return seat?.status === 'Occupied' || seat?.status === 'Reserved';
+    return seat?.status === 'occupied' || seat?.status === 'reserved';
   };
 
   const getAvailableCount = (zoneType: string): number => {
     return seats.filter(s => 
-      s.zoneType === zoneType && s.status === 'Available'
+      s.zoneType === zoneType && s.status === 'available'
     ).length;
   };
 
@@ -84,8 +84,8 @@ const ShiftFloorPlanFinal = () => {
 
   // ✅ Calculate statistics
   const totalSeats = seats.length;
-  const availableSeats = seats.filter(s => s.status === 'Available').length;
-  const occupiedSeats = seats.filter(s => s.status === 'Occupied' || s.status === 'Reserved').length;
+  const availableSeats = seats.filter(s => s.status === 'available').length;
+  const occupiedSeats = seats.filter(s => s.status === 'occupied' || s.status === 'reserved').length;
 
   return (
     <section className="py-12 md:py-24 bg-slate-950 font-poppins relative selection:bg-primary/30">
