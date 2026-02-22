@@ -37,10 +37,7 @@ const LoginPage: React.FC = () => {
   };
 
   return (
-    <AuthLayout
-      title="Welcome back."
-      subtitle="Enter your credentials to access your workspace."
-    >
+    <AuthLayout>
       <LoginForm onLogin={onLogin} isLoading={isLoading} />
     </AuthLayout>
   );
