@@ -11,14 +11,7 @@ export const authLimiter = rateLimit({
   message: "Too many authentication attempts, please try again later",
   standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
   legacyHeaders: false, // Disable `X-RateLimit-*` headers
-  skip: (req) => {
-    // Skip rate limiting for health checks or specific IPs if needed
-    return false;
-  },
-  keyGenerator: (req) => {
-    // Use IP address as the key
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
+  skip: () => false,
 });
 
 /**
@@ -31,9 +24,6 @@ export const apiLimiter = rateLimit({
   message: "Too many requests, please try again later",
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
 });
 
 /**
@@ -46,7 +36,4 @@ export const strictLimiter = rateLimit({
   message: "Too many attempts for this operation, please try again later",
   standardHeaders: true,
   legacyHeaders: false,
-  keyGenerator: (req) => {
-    return req.ip || req.socket.remoteAddress || "unknown";
-  },
 });
