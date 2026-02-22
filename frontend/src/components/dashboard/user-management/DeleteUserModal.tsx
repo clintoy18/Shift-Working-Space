@@ -2,6 +2,7 @@ import { useState } from "react";
 import { X, AlertTriangle } from "lucide-react";
 import { deleteUserAdmin } from "@services";
 import type { IUser } from "@interfaces";
+import Loader from "@/components/ui/loader";
 
 interface DeleteUserModalProps {
   isOpen: boolean;
@@ -104,10 +105,15 @@ export default function DeleteUserModal({
             <button
               type="button"
               onClick={handleDelete}
-              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+              className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
               disabled={loading}
             >
-              {loading ? "Deleting..." : "Delete User"}
+              {loading ? (
+                <>
+                  <Loader variant="spinner" size="sm" color="white" />
+                  Deleting...
+                </>
+              ) : "Delete User"}
             </button>
           </div>
         </div>

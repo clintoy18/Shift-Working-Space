@@ -2,8 +2,9 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle, ArrowLeft, ShieldCheck, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
+import Loader from "@/components/ui/loader";
 
 const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
   // ✅ Changed state name to match backend expectation
@@ -85,7 +86,7 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader variant="spinner" size="sm" color="white" />
                 Signing in...
               </span>
             ) : (

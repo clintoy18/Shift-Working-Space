@@ -3,6 +3,7 @@ import { X, Book, Copy, Mail } from "lucide-react";
 import { createNewUserAdmin } from "@services";
 import type { IUser, ICreateAdminUserRequest } from "@interfaces";
 import { useToast } from "../../../context/ToastContext";
+import Loader from "@/components/ui/loader";
 
 interface CreateUserModalProps {
   isOpen: boolean;
@@ -320,10 +321,15 @@ export default function CreateUserModal({
                 </button>
                 <button
                   type="submit"
-                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 font-medium"
+                  className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition-colors disabled:opacity-50 font-medium flex items-center justify-center gap-2"
                   disabled={loading}
                 >
-                  {loading ? "Creating..." : "Create User"}
+                  {loading ? (
+                    <>
+                      <Loader variant="spinner" size="sm" color="white" />
+                      Creating...
+                    </>
+                  ) : "Create User"}
                 </button>
               </div>
             </div>
