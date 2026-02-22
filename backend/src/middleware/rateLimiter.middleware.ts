@@ -12,6 +12,11 @@ export const authLimiter = rateLimit({
   standardHeaders: true, // Return rate limit info in `RateLimit-*` headers
   legacyHeaders: false, // Disable `X-RateLimit-*` headers
   skip: () => false,
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many authentication attempts, please try again later"
+    });
+  }
 });
 
 /**
@@ -24,6 +29,11 @@ export const apiLimiter = rateLimit({
   message: "Too many requests, please try again later",
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many requests, please try again later"
+    });
+  }
 });
 
 /**
@@ -36,4 +46,9 @@ export const strictLimiter = rateLimit({
   message: "Too many attempts for this operation, please try again later",
   standardHeaders: true,
   legacyHeaders: false,
+  handler: (req, res) => {
+    res.status(429).json({
+      message: "Too many attempts for this operation, please try again later"
+    });
+  }
 });
