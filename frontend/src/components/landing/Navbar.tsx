@@ -20,39 +20,66 @@ const Navbar = () => {
     { href: "#faq", label: "FAQ" },
   ];
 
-  // ✅ Smooth scroll function
+  // ✅ Smooth scroll function with navigation support
   const handleNavClick = (e: React.MouseEvent<HTMLAnchorElement>, href: string) => {
     e.preventDefault();
     setIsOpen(false); // Close mobile menu
-    
-    const targetId = href.replace('#', '');
-    const element = document.getElementById(targetId);
-    
-    if (element) {
-      const navbarHeight = 64; // Height of fixed navbar (h-16 = 64px)
-      const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
-      const offsetPosition = elementPosition - navbarHeight;
 
-      window.scrollTo({
-        top: offsetPosition,
-        behavior: 'smooth'
-      });
+    const targetId = href.replace('#', '');
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+
+    // If on auth page, navigate to home first, then scroll
+    if (isAuthPage) {
+      navigate('/', { replace: false });
+      // Use setTimeout to allow navigation to complete before scrolling
+      setTimeout(() => {
+        const element = document.getElementById(targetId);
+        if (element) {
+          const navbarHeight = 64;
+          const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+          const offsetPosition = elementPosition - navbarHeight;
+          window.scrollTo({
+            top: offsetPosition,
+            behavior: 'smooth'
+          });
+        }
+      }, 100);
+    } else {
+      // Already on home page, just scroll
+      const element = document.getElementById(targetId);
+      if (element) {
+        const navbarHeight = 64; // Height of fixed navbar (h-16 = 64px)
+        const elementPosition = element.getBoundingClientRect().top + window.pageYOffset;
+        const offsetPosition = elementPosition - navbarHeight;
+
+        window.scrollTo({
+          top: offsetPosition,
+          behavior: 'smooth'
+        });
+      }
     }
   };
 
-  // ✅ Logo click handler - Smooth scroll to top on landing page
+  // ✅ Logo click handler - Navigate to home or scroll to top
   const handleLogoClick = (e: React.MouseEvent) => {
-    // If we're on the landing page, smooth scroll to top
-    if (location.pathname === '/') {
-      e.preventDefault();
-      setIsOpen(false); // Close mobile menu if open
-      
+    e.preventDefault();
+    setIsOpen(false); // Close mobile menu if open
+
+    const isAuthPage = location.pathname === '/login' || location.pathname === '/register';
+
+    if (isAuthPage) {
+      // Navigate to home from auth pages
+      navigate('/', { replace: false });
+    } else if (location.pathname === '/') {
+      // Smooth scroll to top on landing page
       window.scrollTo({
         top: 0,
         behavior: 'smooth'
       });
+    } else {
+      // Navigate to home from other pages
+      navigate('/', { replace: false });
     }
-    // If we're on another page, let Logo component handle navigation
   };
 
   return (

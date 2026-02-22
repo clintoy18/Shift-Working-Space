@@ -2,13 +2,44 @@ import { Request, Response } from "express";
 import bcrypt from "bcryptjs";
 import User from "../models/User";
 import { generateToken } from "../utils/jwt";
+import { validatePassword, validateEmail, validateNameField } from "../utils/validation";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  // ✅ 1. ADD 'role' HERE
   const { email, password, firstName, lastName, role } = req.body;
 
+  // Validate required fields
   if (!email || !password || !firstName || !lastName) {
     res.status(400).json({ message: "Required fields are missing" });
+    return;
+  }
+
+  // Validate email format
+  const emailValidation = validateEmail(email);
+  if (!emailValidation.valid) {
+    res.status(400).json({ message: emailValidation.error });
+    return;
+  }
+
+  // Validate password strength
+  const passwordValidation = validatePassword(password);
+  if (!passwordValidation.valid) {
+    res.status(400).json({
+      message: "Password does not meet requirements",
+      errors: passwordValidation.errors,
+    });
+    return;
+  }
+
+  // Validate name fields
+  const firstNameValidation = validateNameField(firstName, "First name");
+  if (!firstNameValidation.valid) {
+    res.status(400).json({ message: firstNameValidation.error });
+    return;
+  }
+
+  const lastNameValidation = validateNameField(lastName, "Last name");
+  if (!lastNameValidation.valid) {
+    res.status(400).json({ message: lastNameValidation.error });
     return;
   }
 
@@ -29,18 +60,17 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       password: hashedPassword,
       firstName,
       lastName,
-      role: isFirstUser ? "admin" : (role || "shifty"), 
-      // isVerified: isFirstUser ? true : false commented out as of now
-      isVerified: true
+      role: isFirstUser ? "admin" : (role || "shifty"),
+      isVerified: isFirstUser ? true : false, // First user auto-verified, others need approval
     });
-    
+
     await newUser.save();
-    res.status(201).json({ 
-      message: isFirstUser ? "Admin created" : "User registered",
-      user: newUser 
+    res.status(201).json({
+      message: isFirstUser ? "Admin created" : "User registered successfully",
+      user: newUser,
     });
   } catch (err) {
-    console.error("REGISTRATION ERROR:", err); // ✅ Always log the error for debugging!
+    console.error("REGISTRATION ERROR:", err);
     res.status(500).json({ message: "Registration failed" });
   }
 };
@@ -126,19 +156,54 @@ export const updateMe = async (req: Request, res: Response): Promise<void> => {
       return;
     }
 
-    if (firstName)              user.firstName  = firstName;
-    if (middleName !== undefined) user.middleName = middleName;
-    if (lastName)               user.lastName   = lastName;
+    // Validate name fields if provided
+    if (firstName) {
+      const validation = validateNameField(firstName, "First name");
+      if (!validation.valid) {
+        res.status(400).json({ message: validation.error });
+        return;
+      }
+      user.firstName = firstName;
+    }
 
+    if (middleName !== undefined) {
+      if (middleName && middleName.trim().length > 0) {
+        const validation = validateNameField(middleName, "Middle name");
+        if (!validation.valid) {
+          res.status(400).json({ message: validation.error });
+          return;
+        }
+      }
+      user.middleName = middleName;
+    }
+
+    if (lastName) {
+      const validation = validateNameField(lastName, "Last name");
+      if (!validation.valid) {
+        res.status(400).json({ message: validation.error });
+        return;
+      }
+      user.lastName = lastName;
+    }
+
+    // Validate password if provided
     if (password && password.trim() !== "") {
+      const passwordValidation = validatePassword(password);
+      if (!passwordValidation.valid) {
+        res.status(400).json({
+          message: "Password does not meet requirements",
+          errors: passwordValidation.errors,
+        });
+        return;
+      }
       user.password = await bcrypt.hash(password, 12);
     }
 
     await user.save();
 
     res.status(200).json({
-      message: "Profile updated successfully.",
-      user,   // password auto-stripped by toJSON transform
+      message: "Profile updated successfully",
+      user, // password auto-stripped by toJSON transform
     });
   } catch (err) {
     console.error("Update profile error:", err);

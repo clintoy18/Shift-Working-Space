@@ -20,6 +20,9 @@ const addAuthInterceptor = (instance: AxiosInstance): AxiosInstance => {
       if (error.response?.status === 401) {
         console.log("Unauthorized, redirecting to login...");
       }
+      if (error.response?.status === 429) {
+        console.log("Rate limit exceeded, please try again later");
+      }
       return Promise.reject(error);
     }
   );
