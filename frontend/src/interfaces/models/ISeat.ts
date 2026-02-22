@@ -1,6 +1,6 @@
 // src/interfaces/models/ISeat.ts
 export type SeatType = 'Regular' | 'Premium' | 'VIP';
-export type SeatStatus = 'Available' | 'Reserved' | 'Occupied' | 'Maintenance';
+export type SeatStatus = 'available' | 'reserved' | 'occupied' | 'maintenance';
 
 export interface ISeat {
     seatId: number;
