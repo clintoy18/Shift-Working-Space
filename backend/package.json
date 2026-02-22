@@ -12,7 +12,7 @@
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset --force",
     "db:push": "prisma db push",
-  "seed:seats": "ts-node src/utils/seedSeats.ts"
+    "seed:seats": "ts-node src/utils/seedSeats.ts"
   },
   "keywords": [
     "emergency",
@@ -34,6 +34,7 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
+    "express-rate-limiter": "^1.3.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^7.1.0",
     "mongoose": "^8.19.0",

@@ -27,11 +27,7 @@ const RegisterPage: React.FC = () => {
   }
 };
   return (
-    <AuthLayout 
-      title="Create your workspace." 
-      subtitle="Join the Shift community avail exclusive member discounts and 
-    premium hourly rates. "
-    >
+    <AuthLayout>
       <RegisterForm onRegister={onRegister} isLoading={isLoading} />
     </AuthLayout>
   );

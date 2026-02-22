@@ -67,10 +67,10 @@ export const createUser = async (req: Request, res: Response): Promise<void> => 
 // ─── UPDATE USER ──────────────────────────────────────────────────────────────
 
 export const updateUser = async (req: Request, res: Response): Promise<void> => {
-  const { userId } = req.params;
+  const userId = req.params.userId as string;
   const { firstName, middleName, lastName, role, password, membershipType, membershipStatus } = req.body;
 
-  if (!userId) {
+  if (!userId || typeof userId !== 'string') {
     res.status(400).json({ message: "User ID is required." });
     return;
   }
@@ -119,9 +119,9 @@ export const updateUser = async (req: Request, res: Response): Promise<void> => 
 // ─── DELETE USER (soft delete) ────────────────────────────────────────────────
 
 export const deleteUser = async (req: Request, res: Response): Promise<void> => {
-  const { userId } = req.params;
+  const userId = req.params.userId as string;
 
-  if (!userId) {
+  if (!userId || typeof userId !== 'string') {
     res.status(400).json({ message: "User ID is required." });
     return;
   }
@@ -147,9 +147,9 @@ export const deleteUser = async (req: Request, res: Response): Promise<void> => 
 // ─── GET SINGLE USER ──────────────────────────────────────────────────────────
 
 export const getUser = async (req: Request, res: Response): Promise<void> => {
-  const { userId } = req.params;
+  const userId = req.params.userId as string;
 
-  if (!userId) {
+  if (!userId || typeof userId !== 'string') {
     res.status(400).json({ message: "User ID is required." });
     return;
   }
