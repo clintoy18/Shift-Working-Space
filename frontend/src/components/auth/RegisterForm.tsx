@@ -2,9 +2,10 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle, ArrowLeft, UserCircle, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, UserCircle } from "lucide-react";
 import type { IRegisterRequest } from '@interfaces';
 import { useNavigate } from "react-router-dom";
+import Loader from "@/components/ui/loader";
 
 const RegisterForm = ({
   onRegister,
@@ -167,14 +168,14 @@ const RegisterForm = ({
             </div>
           )}
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={isLoading}
             className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-base shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader variant="spinner" size="sm" color="white" />
                 Creating account...
               </span>
             ) : 'Create account'}

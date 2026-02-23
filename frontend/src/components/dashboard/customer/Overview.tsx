@@ -66,7 +66,7 @@
 //   return (
 //     <div className="grid grid-cols-3 gap-6">
 //       <Card
-//         title="Overall Average"
+//         title="Overall "
 //         icon={ChartBarIncreasing}
 //         percentage={
 //           loading
