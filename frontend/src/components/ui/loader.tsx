@@ -1,5 +1,5 @@
 import React from 'react';
-import { Loader2, Loader, Zap } from 'lucide-react';
+import { Loader2, Zap } from 'lucide-react';
 
 type LoaderVariant = 'spinner' | 'dots' | 'pulse' | 'bars' | 'bounce';
 type LoaderSize = 'sm' | 'md' | 'lg' | 'xl';
