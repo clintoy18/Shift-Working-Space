@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
-import { X,  } from "lucide-react";
+import { X } from "lucide-react";
 import { updateUserAdmin } from "@services";
 import type { IUser } from "@interfaces";
 import { useToast } from "../../../context/ToastContext";
+import Loader from "@/components/ui/loader";
 
 interface UpdateUserModalProps {
   isOpen: boolean;
@@ -261,10 +262,15 @@ export default function UpdateUserModal({
               </button>
               <button
                 type="submit"
-                className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50"
+                className="flex-1 px-4 py-2 bg-gray-900 text-white rounded-lg hover:bg-gray-800 transition-colors disabled:opacity-50 flex items-center justify-center gap-2"
                 disabled={loading}
               >
-                {loading ? "Updating..." : "Update User"}
+                {loading ? (
+                  <>
+                    <Loader variant="spinner" size="sm" color="white" />
+                    Updating...
+                  </>
+                ) : "Update User"}
               </button>
             </div>
           </div>

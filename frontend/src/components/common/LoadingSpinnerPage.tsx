@@ -1,24 +1,22 @@
-// FullPageSpinner.tsx
-import { TailSpin } from "react-loader-spinner";
+import Loader from '@/components/ui/loader';
 
-// Full-screen spinner (blocks the entire viewport)
+/**
+ * Full-screen spinner for page-level loading states
+ * @deprecated Use Loader component directly with fullScreen prop
+ * @example <FullPageSpinner text="Loading..." />
+ */
 export const FullPageSpinner = ({ text = "Loading..." }: { text?: string }) => {
-  return (
-    <div className="fixed inset-0 z-50 flex flex-col items-center justify-center bg-white/50 backdrop-blur-sm">
-      <TailSpin height="50" width="50" color="#4F46E5" ariaLabel="loading" />
-      <p className="mt-4 text-sm font-medium text-gray-600">{text}</p>
-    </div>
-  );
+  return <Loader fullScreen variant="spinner" size="lg" text={text} />;
 };
 
-// Inline/compact spinner (for cards, buttons, tables, etc.)
-export const InlineSpinner = ({ size = 24, color = "#4F46E5" }: { size?: number; color?: string }) => {
-  return (
-    <div className="flex items-center justify-center">
-      <TailSpin height={size} width={size} color={color} ariaLabel="loading" />
-    </div>
-  );
+/**
+ * Inline/compact spinner for cards, buttons, tables, etc.
+ * @deprecated Use Loader component directly
+ * @example <InlineSpinner />
+ */
+export const InlineSpinner = ({ size = 'md', color = 'primary' }: { size?: 'sm' | 'md' | 'lg'; color?: string }) => {
+  return <Loader variant="spinner" size={size} color={color} />;
 };
 
-// Optional: Default export remains the full-page version for backward compatibility
+// Default export remains the full-page version for backward compatibility
 export default FullPageSpinner;
