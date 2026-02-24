@@ -2,7 +2,7 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle, ArrowLeft, UserCircle } from "lucide-react";
+import { AlertCircle, ArrowLeft, UserCircle, Check, X } from "lucide-react";
 import type { IRegisterRequest } from '@interfaces';
 import { useNavigate } from "react-router-dom";
 import Loader from "@/components/ui/loader";
@@ -17,6 +17,7 @@ const RegisterForm = ({
   error?: string
 }) => {
   const navigate = useNavigate();
+
   // ✅ Removed userId - matched to IRegisterRequest
   const [formData, setFormData] = useState<IRegisterRequest>({
     firstName: '',
@@ -28,12 +29,29 @@ const RegisterForm = ({
   });
 
   const [formErrors, setFormErrors] = useState<Partial<IRegisterRequest>>({});
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+
+  // Password requirement checks
+  const passwordRequirements = {
+    minLength: formData.password.length >= 12,
+    hasUpperCase: /[A-Z]/.test(formData.password),
+    hasLowerCase: /[a-z]/.test(formData.password),
+    hasNumber: /[0-9]/.test(formData.password),
+    hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password),
+  };
+
+  const isPasswordValid = Object.values(passwordRequirements).every(req => req);
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
     setFormData(prev => ({ ...prev, [id]: value }));
     if (formErrors[id as keyof IRegisterRequest]) {
       setFormErrors(prev => ({ ...prev, [id]: undefined }));
+    }
+
+    // Show password requirements when user focuses on password field
+    if (id === "password") {
+      setShowPasswordRequirements(value.length > 0);
     }
   };
 
@@ -48,8 +66,8 @@ const RegisterForm = ({
     }
     if (!formData.password) {
       errors.password = 'Required';
-    } else if (formData.password.length < 6) {
-      errors.password = 'Min 6 characters';
+    } else if (!isPasswordValid) {
+      errors.password = 'Password does not meet requirements';
     }
     if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = 'Passwords must match';
@@ -138,24 +156,95 @@ const RegisterForm = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Password</label>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  value={formData.password} 
-                  onChange={handleInputChange} 
-                  placeholder="••••••••" 
-                  className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.password ? "border-destructive" : "border-muted-foreground/20"}`} 
+                <Input
+                  id="password"
+                  type="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  placeholder="••••••••"
+                  className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.password ? "border-destructive" : "border-muted-foreground/20"}`}
                 />
+
+                {/* Password Requirements Display */}
+                {showPasswordRequirements && (
+                  <div className={`mt-3 p-3 rounded-lg border space-y-2 ${
+                    isPasswordValid
+                      ? "bg-green-500/10 border-green-500/30"
+                      : "bg-destructive/10 border-destructive/30"
+                  }`}>
+                    <p className={`text-xs font-semibold ${
+                      isPasswordValid
+                        ? "text-green-600"
+                        : "text-destructive"
+                    }`}>
+                      {isPasswordValid ? "✓ Password meets all requirements" : "Password Requirements:"}
+                    </p>
+                    {!isPasswordValid && (
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.minLength ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.minLength ? "text-green-600" : "text-muted-foreground"}>
+                            At least 12 characters
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.hasUpperCase ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.hasUpperCase ? "text-green-600" : "text-muted-foreground"}>
+                            One uppercase letter (A-Z)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.hasLowerCase ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.hasLowerCase ? "text-green-600" : "text-muted-foreground"}>
+                            One lowercase letter (a-z)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.hasNumber ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.hasNumber ? "text-green-600" : "text-muted-foreground"}>
+                            One number (0-9)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.hasSpecialChar ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.hasSpecialChar ? "text-green-600" : "text-muted-foreground"}>
+                            One special character (!@#$%^&*)
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Confirm Password</label>
-                <Input 
-                  id="confirmPassword" 
-                  type="password" 
-                  value={formData.confirmPassword} 
-                  onChange={handleInputChange} 
-                  placeholder="••••••••" 
-                  className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.confirmPassword ? "border-destructive" : "border-muted-foreground/20"}`} 
+                <Input
+                  id="confirmPassword"
+                  type="password"
+                  value={formData.confirmPassword}
+                  onChange={handleInputChange}
+                  placeholder="••••••••"
+                  className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.confirmPassword ? "border-destructive" : "border-muted-foreground/20"}`}
                 />
               </div>
             </div>
