@@ -1,27 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { MapPin, Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-// import { fetchStats } from "@services/StatsService";
-// import { useEffect, useState } from "react"; // ✅ IMPORT HOOKS
+import { useEffect, useState } from "react";
+import { getActiveMembersCount } from "@services/AdminService";
 
 const Hero = () => {
   const navigate = useNavigate();
 
-  // // ✅ STATE FOR STATS
-  // const [stats, setStats] = useState({
-  //   totalSeats: 0,
-  //   totalMembers: 0,
-  // });
+  // ✅ STATE FOR STATS
+  const [activeMembersCount, setActiveMembersCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  // // ✅ FETCH STATS ON LOAD
-  // useEffect(() => {
-  //   const loadStats = async () => {
-  //     const data = await fetchStats();
-  //     setStats(data);
-  //   };
+  // ✅ FETCH ACTIVE MEMBERS COUNT ON LOAD
+  useEffect(() => {
+    const loadActiveMembersCount = async () => {
+      try {
+        setLoading(true);
+        const count = await getActiveMembersCount();
+        setActiveMembersCount(count);
+      } catch (error) {
+        console.error("Failed to load active members count:", error);
+        setActiveMembersCount(0);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   loadStats();
-  // }, []);
+    loadActiveMembersCount();
+  }, []);
 
   return (
     <section
@@ -103,13 +109,10 @@ const Hero = () => {
               </div>
               <div className="text-left">
                 <p className="text-3xl font-black text-white">
-                  {/* {stats.totalMembers
-                    ? stats.totalMembers.toLocaleString()
-                    : "500+"} */}
-                  20+
+                  {loading ? "..." : activeMembersCount > 0 ? `${activeMembersCount}+` : "You!"}
                 </p>
                 <p className="text-slate-300 text-sm font-medium">
-                  Active Members
+                  {loading ? "Loading..." : activeMembersCount > 0 ? "Active Members" : "Be our first member!"}
                 </p>
               </div>
             </div>
