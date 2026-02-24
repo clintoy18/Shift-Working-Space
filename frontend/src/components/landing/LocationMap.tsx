@@ -1,17 +1,17 @@
-import { MapPin, Navigation, Phone, Clock, ExternalLink } from "lucide-react";
+import { MapPin, Phone, Clock } from "lucide-react";
 
 const LocationMap = () => {
-  // ✅ Shift Workspace Location (Sample: Mandaue, Cebu)
+  // ✅ Shift Workspace Location (Mandaue, Cebu)
   const location = {
     name: "Shift Workspace",
-    address: "J Centre Mall, A.S. Fortuna St, Mandaue City, 6014 Cebu",
+    address: "H. Abellana St. Canduman, Mandaue City, Cebu",
     coordinates: {
       lat: 10.3334,
       lng: 123.9488
     },
     phone: "+63 32 123 4567",
     hours: "Mon - Sat: 8:00 AM - 10:00 PM",
-    googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=10.3334,123.9488"
+    googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=H.+Abellana+St.+Canduman,+Mandaue+City,+Cebu"
   };
 
   const handleViewOnMaps = () => {
@@ -24,15 +24,10 @@ const LocationMap = () => {
         
         {/* ✅ SECTION HEADER */}
         <div className="text-center mb-12 sm:mb-16">
-          <div className="inline-flex items-center gap-2 px-4 py-2 bg-orange-100 rounded-full mb-4">
-            <MapPin className="w-4 h-4 text-orange-600" />
-            <span className="text-sm font-bold text-orange-700 uppercase tracking-wider">Find Us</span>
-          </div>
-          
           <h2 className="text-3xl sm:text-4xl lg:text-5xl font-black text-slate-900 mb-4 tracking-tight">
             Visit Our <span className="text-orange-600">Workspace</span>
           </h2>
-          
+
           <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
             Located in the heart of Mandaue City, we're easy to find and accessible to all.
           </p>
@@ -60,18 +55,6 @@ const LocationMap = () => {
               
               {/* Overlay gradient */}
               <div className="absolute inset-0 bg-gradient-to-t from-slate-900/20 to-transparent pointer-events-none" />
-              
-              {/* View on Maps Button - Floating */}
-              <div className="absolute bottom-4 left-4 right-4">
-                <button
-                  onClick={handleViewOnMaps}
-                  className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-white/95 backdrop-blur-sm text-slate-900 font-bold rounded-xl shadow-lg hover:bg-white hover:scale-105 transition-all duration-300 group"
-                >
-                  <Navigation className="w-5 h-5 text-orange-600 group-hover:rotate-45 transition-transform" />
-                  <span>View on Google Maps</span>
-                  <ExternalLink className="w-4 h-4 text-slate-400" />
-                </button>
-              </div>
             </div>
           </div>
 
