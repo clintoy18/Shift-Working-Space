@@ -2,18 +2,18 @@ import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
 
 const Footer = () => {
   const footerLinks = {
-    Product: [
+    Services: [
       { label: "Features", href: "#features" },
       { label: "Pricing", href: "#pricing" },
       { label: "Locations", href: "#location" },
       { label: "FAQ", href: "#faq" },
     ],
-    Company: [
-      { label: "About Us", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Press", href: "#" },
-    ],
+    // Company: [
+    //   { label: "About Us", href: "#" },
+    //   { label: "Careers", href: "#" },
+    //   { label: "Blog", href: "#" },
+    //   { label: "Press", href: "#" },
+    // ],
     Legal: [
       { label: "Privacy Policy", href: "#" },
       { label: "Terms of Service", href: "#" },
@@ -22,10 +22,10 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
+    // { icon: Twitter, href: "#", label: "Twitter" },
+    // { icon: Linkedin, href: "#", label: "LinkedIn" },
     { icon: Instagram, href: "https://www.instagram.com/shiftworkingspace.co/", label: "Instagram" },
-    { icon: Facebook, href: "#", label: "Facebook" },
+    { icon: Facebook, href: "https://www.facebook.com/share/1AqQhwUMHo/?mibextid=wwXIfr", label: "Facebook" },
   ];
 
   return (
