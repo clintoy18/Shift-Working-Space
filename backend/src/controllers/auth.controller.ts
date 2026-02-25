@@ -61,12 +61,21 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       firstName,
       lastName,
       role: isFirstUser ? "admin" : (role || "shifty"),
-      isVerified: isFirstUser ? true : false, // First user auto-verified, others need approval
+      isVerified: true, // All users auto-verified on registration
     });
 
     await newUser.save();
+
+    // Generate token for immediate login
+    const token = generateToken({
+      id: (newUser._id as any).toString(),
+      email: newUser.email,
+      role: newUser.role,
+    });
+
     res.status(201).json({
-      message: isFirstUser ? "Admin created" : "User registered successfully",
+      message: "User registered successfully",
+      token,
       user: newUser,
     });
   } catch (err) {

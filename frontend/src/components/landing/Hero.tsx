@@ -2,31 +2,31 @@ import { Button } from "@/components/ui/button";
 import { MapPin, Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import { getActiveMembersCount } from "@services/AdminService";
+import { fetchShiftyCount } from "@/services/PublicService";
 
 const Hero = () => {
   const navigate = useNavigate();
 
   // ✅ STATE FOR STATS
-  const [activeMembersCount, setActiveMembersCount] = useState(0);
+  const [shiftyCount, setShiftyCount] = useState(0);
   const [loading, setLoading] = useState(true);
 
-  // ✅ FETCH ACTIVE MEMBERS COUNT ON LOAD
+  // ✅ FETCH SHIFTY COUNT ON LOAD
   useEffect(() => {
-    const loadActiveMembersCount = async () => {
+    const loadShiftyCount = async () => {
       try {
         setLoading(true);
-        const count = await getActiveMembersCount();
-        setActiveMembersCount(count);
+        const count = await fetchShiftyCount();
+        setShiftyCount(count);
       } catch (error) {
-        console.error("Failed to load active members count:", error);
-        setActiveMembersCount(0);
+        console.error("Failed to load shifty count:", error);
+        setShiftyCount(0);
       } finally {
         setLoading(false);
       }
     };
 
-    loadActiveMembersCount();
+    loadShiftyCount();
   }, []);
 
   return (
@@ -109,10 +109,10 @@ const Hero = () => {
               </div>
               <div className="text-left">
                 <p className="text-3xl font-black text-white">
-                  {loading ? "..." : activeMembersCount > 0 ? `${activeMembersCount}+` : "You!"}
+                  {loading ? "..." : shiftyCount > 0 ? `${shiftyCount}+` : "You!"}
                 </p>
                 <p className="text-slate-300 text-sm font-medium">
-                  {loading ? "Loading..." : activeMembersCount > 0 ? "Active Members" : "Be our first member!"}
+                  {loading ? "Loading..." : shiftyCount > 0 ? "Members Joined" : "Be our first member!"}
                 </p>
               </div>
             </div>
@@ -122,7 +122,7 @@ const Hero = () => {
                 <MapPin className="w-7 h-7 text-white" />
               </div>
               <div className="text-left">
-                <p className="text-lg font-black text-white">Mandaue City</p>
+                <p className="text-lg font-black text-white">Canduman, Mandaue City</p>
                 <p className="text-slate-300 text-sm font-medium">
                   Cebu, Philippines
                 </p>
