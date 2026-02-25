@@ -11,7 +11,7 @@ const Header = () => {
   const navigate = useNavigate();
 
   const name = `${user.fullName} `;
-  const role = user.role
+  const role = user.role ? user.role.charAt(0).toUpperCase() + user.role.slice(1) : '';
   const handleLogoutHandler = () => {
     handleLogout();
     navigate('/');
