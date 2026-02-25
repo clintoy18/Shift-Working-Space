@@ -58,23 +58,6 @@ export const fetchStats = async() => {
   return response.data
 }
 
-/**
- * Fetch count of active members with "shifty" role
- * Used for Hero section statistics
- */
-export const getActiveMembersCount = async () => {
-  try {
-    const users = await fetchAllUsersAdmin();
-    // Filter users with "shifty" role (case-insensitive)
-    const shiftyMembers = users.filter(
-      (user: IUser) => user.role?.toLowerCase() === "shifty"
-    );
-    return shiftyMembers.length;
-  } catch (error) {
-    console.error("Error fetching active members count:", error);
-    return 0;
-  }
-}
 export const assignTeacherToCourse = async (courseId: number, teacherId: string) => {
   const response = await admin.put(`/course/assign-teacher/${courseId}`, null, {
     params: { teacherId }
