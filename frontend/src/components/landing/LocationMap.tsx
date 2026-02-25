@@ -4,14 +4,14 @@ const LocationMap = () => {
   // ✅ Shift Workspace Location (Mandaue, Cebu)
   const location = {
     name: "Shift Workspace",
-    address: "H. Abellana St. Canduman, Mandaue City, Cebu",
+    address: "2nd Floor Tec Fuel Bldg, H. Abellana St. Canduman, Mandaue City 6014, Ph",
     coordinates: {
       lat: 10.3334,
       lng: 123.9488
     },
-    phone: "+63 32 123 4567",
+    phone: "+(0927) 997 7497",
     hours: "Mon - Sat: 8:00 AM - 10:00 PM",
-    googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=H.+Abellana+St.+Canduman,+Mandaue+City,+Cebu"
+    googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=2nd+Floor+Tec+Fuel+Bldg,+H.+Abellana+St.+Canduman,+Mandaue+City,+Cebu"
   };
 
   const handleViewOnMaps = () => {

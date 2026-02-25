@@ -259,14 +259,18 @@ const Pricing = () => {
                       <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 items-center bg-muted/40 p-8 md:p-12 rounded-[2rem] border border-border">
                         <div className="lg:col-span-4 space-y-6">
                           <h3 className="text-3xl font-black uppercase leading-none">Early Bird <br /><span className="text-primary">Membership</span></h3>
-                          <p className="text-muted-foreground text-sm">Pay in advance to unlock exclusive weekly and monthly rates at our prime locations.</p>
+                          <p className="text-muted-foreground text-sm">Be a member now and claim these exclusive weekly and monthly rates when you walk in.</p>
                           <div className="flex flex-wrap gap-2">
                             <Badge className="bg-primary/10 text-primary border-none">Weekly</Badge>
                             <Badge className="bg-primary/10 text-primary border-none">Monthly</Badge>
                             <Badge className="bg-primary/10 text-primary border-none italic tracking-tighter">Snacks for Sale</Badge>
                           </div>
+                          <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
+                            <p className="text-xs font-bold text-yellow-900 uppercase tracking-tight">⏰ Limited Time Offer</p>
+                            <p className="text-xs text-yellow-800 mt-1">Discounted prices apply only to members from March 1 to March 30</p>
+                          </div>
                         </div>
-          
+
                         <div className="lg:col-span-8 grid grid-cols-1 md:grid-cols-2 gap-6">
                           <div className="bg-background p-6 rounded-2xl border border-border relative overflow-hidden group">
                              <div className="absolute top-0 right-0 p-3 opacity-5 group-hover:opacity-10 transition-opacity">
@@ -276,13 +280,26 @@ const Pricing = () => {
                              <div className="space-y-4">
                                <div className="flex justify-between items-center">
                                  <span className="text-sm font-medium">Regular Seating</span>
-                                 <span className="text-xl font-bold">₱1,799</span>
+                                 <div className="flex flex-col items-end gap-1">
+                                   <span className="text-xs line-through text-muted-foreground">₱2,828</span>
+                                   <span className="text-xl font-bold">₱1,799</span>
+                                 </div>
                                </div>
                                <div className="flex justify-between items-center">
                                  <span className="text-sm font-medium">Cubicle Seating</span>
-                                 <span className="text-xl font-bold text-primary">₱2,499</span>
+                                 <div className="flex flex-col items-end gap-1">
+                                   <span className="text-xs line-through text-muted-foreground">₱3,938</span>
+                                   <span className="text-xl font-bold text-primary">₱2,499</span>
+                                 </div>
                                </div>
-                               <p className="text-[10px] text-muted-foreground mt-4 italic font-medium leading-none">*Cubicle subject to availability</p>
+                               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+                                 <p className="text-[10px] font-bold text-blue-900 uppercase tracking-tight mb-2">Meeting Room Access</p>
+                                 <ul className="text-[10px] text-blue-800 space-y-1">
+                                   <li>• 2 hrs Conference Room</li>
+                                   <li>• 1 hr Huddle Room</li>
+                                 </ul>
+                               </div>
+                               <p className="text-[10px] text-muted-foreground mt-2 italic font-medium leading-none">*Cubicle subject to availability</p>
                              </div>
                           </div>
 
@@ -294,13 +311,26 @@ const Pricing = () => {
                              <div className="space-y-4">
                                <div className="flex justify-between items-center">
                                  <span className="text-sm font-medium">Regular Seating</span>
-                                 <span className="text-xl font-bold">₱5,999</span>
+                                 <div className="flex flex-col items-end gap-1">
+                                   <span className="text-xs line-through text-muted-foreground">₱6,478</span>
+                                   <span className="text-xl font-bold">₱5,999</span>
+                                 </div>
                                </div>
                                <div className="flex justify-between items-center">
                                  <span className="text-sm font-medium">Cubicle Seating</span>
-                                 <span className="text-xl font-bold text-primary">₱7,999</span>
+                                 <div className="flex flex-col items-end gap-1">
+                                   <span className="text-xs line-through text-muted-foreground">₱8,999</span>
+                                   <span className="text-xl font-bold text-primary">₱7,999</span>
+                                 </div>
                                </div>
-                               <p className="text-[10px] text-muted-foreground mt-4 italic font-medium leading-none">*Cubicle subject to availability</p>
+                               <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 mt-4">
+                                 <p className="text-[10px] font-bold text-blue-900 uppercase tracking-tight mb-2">Meeting Room Access</p>
+                                 <ul className="text-[10px] text-blue-800 space-y-1">
+                                   <li>• 4 hrs Conference Room</li>
+                                   <li>• 1 hr Huddle Room</li>
+                                 </ul>
+                               </div>
+                               <p className="text-[10px] text-muted-foreground mt-2 italic font-medium leading-none">*Cubicle subject to availability</p>
                              </div>
                           </div>
                         </div>

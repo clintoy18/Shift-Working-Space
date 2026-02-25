@@ -1,5 +1,6 @@
 import { auth } from "../lib/api";
 import type { ILoginRequest, IRegisterRequest, IUser } from "@interfaces";
+import { fetchAllUsersAdmin } from "./AdminService";
 
 export const loginUser = async (credentials: ILoginRequest) => {
     const response = await auth.post('/login', credentials);
@@ -40,4 +41,18 @@ export const updateSelf = async(userData: IUser, password: string, confirmPasswo
   }
   const response = await auth.put('/me/update/', updatedData)
   return response.data
+}
+
+export const getActiveMembersCount = async () => {
+  try {
+    const users = await fetchAllUsersAdmin();
+    // Filter users with "shifty" role (case-insensitive)
+    const shiftyMembers = users.filter(
+      (user: IUser) => user.role?.toLowerCase() === "shifty"
+    );
+    return shiftyMembers.length;
+  } catch (error) {
+    console.error("Error fetching active members count:", error);
+    return 0;
+  }
 }
