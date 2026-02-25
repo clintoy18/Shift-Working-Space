@@ -23,39 +23,24 @@ const getCachedData = async (key: string, fetchFn: () => Promise<any>) => {
 };
 
 /**
- * @desc Get all active seats with pagination
- * @route GET /api/seat?page=1&limit=20
+ * @desc Get all active seats with caching
+ * @route GET /api/seat
+ *
+ * Caching strategy:
+ * - Data cached for 5 minutes
+ * - Reduces database load
+ * - Prevents real-time scraping
+ * - Users see fresh data every 5 minutes
  */
 export const getAllSeats = async (req: Request, res: Response) => {
   try {
-    const page = Math.max(1, parseInt(req.query.page as string) || 1);
-    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 20)); // Max 50 per page
-    const skip = (page - 1) * limit;
+    const cacheKey = 'all_seats';
 
-    const cacheKey = `seats_page_${page}_limit_${limit}`;
-
-    const result = await getCachedData(cacheKey, async () => {
-      const [seats, total] = await Promise.all([
-        Seat.find({ isDeleted: false, isActive: true })
-          .skip(skip)
-          .limit(limit)
-          .lean(),
-        Seat.countDocuments({ isDeleted: false, isActive: true })
-      ]);
-
-      return {
-        seats,
-        pagination: {
-          page,
-          limit,
-          total,
-          pages: Math.ceil(total / limit),
-          hasMore: page < Math.ceil(total / limit)
-        }
-      };
+    const seats = await getCachedData(cacheKey, async () => {
+      return await Seat.find({ isDeleted: false, isActive: true }).lean();
     });
 
-    res.status(200).json(result);
+    res.status(200).json(seats);
   } catch (error) {
     res.status(500).json({ message: "Error fetching seats", error });
   }
