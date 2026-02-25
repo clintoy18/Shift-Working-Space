@@ -2,31 +2,22 @@ import { Request, Response, NextFunction } from "express";
 
 /**
  * Bot Detection Middleware
- * Blocks obvious bots and scrapers from accessing public endpoints
+ * Detects and blocks obvious bots while allowing legitimate users
  */
 
 const BOT_PATTERNS = [
-  'bot',
-  'crawler',
-  'scraper',
-  'spider',
   'curl',
   'wget',
   'python',
-  'java',
-  'perl',
-  'ruby',
-  'php',
-  'node',
-  'axios',
-  'requests',
   'scrapy',
   'selenium',
   'puppeteer',
   'headless',
   'phantom',
-  'watir',
   'mechanize',
+  'requests',
+  'httpx',
+  'aiohttp',
 ];
 
 const ALLOWED_BROWSERS = [
@@ -36,31 +27,36 @@ const ALLOWED_BROWSERS = [
   'firefox',
   'edge',
   'opera',
+  'brave',
 ];
 
 /**
  * Check if user agent looks like a bot
+ * Only blocks OBVIOUS bots (curl, wget, python, etc.)
+ * Does NOT block legitimate tools like Postman, Insomnia, etc.
  */
-const isBot = (userAgent: string): boolean => {
+const isObviousBot = (userAgent: string): boolean => {
   const ua = userAgent.toLowerCase();
 
-  // Check for bot patterns
+  // Check for obvious bot patterns
   const hasBot = BOT_PATTERNS.some(pattern => ua.includes(pattern));
 
   // Check if it's a known browser
   const isBrowser = ALLOWED_BROWSERS.some(browser => ua.includes(browser));
 
-  // If it has bot pattern and is NOT a browser, it's likely a bot
+  // Only block if it has bot pattern AND is NOT a browser
+  // This allows Postman, Insomnia, and other legitimate tools
   return hasBot && !isBrowser;
 };
 
 /**
- * Middleware to detect and block bots
+ * Middleware to detect and block obvious bots
+ * Allows legitimate users and tools
  */
 export const detectBot = (req: Request, res: Response, next: NextFunction) => {
   const userAgent = req.get('user-agent') || '';
 
-  if (isBot(userAgent)) {
+  if (isObviousBot(userAgent)) {
     console.warn(`🚫 Bot detected: ${req.ip} - ${userAgent}`);
     return res.status(403).json({
       message: "Access denied",
@@ -72,7 +68,8 @@ export const detectBot = (req: Request, res: Response, next: NextFunction) => {
 };
 
 /**
- * Track request patterns to detect scraping behavior
+ * Track request patterns to detect AGGRESSIVE scraping behavior
+ * Only blocks extremely suspicious patterns, not normal user behavior
  */
 const requestPatterns = new Map<string, { timestamps: number[]; endpoints: string[] }>();
 
@@ -94,24 +91,29 @@ export const detectScrapingPattern = (req: Request, res: Response, next: NextFun
   pattern.timestamps.push(now);
   pattern.endpoints.push(endpoint);
 
-  // Scraping detection heuristics
+  // Scraping detection heuristics - ONLY block EXTREME cases
   const requestsPerSecond = pattern.timestamps.length;
   const uniqueEndpoints = new Set(pattern.endpoints).size;
 
-  // If making 10+ requests per second = likely bot
-  if (requestsPerSecond > 10) {
-    console.warn(`⚠️ High request rate from ${ip}: ${requestsPerSecond} req/sec`);
+  // Only block if making 50+ requests per second (extremely aggressive)
+  // Normal users: 1-5 requests per minute
+  // Legitimate tools: 10-20 requests per minute
+  // Aggressive scrapers: 100+ requests per minute
+  if (requestsPerSecond > 50) {
+    console.warn(`🚨 EXTREME request rate from ${ip}: ${requestsPerSecond} req/sec`);
     return res.status(429).json({
       message: "Too many requests, please slow down",
       code: "RATE_LIMIT_EXCEEDED"
     });
   }
 
-  // If accessing 5+ different endpoints in 10 seconds = likely scraper
-  if (uniqueEndpoints >= 5 && pattern.timestamps.length >= 5) {
+  // Only block if accessing 20+ different endpoints in 5 seconds
+  // Normal user: 1-2 endpoints per session
+  // Aggressive scraper: 50+ endpoints in seconds
+  if (uniqueEndpoints >= 20 && pattern.timestamps.length >= 20) {
     const timeSpan = pattern.timestamps[pattern.timestamps.length - 1] - pattern.timestamps[0];
-    if (timeSpan < 10000) {
-      console.warn(`⚠️ Scraping pattern detected from ${ip}: ${uniqueEndpoints} endpoints in ${timeSpan}ms`);
+    if (timeSpan < 5000) {
+      console.warn(`🚨 EXTREME scraping pattern from ${ip}: ${uniqueEndpoints} endpoints in ${timeSpan}ms`);
       return res.status(429).json({
         message: "Suspicious activity detected",
         code: "SCRAPING_DETECTED"
@@ -128,9 +130,6 @@ export const detectScrapingPattern = (req: Request, res: Response, next: NextFun
 export const honeypot = (req: Request, res: Response) => {
   const ip = req.ip || 'unknown';
   console.error(`🚨 HONEYPOT TRIGGERED: Scraper accessed fake endpoint from ${ip}`);
-
-  // Block this IP for 24 hours
-  // In production, store in Redis
 
   res.status(403).json({
     message: "Access denied",
