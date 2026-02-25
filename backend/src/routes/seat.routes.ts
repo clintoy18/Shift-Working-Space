@@ -7,12 +7,15 @@ import {
   getAvailability
 } from '../controllers/seat.controller';
 import { authenticate, checkRole } from "../middleware/auth.middleware";
-import { apiLimiter } from "../middleware/rateLimiter.middleware";
+import { seatLimiter } from "../middleware/rateLimiter.middleware";
+import { detectBot, detectScrapingPattern } from "../middleware/botDetection.middleware";
 
 const router = express.Router();
 
-// Apply rate limiting to all seat endpoints
-router.use(apiLimiter);
+// Apply strict rate limiting and bot detection to all public seat endpoints
+router.use(seatLimiter);           // 5 requests per 15 min
+router.use(detectBot);             // Block obvious bots
+router.use(detectScrapingPattern);  // Detect scraping patterns
 
 router.get('/', getAllSeats);
 router.get('/availability', getAvailability);

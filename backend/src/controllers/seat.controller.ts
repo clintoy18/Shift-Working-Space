@@ -2,14 +2,60 @@ import { Request, Response } from 'express';
 import Seat from '../models/Seat';
 import { escapeRegex } from '../utils/validation';
 
+// Simple in-memory cache (use Redis in production)
+const seatCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 /**
- * @desc Get all active seats with current status
- * @route GET /api/seat
+ * Get cached data or fetch from DB
+ */
+const getCachedData = async (key: string, fetchFn: () => Promise<any>) => {
+  const cached = seatCache.get(key);
+  const now = Date.now();
+
+  if (cached && now - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+
+  const data = await fetchFn();
+  seatCache.set(key, { data, timestamp: now });
+  return data;
+};
+
+/**
+ * @desc Get all active seats with pagination
+ * @route GET /api/seat?page=1&limit=20
  */
 export const getAllSeats = async (req: Request, res: Response) => {
   try {
-    const seats = await Seat.find({ isDeleted: false, isActive: true });
-    res.status(200).json(seats);
+    const page = Math.max(1, parseInt(req.query.page as string) || 1);
+    const limit = Math.min(50, Math.max(1, parseInt(req.query.limit as string) || 20)); // Max 50 per page
+    const skip = (page - 1) * limit;
+
+    const cacheKey = `seats_page_${page}_limit_${limit}`;
+
+    const result = await getCachedData(cacheKey, async () => {
+      const [seats, total] = await Promise.all([
+        Seat.find({ isDeleted: false, isActive: true })
+          .skip(skip)
+          .limit(limit)
+          .lean(),
+        Seat.countDocuments({ isDeleted: false, isActive: true })
+      ]);
+
+      return {
+        seats,
+        pagination: {
+          page,
+          limit,
+          total,
+          pages: Math.ceil(total / limit),
+          hasMore: page < Math.ceil(total / limit)
+        }
+      };
+    });
+
+    res.status(200).json(result);
   } catch (error) {
     res.status(500).json({ message: "Error fetching seats", error });
   }
