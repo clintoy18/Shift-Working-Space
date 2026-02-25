@@ -8,11 +8,14 @@ import {
 } from '../controllers/seat.controller';
 import { authenticate, checkRole } from "../middleware/auth.middleware";
 import { apiLimiter } from "../middleware/rateLimiter.middleware";
+import { detectBot, detectScrapingPattern } from "../middleware/botDetection.middleware";
 
 const router = express.Router();
 
-// Apply rate limiting to all seat endpoints
-router.use(apiLimiter);
+// Apply bot detection and scraping pattern detection (NO RATE LIMITING on seat endpoints)
+// This allows users to see seats freely while still catching bots
+router.use(detectBot);             // Block obvious bots (curl, wget, python, etc.)
+router.use(detectScrapingPattern);  // Detect aggressive scraping patterns
 
 router.get('/', getAllSeats);
 router.get('/availability', getAvailability);

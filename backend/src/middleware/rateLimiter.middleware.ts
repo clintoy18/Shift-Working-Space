@@ -66,6 +66,18 @@ export const apiLimiter = createLimiter({
 });
 
 /**
+ * STRICT rate limiter for public seat endpoints
+ * Prevents scraping of seat data
+ * 5 requests per 15 minutes per IP
+ */
+export const seatLimiter = createLimiter({
+  windowMs: parseInt(process.env.SEAT_RATE_LIMIT_WINDOW_MS || "900000"),
+  max: parseInt(process.env.SEAT_RATE_LIMIT_MAX || "5"),
+  message: "Too many seat requests, please try again later",
+  keyPrefix: "rl:seat:",
+});
+
+/**
  * Strict rate limiter for sensitive operations (password reset, etc.)
  * 3 attempts per 1 hour per IP
  */
