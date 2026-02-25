@@ -7,6 +7,7 @@ import ExportPDFDropdown from "../common/ExportPDFDropdown";
 const MainContent = () => {
   const { user } = useAuth();
   const role: Role = user.role || "shifty";
+  const capitalizedRole = role.charAt(0).toUpperCase() + role.slice(1);
 
   const { tabs, description } = getRoleConfig(role);
   return (
@@ -15,7 +16,7 @@ const MainContent = () => {
         <div className="flex justify-between items-start">
           <div>
             <h2 className="font-heading text-2xl font-semibold text-gray-800">
-              {role} Dashboard
+              {capitalizedRole} Dashboard
             </h2>
             <p className="font-sans text-sm text-gray-600 mt-1">
               {description}
