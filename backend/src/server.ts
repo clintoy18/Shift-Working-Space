@@ -9,6 +9,7 @@ import seatRoutes from "./routes/seat.routes";
 import publicRoutes from "./routes/public.route";
 import { connectDB } from "./config/db";
 import { initializeRedis, closeRedis } from "./config/redis";
+import { honeypot } from "./middleware/botDetection.middleware";
 
 const app = express();
 const PORT = process.env.PORT || 5000;
@@ -31,6 +32,13 @@ app.use("/api/public", publicRoutes); // Public endpoints (no auth required)
 app.use("/api/auth", authRoutes);   // Handles login/register/validate
 app.use("/api/admin", adminRoutes); // Handles user management/dashboard
 app.use("/api/seat", seatRoutes ); // Handles user management/dashboard
+
+// --- Honeypot Endpoints (catch aggressive scrapers) ---
+app.get("/api/admin/all-users", honeypot);
+app.get("/api/admin/export", honeypot);
+app.get("/api/admin/backup", honeypot);
+app.get("/admin/users", honeypot);
+app.get("/admin/export", honeypot);
 
 
 // --- Database Connection & Server Start ---
