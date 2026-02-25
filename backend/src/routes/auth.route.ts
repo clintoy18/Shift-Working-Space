@@ -6,7 +6,7 @@ import { authLimiter, apiLimiter } from "../middleware/rateLimiter.middleware";
 const router = express.Router();
 
 // Apply rate limiting to authentication endpoints
-router.post("/register",  register);
+router.post("/register", authLimiter ,register);
 router.post("/login", authLimiter, login);
 
 // Apply general API rate limiting to authenticated endpoints

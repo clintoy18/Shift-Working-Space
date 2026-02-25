@@ -18,8 +18,8 @@ const amenities = [
   {
     icon: Plug,
     title: "Power Outlets",
-    description:
-      "It's a common experience for us who want to study and work in a coffee shop — we look for outlets to charge our gadgets with. Don't worry, we have lots of it here."
+   description:
+  "Designed for productivity, each workspace is equipped with accessible power outlets so you can keep your devices charged and your focus uninterrupted."
   },
   {
     icon: Armchair,
