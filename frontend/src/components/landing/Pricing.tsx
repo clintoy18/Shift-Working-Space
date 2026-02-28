@@ -267,7 +267,7 @@ const Pricing = () => {
                           </div>
                           <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-3 mt-4">
                             <p className="text-xs font-bold text-yellow-900 uppercase tracking-tight">⏰ Limited Time Offer</p>
-                            <p className="text-xs text-yellow-800 mt-1">Discounted prices apply only to members from March 1 to March 31</p>
+                            <p className="text-xs text-yellow-800 mt-1">Discounted prices <b>EXCLUSIVE ONLY</b> for memberships made during March 1 to March 31</p>
                           </div>
                         </div>
 
