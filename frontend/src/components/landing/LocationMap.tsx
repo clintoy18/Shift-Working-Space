@@ -10,7 +10,7 @@ const LocationMap = () => {
       lng: 123.9488
     },
     phone: "+(0927) 997 7497",
-    hours: "Mon - Sat: 8:00 AM - 10:00 PM",
+    hours: "Mon - Sat: 8:00 AM - 2:00 AM",
     googleMapsUrl: "https://www.google.com/maps/search/?api=1&query=2nd+Floor+Tec+Fuel+Bldg,+H.+Abellana+St.+Canduman,+Mandaue+City,+Cebu"
   };
 
