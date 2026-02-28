@@ -187,11 +187,18 @@ export const CheckInForm: React.FC<CheckInFormProps> = ({
       let errorMessage = "Error during check-in. Please try again.";
 
       if (error.response?.status === 409) {
-        // Seat occupancy conflict
-        const occupiedBy = error.response?.data?.checkInType === "guest"
-          ? `Guest ${error.response?.data?.existingCheckInId}`
-          : "another user";
-        errorMessage = `Cannot proceed with payment: Seat is already occupied by ${occupiedBy}. Please select a different seat.`;
+        // Conflict: Seat occupancy or user double booking
+        const data = error.response?.data;
+        if (data?.checkInType === "registered" && data?.existingSeatId) {
+          // User already has an active check-in
+          errorMessage = `Cannot proceed: This user already has an active check-in. Please check them out first before checking in again.`;
+        } else {
+          // Seat is occupied by another user/guest
+          const occupiedBy = data?.checkInType === "guest"
+            ? `Guest ${data?.existingCheckInId}`
+            : "another user";
+          errorMessage = `Cannot proceed with payment: Seat is already occupied by ${occupiedBy}. Please select a different seat.`;
+        }
       } else if (error.response?.status === 400) {
         // Bad request - validation error
         errorMessage = error.response?.data?.message || "Invalid check-in data. Please verify all fields.";

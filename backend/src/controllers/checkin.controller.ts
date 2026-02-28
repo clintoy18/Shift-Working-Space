@@ -92,6 +92,26 @@ export const checkIn = async (req: Request, res: Response) => {
       });
     }
 
+    // Check if user already has an active check-in (prevent double booking for registered users)
+    if (checkInType === "registered" && userId) {
+      const userActiveCheckIn = await CheckIn.findOne({
+        user: userId,
+        status: { $in: ["active", "warning", "overtime"] },
+        isDeleted: false,
+      });
+
+      if (userActiveCheckIn) {
+        return res.status(409).json({
+          message: `User already has an active check-in on seat ${userActiveCheckIn.seat}. Please check out first before checking in again.`,
+          existingCheckInId: userActiveCheckIn._id.toString(),
+          existingCheckInType: "registered",
+          checkInTime: userActiveCheckIn.checkInTime,
+          status: userActiveCheckIn.status,
+          existingSeatId: userActiveCheckIn.seat,
+        });
+      }
+    }
+
     // Check if seat is available
     if (seat.status !== "available") {
       return res
