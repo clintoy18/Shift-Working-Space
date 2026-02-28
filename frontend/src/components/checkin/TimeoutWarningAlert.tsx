@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from "react";
 import { AlertCircle, Clock, AlertTriangle } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
 import type { ICheckIn } from "@/interfaces/models/ICheckIn";
 
 interface TimeoutWarningAlertProps {
@@ -43,13 +45,7 @@ export const TimeoutWarningAlert: React.FC<TimeoutWarningAlertProps> = ({
   const isWarning = timeRemaining <= checkIn.warningThresholdMinutes && timeRemaining > 0;
   const isCritical = timeRemaining <= 0;
 
-  // Get colors based on status
-  const getAlertColor = () => {
-    if (isCritical) return "bg-red-50 border-red-200";
-    if (isWarning) return "bg-yellow-50 border-yellow-200";
-    return "bg-green-50 border-green-200";
-  };
-
+  // Get text color based on status
   const getTextColor = () => {
     if (isCritical) return "text-red-900";
     if (isWarning) return "text-yellow-900";
@@ -81,107 +77,125 @@ export const TimeoutWarningAlert: React.FC<TimeoutWarningAlertProps> = ({
       : checkIn.user?.fullName || "Unknown User";
 
   return (
-    <div
-      className={`border-2 rounded-lg p-6 ${getAlertColor()} ${getTextColor()} transition-all`}
-    >
-      <div className="flex items-start justify-between mb-4">
-        <div className="flex items-center gap-3">
-          {getIcon()}
+    <Card className={`border-2 ${isCritical ? "bg-red-50 border-red-200" : isWarning ? "bg-yellow-50 border-yellow-200" : "bg-green-50 border-green-200"} transition-all`}>
+      <CardHeader>
+        <div className="flex items-start justify-between">
+          <div className="flex items-center gap-3">
+            {getIcon()}
+            <div>
+              <CardTitle className={`text-lg ${getTextColor()}`}>
+                {getStatusLabel()}
+              </CardTitle>
+              <p className={`text-sm ${getTextColor()} opacity-75`}>{identifier}</p>
+            </div>
+          </div>
+          <div className="text-right">
+            <div className={`text-4xl font-bold ${getTimerColor()}`}>
+              {Math.max(0, timeRemaining)}
+            </div>
+            <p className={`text-sm ${getTextColor()} opacity-75`}>minutes remaining</p>
+          </div>
+        </div>
+      </CardHeader>
+
+      <CardContent className="space-y-6">
+        {/* Details Grid */}
+        <div className="grid grid-cols-2 gap-4">
           <div>
-            <h3 className="text-lg font-bold">{getStatusLabel()}</h3>
-            <p className="text-sm opacity-75">{identifier}</p>
+            <p className={`text-xs font-bold uppercase tracking-wider ${getTextColor()} opacity-75 mb-1`}>
+              Seat
+            </p>
+            <p className={`font-semibold ${getTextColor()}`}>{checkIn.seat?.displayLabel}</p>
+          </div>
+          <div>
+            <p className={`text-xs font-bold uppercase tracking-wider ${getTextColor()} opacity-75 mb-1`}>
+              Allocated Duration
+            </p>
+            <p className={`font-semibold ${getTextColor()}`}>{checkIn.allocatedDurationMinutes} min</p>
+          </div>
+          <div>
+            <p className={`text-xs font-bold uppercase tracking-wider ${getTextColor()} opacity-75 mb-1`}>
+              Elapsed Time
+            </p>
+            <p className={`font-semibold ${getTextColor()}`}>
+              {checkIn.elapsedMinutes || 0} min
+            </p>
+          </div>
+          <div>
+            <p className={`text-xs font-bold uppercase tracking-wider ${getTextColor()} opacity-75 mb-1`}>
+              Payment
+            </p>
+            <p className={`font-semibold ${getTextColor()}`}>${checkIn.paymentAmount.toFixed(2)}</p>
           </div>
         </div>
-        <div className="text-right">
-          <div className={`text-4xl font-bold ${getTimerColor()}`}>
-            {Math.max(0, timeRemaining)}
+
+        {/* Extension History */}
+        {checkIn.extensionHistory && checkIn.extensionHistory.length > 0 && (
+          <div className={`p-3 rounded-lg ${isCritical ? "bg-red-100/50" : isWarning ? "bg-yellow-100/50" : "bg-green-100/50"}`}>
+            <p className={`text-sm font-semibold mb-2 ${getTextColor()}`}>Extensions</p>
+            <div className="space-y-1 text-xs">
+              {checkIn.extensionHistory.map((ext, idx) => (
+                <div key={idx} className={`flex justify-between ${getTextColor()}`}>
+                  <span>+{ext.addedMinutes} min</span>
+                  <span>${ext.addedAmount.toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
           </div>
-          <p className="text-sm opacity-75">minutes remaining</p>
-        </div>
-      </div>
-
-      {/* Details */}
-      <div className="grid grid-cols-2 gap-4 mb-6 text-sm">
-        <div>
-          <p className="opacity-75">Seat</p>
-          <p className="font-semibold">{checkIn.seat?.displayLabel}</p>
-        </div>
-        <div>
-          <p className="opacity-75">Allocated Duration</p>
-          <p className="font-semibold">{checkIn.allocatedDurationMinutes} min</p>
-        </div>
-        <div>
-          <p className="opacity-75">Elapsed Time</p>
-          <p className="font-semibold">
-            {checkIn.elapsedMinutes || 0} min
-          </p>
-        </div>
-        <div>
-          <p className="opacity-75">Payment</p>
-          <p className="font-semibold">${checkIn.paymentAmount.toFixed(2)}</p>
-        </div>
-      </div>
-
-      {/* Extension History */}
-      {checkIn.extensionHistory && checkIn.extensionHistory.length > 0 && (
-        <div className="mb-6 p-3 bg-white bg-opacity-50 rounded">
-          <p className="text-sm font-semibold mb-2">Extensions</p>
-          <div className="space-y-1 text-xs">
-            {checkIn.extensionHistory.map((ext, idx) => (
-              <div key={idx} className="flex justify-between">
-                <span>+{ext.addedMinutes} min</span>
-                <span>${ext.addedAmount.toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Penalty Charges */}
-      {checkIn.penaltyCharges && checkIn.penaltyCharges.length > 0 && (
-        <div className="mb-6 p-3 bg-white bg-opacity-50 rounded">
-          <p className="text-sm font-semibold mb-2">Penalties</p>
-          <div className="space-y-1 text-xs">
-            {checkIn.penaltyCharges.map((penalty, idx) => (
-              <div key={idx} className="flex justify-between">
-                <span>{penalty.reason}</span>
-                <span>${penalty.amount.toFixed(2)}</span>
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      {/* Action Buttons */}
-      <div className="flex gap-3">
-        {!isCritical && onExtend && (
-          <button
-            onClick={onExtend}
-            className="flex-1 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition font-medium text-sm"
-          >
-            Extend Duration
-          </button>
         )}
 
-        {(isWarning || isCritical) && onApplyPenalty && (
-          <button
-            onClick={onApplyPenalty}
-            className="flex-1 px-4 py-2 bg-orange-600 text-white rounded-lg hover:bg-orange-700 transition font-medium text-sm"
-          >
-            Apply Penalty
-          </button>
+        {/* Penalty Charges */}
+        {checkIn.penaltyCharges && checkIn.penaltyCharges.length > 0 && (
+          <div className={`p-3 rounded-lg ${isCritical ? "bg-red-100/50" : isWarning ? "bg-yellow-100/50" : "bg-green-100/50"}`}>
+            <p className={`text-sm font-semibold mb-2 ${getTextColor()}`}>Penalties</p>
+            <div className="space-y-1 text-xs">
+              {checkIn.penaltyCharges.map((penalty, idx) => (
+                <div key={idx} className={`flex justify-between ${getTextColor()}`}>
+                  <span>{penalty.reason}</span>
+                  <span>${penalty.amount.toFixed(2)}</span>
+                </div>
+              ))}
+            </div>
+          </div>
         )}
 
-        {onCheckOut && (
-          <button
-            onClick={onCheckOut}
-            className="flex-1 px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition font-medium text-sm"
-          >
-            Check Out
-          </button>
-        )}
-      </div>
-    </div>
+        {/* Action Buttons */}
+        <div className="flex gap-3 pt-2">
+          {!isCritical && onExtend && (
+            <Button
+              onClick={onExtend}
+              variant="outline"
+              className="flex-1"
+              size="sm"
+            >
+              Extend Duration
+            </Button>
+          )}
+
+          {(isWarning || isCritical) && onApplyPenalty && (
+            <Button
+              onClick={onApplyPenalty}
+              variant="outline"
+              className="flex-1"
+              size="sm"
+            >
+              Apply Penalty
+            </Button>
+          )}
+
+          {onCheckOut && (
+            <Button
+              onClick={onCheckOut}
+              variant="outline"
+              className="flex-1"
+              size="sm"
+            >
+              Check Out
+            </Button>
+          )}
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
