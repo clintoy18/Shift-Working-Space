@@ -2,6 +2,9 @@ import React, { useState, useEffect } from "react";
 import CheckInService from "@/services/CheckInService";
 import { useToast } from "@/context/ToastContext";
 import type { ICheckIn } from "@/interfaces/models/ICheckIn";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { AlertCircle, Clock, AlertTriangle, CheckCircle2, RefreshCw } from "lucide-react";
 
 /**
  * Check-In Management Component
@@ -61,23 +64,21 @@ export const CheckInManagement: React.FC = () => {
       await CheckInService.checkOut({ checkInId });
       showToast("Check-out successful", "success");
       fetchActiveCheckIns();
-    } catch (error) {
-      showToast("Error during check-out", "error");
-      console.error(error);
-    }
-  };
+    } catch (error: any) {
+      let errorMessage = "Error during check-out. Please try again.";
 
-  // Get status badge color
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "bg-green-100 text-green-800";
-      case "warning":
-        return "bg-yellow-100 text-yellow-800";
-      case "overtime":
-        return "bg-red-100 text-red-800";
-      default:
-        return "bg-gray-100 text-gray-800";
+      if (error.response?.status === 404) {
+        errorMessage = "Check-in record not found. It may have already been checked out.";
+      } else if (error.response?.status === 400) {
+        errorMessage = error.response?.data?.message || "Invalid check-out request.";
+      } else if (error.response?.status === 409) {
+        errorMessage = "Cannot check out: This check-in has already been completed.";
+      } else if (error.response?.status === 500) {
+        errorMessage = "Server error occurred. Please try again later.";
+      }
+
+      showToast(errorMessage, "error");
+      console.error(error);
     }
   };
 
@@ -103,139 +104,187 @@ export const CheckInManagement: React.FC = () => {
     return "Invalid Check-In";
   };
 
+  // Get status icon
+  const getStatusIcon = (status: string) => {
+    switch (status) {
+      case "active":
+        return <CheckCircle2 className="w-4 h-4 text-green-600" />;
+      case "warning":
+        return <AlertCircle className="w-4 h-4 text-yellow-600" />;
+      case "overtime":
+        return <AlertTriangle className="w-4 h-4 text-red-600" />;
+      default:
+        return <Clock className="w-4 h-4 text-muted-foreground" />;
+    }
+  };
+
   return (
-    <div className="w-full space-y-6">
+    <div className="w-full space-y-8">
+      {/* Header */}
       <div className="flex justify-between items-center">
-        <h1 className="text-3xl font-bold">Active Check-Ins</h1>
-        <button
+        <div>
+          <h1 className="text-3xl font-bold tracking-tight">Active Check-Ins</h1>
+          <p className="text-sm text-muted-foreground mt-1">
+            Manage and monitor all active check-ins
+          </p>
+        </div>
+        <Button
           onClick={fetchActiveCheckIns}
-          className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition"
+          variant="outline"
+          className="gap-2"
         >
+          <RefreshCw className="w-4 h-4" />
           Refresh
-        </button>
+        </Button>
       </div>
 
-      {/* Filters */}
-      <div className="flex gap-4 bg-white p-4 rounded-lg shadow">
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Type
-          </label>
-          <select
-            value={filterType}
-            onChange={(e) => setFilterType(e.target.value as any)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All</option>
-            <option value="guest">Guest</option>
-            <option value="registered">Registered</option>
-          </select>
-        </div>
+      {/* Filters Card */}
+      <Card>
+        <CardHeader>
+          <CardTitle className="text-lg">Filters</CardTitle>
+        </CardHeader>
+        <CardContent>
+          <div className="flex gap-4">
+            <div className="flex-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                Check-In Type
+              </label>
+              <select
+                value={filterType}
+                onChange={(e) => setFilterType(e.target.value as any)}
+                className="w-full h-11 px-3 border border-muted rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">All Types</option>
+                <option value="guest">Guest</option>
+                <option value="registered">Registered User</option>
+              </select>
+            </div>
 
-        <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">
-            Status
-          </label>
-          <select
-            value={filterStatus}
-            onChange={(e) => setFilterStatus(e.target.value as any)}
-            className="px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500"
-          >
-            <option value="all">All</option>
-            <option value="active">Active</option>
-            <option value="warning">Warning</option>
-            <option value="overtime">Overtime</option>
-          </select>
-        </div>
-      </div>
+            <div className="flex-1">
+              <label className="block text-xs font-bold uppercase tracking-wider text-muted-foreground mb-2">
+                Status
+              </label>
+              <select
+                value={filterStatus}
+                onChange={(e) => setFilterStatus(e.target.value as any)}
+                className="w-full h-11 px-3 border border-muted rounded-lg bg-background focus:outline-none focus:ring-2 focus:ring-primary"
+              >
+                <option value="all">All Statuses</option>
+                <option value="active">Active</option>
+                <option value="warning">Warning</option>
+                <option value="overtime">Overtime</option>
+              </select>
+            </div>
+          </div>
+        </CardContent>
+      </Card>
 
-      {/* Check-Ins Table */}
+      {/* Check-Ins List */}
       {loading ? (
-        <div className="text-center py-8 text-gray-500">Loading...</div>
+        <Card>
+          <CardContent className="py-12">
+            <div className="text-center text-muted-foreground">
+              <Clock className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p>Loading check-ins...</p>
+            </div>
+          </CardContent>
+        </Card>
       ) : activeCheckIns.length === 0 ? (
-        <div className="text-center py-8 text-gray-500">No active check-ins</div>
+        <Card>
+          <CardContent className="py-12">
+            <div className="text-center text-muted-foreground">
+              <CheckCircle2 className="w-8 h-8 mx-auto mb-2 opacity-50" />
+              <p>No active check-ins at this time</p>
+            </div>
+          </CardContent>
+        </Card>
       ) : (
-        <div className="overflow-x-auto bg-white rounded-lg shadow">
-          <table className="w-full">
-            <thead className="bg-gray-50 border-b">
-              <tr>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Identifier
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Seat
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Check-In Time
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Time Remaining
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Status
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Amount
-                </th>
-                <th className="px-6 py-3 text-left text-sm font-semibold text-gray-900">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody className="divide-y">
-              {activeCheckIns.map((checkIn) => (
-                <tr key={checkIn.id} className="hover:bg-gray-50">
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {getIdentifier(checkIn)}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-900">
-                    {checkIn.seat?.displayLabel}
-                  </td>
-                  <td className="px-6 py-4 text-sm text-gray-600">
-                    {new Date(checkIn.checkInTime).toLocaleTimeString()}
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium">
-                    {checkIn.timeRemainingMinutes !== undefined ? (
-                      <span
-                        className={
-                          checkIn.timeRemainingMinutes <= 0
-                            ? "text-red-600"
-                            : checkIn.timeRemainingMinutes <= 5
-                            ? "text-yellow-600"
-                            : "text-green-600"
-                        }
-                      >
-                        {Math.max(0, checkIn.timeRemainingMinutes)} min
-                      </span>
-                    ) : (
-                      "-"
-                    )}
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <span
-                      className={`px-3 py-1 rounded-full text-xs font-medium ${getStatusColor(
-                        checkIn.status
-                      )}`}
-                    >
-                      {checkIn.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4 text-sm font-medium text-gray-900">
-                    ${checkIn.paymentAmount.toFixed(2)}
-                  </td>
-                  <td className="px-6 py-4 text-sm">
-                    <button
-                      onClick={() => handleCheckOut(checkIn.id)}
-                      className="px-3 py-1 bg-red-600 text-white rounded hover:bg-red-700 transition text-xs"
-                    >
-                      Check Out
-                    </button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+        <Card>
+          <CardContent className="p-0">
+            <div className="overflow-x-auto">
+              <table className="w-full">
+                <thead>
+                  <tr className="border-b border-muted bg-muted/50">
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Identifier
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Seat
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Check-In Time
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Time Remaining
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Status
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Amount
+                    </th>
+                    <th className="px-6 py-4 text-left text-xs font-bold uppercase tracking-wider text-muted-foreground">
+                      Actions
+                    </th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-muted">
+                  {activeCheckIns.map((checkIn) => (
+                    <tr key={checkIn.id} className="hover:bg-muted/50 transition">
+                      <td className="px-6 py-4 text-sm font-medium text-foreground">
+                        {getIdentifier(checkIn)}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-foreground">
+                        {checkIn.seat?.displayLabel}
+                      </td>
+                      <td className="px-6 py-4 text-sm text-muted-foreground">
+                        {new Date(checkIn.checkInTime).toLocaleTimeString()}
+                      </td>
+                      <td className="px-6 py-4 text-sm font-semibold">
+                        {checkIn.timeRemainingMinutes !== undefined ? (
+                          <span
+                            className={
+                              checkIn.timeRemainingMinutes <= 0
+                                ? "text-red-600"
+                                : checkIn.timeRemainingMinutes <= 5
+                                ? "text-yellow-600"
+                                : "text-green-600"
+                            }
+                          >
+                            {Math.max(0, checkIn.timeRemainingMinutes)} min
+                          </span>
+                        ) : (
+                          "-"
+                        )}
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <div className="flex items-center gap-2">
+                          {getStatusIcon(checkIn.status)}
+                          <span className="capitalize text-xs font-semibold">
+                            {checkIn.status}
+                          </span>
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 text-sm font-semibold text-foreground">
+                        ${checkIn.paymentAmount.toFixed(2)}
+                      </td>
+                      <td className="px-6 py-4 text-sm">
+                        <Button
+                          onClick={() => handleCheckOut(checkIn.id)}
+                          variant="outline"
+                          size="sm"
+                          className="text-xs"
+                        >
+                          Check Out
+                        </Button>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </CardContent>
+        </Card>
       )}
     </div>
   );
