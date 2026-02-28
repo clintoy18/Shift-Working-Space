@@ -189,7 +189,7 @@ export const CheckInForm: React.FC<CheckInFormProps> = ({
       if (error.response?.status === 409) {
         // Conflict: Seat occupancy or user double booking
         const data = error.response?.data;
-        if (data?.checkInType === "registered" && data?.existingSeatId) {
+        if (data?.existingSeatId || data?.existingCheckInType === "registered") {
           // User already has an active check-in
           errorMessage = `⚠️ User already checked in! This user has an active check-in. Please check them out first before checking in again.`;
         } else {
