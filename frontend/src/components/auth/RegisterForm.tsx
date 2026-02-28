@@ -6,6 +6,7 @@ import { AlertCircle, ArrowLeft, UserCircle, Check, X } from "lucide-react";
 import type { IRegisterRequest } from '@interfaces';
 import { useNavigate } from "react-router-dom";
 import Loader from "@/components/ui/loader";
+import PasswordInput from "./PasswordInput";
 
 const RegisterForm = ({
   onRegister,
@@ -41,6 +42,8 @@ const RegisterForm = ({
   };
 
   const isPasswordValid = Object.values(passwordRequirements).every(req => req);
+  const passwordsMatch = formData.password && formData.confirmPassword && formData.password === formData.confirmPassword;
+  const showPasswordMismatch = formData.confirmPassword && formData.password !== formData.confirmPassword;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -156,13 +159,11 @@ const RegisterForm = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Password</label>
-                <Input
+                <PasswordInput
                   id="password"
-                  type="password"
                   value={formData.password}
                   onChange={handleInputChange}
-                  placeholder="••••••••"
-                  className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.password ? "border-destructive" : "border-muted-foreground/20"}`}
+                  error={!!formErrors.password}
                 />
 
                 {/* Password Requirements Display */}
@@ -238,14 +239,42 @@ const RegisterForm = ({
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Confirm Password</label>
-                <Input
-                  id="confirmPassword"
-                  type="password"
-                  value={formData.confirmPassword}
-                  onChange={handleInputChange}
-                  placeholder="••••••••"
-                  className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.confirmPassword ? "border-destructive" : "border-muted-foreground/20"}`}
-                />
+                <div className="relative">
+                  <PasswordInput
+                    id="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    error={showPasswordMismatch}
+                    className={
+                      showPasswordMismatch
+                        ? "ring-destructive/20"
+                        : passwordsMatch
+                        ? "border-green-500/50 ring-green-500/20"
+                        : ""
+                    }
+                  />
+                </div>
+
+                {/* Password Match Feedback */}
+                {formData.confirmPassword && (
+                  <div className={`mt-2 p-2 rounded-lg flex items-center gap-2 text-xs font-medium ${
+                    passwordsMatch
+                      ? "bg-green-500/10 text-green-600"
+                      : "bg-destructive/10 text-destructive"
+                  }`}>
+                    {passwordsMatch ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>Passwords match</span>
+                      </>
+                    ) : (
+                      <>
+                        <X className="w-4 h-4" />
+                        <span>Passwords do not match</span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
           </div>

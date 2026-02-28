@@ -5,6 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { AlertCircle, ArrowLeft, ShieldCheck } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 import Loader from "@/components/ui/loader";
+import PasswordInput from "./PasswordInput";
 
 const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
   // ✅ Changed state name to match backend expectation
@@ -61,14 +62,11 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
                 Forgot password?
               </button>
             </div>
-            <Input
+            <PasswordInput
               id="password"
-              type="password"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              placeholder="••••••••"
-              required
-              className="h-11 focus-visible:ring-primary transition-all"
+              className="focus-visible:ring-primary"
             />
           </div>
 
