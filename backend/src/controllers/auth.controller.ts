@@ -5,11 +5,17 @@ import { generateToken } from "../utils/jwt";
 import { validatePassword, validateEmail, validateNameField } from "../utils/validation";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { email, password, firstName, lastName, role } = req.body;
+  const { email, password, firstName, lastName, role, termsAccepted, privacyPolicyAccepted } = req.body;
 
   // Validate required fields
   if (!email || !password || !firstName || !lastName) {
     res.status(400).json({ message: "Required fields are missing" });
+    return;
+  }
+
+  // Validate agreement acceptance
+  if (!termsAccepted || !privacyPolicyAccepted) {
+    res.status(400).json({ message: "You must accept both Terms of Service and Privacy Policy to register" });
     return;
   }
 
@@ -62,6 +68,9 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       lastName,
       role: isFirstUser ? "admin" : (role || "shifty"),
       isVerified: true, // All users auto-verified on registration
+      termsAccepted: true,
+      privacyPolicyAccepted: true,
+      agreementAcceptedAt: new Date(),
     });
 
     await newUser.save();

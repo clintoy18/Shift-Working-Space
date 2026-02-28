@@ -25,15 +25,17 @@ export const AuthProvider = ({ children }) => {
       id: data.id || data._id,
       email: data.email,
       firstName: data.firstName,
-      middleName: data.middleName, 
+      middleName: data.middleName,
       lastName: data.lastName,
-      fullName: data.fullName,     
+      fullName: data.fullName,
       role: data.role,             // 'admin' | 'shifty' | 'cashier'
       membershipType: data.membershipType || 'None',
       membershipStatus: data.membershipStatus || 'Inactive',
       isVerified: data.isVerified,
       isDeleted: data.isDeleted,
-      createdAt: data.createdAt,  
+      termsAccepted: data.termsAccepted ?? false,
+      privacyPolicyAccepted: data.privacyPolicyAccepted ?? false,
+      createdAt: data.createdAt,
       updatedAt: data.updatedAt,
     };
 
