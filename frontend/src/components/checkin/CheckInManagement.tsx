@@ -33,8 +33,20 @@ export const CheckInManagement: React.FC = () => {
 
       const data = await CheckInService.getActiveCheckIns(filters);
       setActiveCheckIns(data);
-    } catch (error) {
-      showToast("Error loading check-ins", "error");
+    } catch (error: any) {
+      let errorMessage = "Error loading check-ins. Please try again.";
+
+      if (error.response?.status === 401) {
+        errorMessage = "Session expired. Please log in again.";
+      } else if (error.response?.status === 403) {
+        errorMessage = "You don't have permission to view check-ins.";
+      } else if (error.response?.status === 500) {
+        errorMessage = "Server error occurred. Please try again later.";
+      } else if (error.message?.includes("Network")) {
+        errorMessage = "Network error. Please check your connection.";
+      }
+
+      showToast(errorMessage, "error");
       console.error(error);
     } finally {
       setLoading(false);
@@ -266,7 +278,7 @@ export const CheckInManagement: React.FC = () => {
                         </div>
                       </td>
                       <td className="px-6 py-4 text-sm font-semibold text-foreground">
-                        ${checkIn.paymentAmount.toFixed(2)}
+                        P{checkIn.paymentAmount.toFixed(2)}
                       </td>
                       <td className="px-6 py-4 text-sm">
                         <Button
