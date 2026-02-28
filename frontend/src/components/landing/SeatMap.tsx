@@ -128,24 +128,30 @@ const ShiftFloorPlanFinal = () => {
                 </span>
               </h3>
 
-              <FacilityItem 
-                icon={<Users size={14} />} 
-                label="Team Collaboration" 
-                description="Conf & Huddle Rooms" 
-                price="From ₱270/hr" 
+              <FacilityItem
+                icon={<Users size={14} />}
+                label="Open Seating"
+                description="Island Tables & Wall Seats"
+                price="₱60/hr"
               />
-              <FacilityItem 
-                icon={<Monitor size={14} />} 
-                label="Deep Work Zone" 
-                description="Private Focus Cubicles" 
-                price="₱175/hr" 
-                available={getAvailableCount("Cubicle")}
+              <FacilityItem
+                icon={<Monitor size={14} />}
+                label="Deep Work Zone"
+                description="Private Focus Cubicles"
+                price="₱175/hr"
+                available={getAvailableCount("cubicle")}
               />
-              <FacilityItem 
-                icon={<Coffee size={14} />} 
-                label="Unlimited Fuel" 
-                description="Pantry & Premium Drinks" 
-                price="FREE" 
+              <FacilityItem
+                icon={<Users size={14} />}
+                label="Team Collaboration"
+                description="Huddle Rooms (2) & Conference"
+                price="From ₱270/hr"
+              />
+              <FacilityItem
+                icon={<Coffee size={14} />}
+                label="Unlimited Fuel"
+                description="Pantry & Premium Drinks"
+                price="FREE"
               />
             </div>
 
