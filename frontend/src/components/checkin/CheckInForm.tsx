@@ -222,7 +222,7 @@ export const CheckInForm: React.FC<CheckInFormProps> = ({
 
   if (loading) {
     return (
-      <Card className="w-full max-w-2xl mx-auto">
+      <Card className="w-full">
         <CardContent className="flex items-center justify-center py-12">
           <Loader variant="spinner" size="lg" />
         </CardContent>
@@ -231,7 +231,7 @@ export const CheckInForm: React.FC<CheckInFormProps> = ({
   }
 
   return (
-    <Card className="w-full max-w-2xl mx-auto shadow-lg border-muted">
+    <Card className="w-full shadow-lg border-muted">
       <CardHeader className="border-b">
         <CardTitle className="text-3xl font-bold tracking-tight">Check-In</CardTitle>
         <p className="text-muted-foreground text-sm mt-2">
@@ -542,7 +542,7 @@ export const CheckInForm: React.FC<CheckInFormProps> = ({
         {/* Confirmation Modal */}
         {showConfirmation && selectedSeat && selectedPricingOption && (
           <div className="fixed inset-0 bg-black/50 flex items-center justify-center z-50 p-4">
-            <Card className="w-full max-w-md shadow-xl">
+            <Card className="w-full shadow-xl">
               <CardHeader className="border-b">
                 <CardTitle className="text-2xl">Confirm Check-In</CardTitle>
               </CardHeader>
