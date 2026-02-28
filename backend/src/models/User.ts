@@ -12,6 +12,9 @@ export interface IUser extends Document {
   membershipStatus: string;
   isVerified: boolean;
   isDeleted: boolean;
+  termsAccepted: boolean;
+  privacyPolicyAccepted: boolean;
+  agreementAcceptedAt?: Date;
 }
 
 const UserSchema: Schema = new Schema(
@@ -31,6 +34,9 @@ const UserSchema: Schema = new Schema(
     membershipStatus: { type: String, default: "Inactive" },
     isVerified: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
+    termsAccepted: { type: Boolean, required: true, default: false },
+    privacyPolicyAccepted: { type: Boolean, required: true, default: false },
+    agreementAcceptedAt: { type: Date },
   },
   { 
     timestamps: true,

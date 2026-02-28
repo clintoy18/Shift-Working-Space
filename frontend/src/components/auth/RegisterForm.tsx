@@ -7,6 +7,7 @@ import type { IRegisterRequest } from '@interfaces';
 import { useNavigate } from "react-router-dom";
 import Loader from "@/components/ui/loader";
 import PasswordInput from "./PasswordInput";
+import TermsModal from "./TermsModal";
 
 const RegisterForm = ({
   onRegister,
@@ -27,10 +28,13 @@ const RegisterForm = ({
     email: '',
     password: '',
     confirmPassword: '',
+    termsAccepted: false,
+    privacyPolicyAccepted: false,
   });
 
-  const [formErrors, setFormErrors] = useState<Partial<IRegisterRequest>>({});
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof IRegisterRequest | 'general', string>>>({});
   const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
 
   // Password requirement checks
   const passwordRequirements = {
@@ -59,7 +63,7 @@ const RegisterForm = ({
   };
 
   const validateForm = (): boolean => {
-    const errors: Partial<IRegisterRequest> = {};
+    const errors: Partial<Record<keyof IRegisterRequest | 'general', string>> = {};
     if (!formData.firstName.trim()) errors.firstName = 'Required';
     if (!formData.lastName.trim()) errors.lastName = 'Required';
     if (!formData.email.trim()) {
@@ -75,8 +79,15 @@ const RegisterForm = ({
     if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = 'Passwords must match';
     }
+    if (!formData.termsAccepted || !formData.privacyPolicyAccepted) {
+      errors.general = 'You must accept both Terms and Privacy Policy';
+    }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  const handleCloseTermsModal = () => {
+    setShowTermsModal(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -87,7 +98,12 @@ const RegisterForm = ({
   };
 
   return (
-    <Card className="w-full max-w-xl shadow-2xl bg-card/50 backdrop-blur-md mx-auto">
+    <>
+      <TermsModal
+        isOpen={showTermsModal}
+        onClose={handleCloseTermsModal}
+      />
+      <Card className="w-full max-w-xl shadow-2xl bg-card/50 backdrop-blur-md mx-auto">
       <CardContent className="p-8">
         <div className="mb-10 text-center">
           <div className="inline-flex h-12 w-12 bg-primary rounded-xl items-center justify-center mb-4 shadow-lg shadow-primary/20">
@@ -279,6 +295,57 @@ const RegisterForm = ({
             </div>
           </div>
 
+          {/* Terms & Privacy Policy Checkbox */}
+          <div className="space-y-3">
+            <label className="flex items-start gap-3 cursor-pointer group p-3 rounded-lg hover:bg-muted/30 transition-colors border border-muted-foreground/10">
+              <input
+                type="checkbox"
+                checked={formData.termsAccepted && formData.privacyPolicyAccepted}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setFormData(prev => ({
+                      ...prev,
+                      termsAccepted: true,
+                      privacyPolicyAccepted: true,
+                    }));
+                  } else {
+                    setFormData(prev => ({
+                      ...prev,
+                      termsAccepted: false,
+                      privacyPolicyAccepted: false,
+                    }));
+                  }
+                  if (formErrors.general) {
+                    setFormErrors(prev => ({ ...prev, general: undefined }));
+                  }
+                }}
+                className="mt-1 w-5 h-5 rounded border-2 border-muted-foreground/30 cursor-pointer accent-primary flex-shrink-0"
+              />
+              <div className="flex-1">
+                <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  I accept the{' '}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowTermsModal(true);
+                    }}
+                    className="text-primary hover:text-primary/80 font-semibold underline transition-colors"
+                  >
+                    Terms of Service and Privacy Policy
+                  </button>
+                </span>
+              </div>
+            </label>
+
+            {formErrors.general && (
+              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex gap-2 items-start text-sm text-destructive">
+                <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                <span>{formErrors.general}</span>
+              </div>
+            )}
+          </div>
+
           {error && (
             <div className="bg-destructive/10 border border-destructive/20 rounded-xl p-4 flex gap-3 items-center animate-in slide-in-from-top-2 duration-300">
               <AlertCircle className="h-5 w-5 text-destructive flex-shrink-0" />
@@ -310,6 +377,7 @@ const RegisterForm = ({
         </button>
       </CardContent>
     </Card>
+    </>
   );
 };
 
