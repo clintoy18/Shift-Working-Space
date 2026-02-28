@@ -71,9 +71,9 @@ regularData.forEach((data, index) => {
     });
 });
 
-// 4. FOCUS CUBICLES (4 seats)
+// 4. FOCUS CUBICLES (8 seats)
 const cubeStartId = 28;
-for (let i = 0; i < 4; i++) {
+for (let i = 0; i < 8; i++) {
     const id = cubeStartId + i;
     seats.push({
         seatNumber: `S-${id.toString().padStart(3, '0')}`,
@@ -88,7 +88,29 @@ for (let i = 0; i < 4; i++) {
     });
 }
 
-// 5. HUDDLE ROOMS (Meeting Rooms - 3 rooms)
+// 5. MEETING ROOMS (3 rooms)
+const meetingRooms = [
+    { code: "meeting-0", label: "Meeting Room 1", capacity: 4, hourlyRate: 270 },
+    { code: "meeting-1", label: "Meeting Room 2", capacity: 4, hourlyRate: 270 },
+    { code: "meeting-2", label: "Meeting Room 3", capacity: 8, hourlyRate: 420 },
+];
+
+meetingRooms.forEach((room, index) => {
+    const id = 36 + index;
+    seats.push({
+        seatNumber: `S-${id.toString().padStart(3, '0')}`,
+        seatCode: room.code,
+        displayLabel: room.label,
+        seatType: "meeting-room",
+        status: "available",
+        location: `Floor 1, South Wing, ${room.label}`,
+        zoneType: "huddle",
+        hourlyRate: room.hourlyRate,
+        dailyRate: room.hourlyRate * 8,
+    });
+});
+
+// 6. HUDDLE ROOMS (Conference Rooms - 3 rooms)
 const huddleRooms = [
     { code: "huddle-1", label: "Huddle 1", capacity: 4, hourlyRate: 270 },
     { code: "huddle-2-room", label: "Huddle 2", capacity: 4, hourlyRate: 270 },
@@ -96,12 +118,12 @@ const huddleRooms = [
 ];
 
 huddleRooms.forEach((room, index) => {
-    const id = 32 + index;
+    const id = 39 + index;
     seats.push({
         seatNumber: `S-${id.toString().padStart(3, '0')}`,
         seatCode: room.code,
         displayLabel: room.label,
-        seatType: "meeting-room",
+        seatType: "regular",
         status: "available",
         location: `Floor 1, North Wing, ${room.label} Room`,
         zoneType: "huddle",
