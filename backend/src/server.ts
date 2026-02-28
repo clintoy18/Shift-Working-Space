@@ -7,6 +7,7 @@ import authRoutes from "./routes/auth.route";
 import adminRoutes from "./routes/admin.route";
 import seatRoutes from "./routes/seat.routes";
 import publicRoutes from "./routes/public.route";
+import checkInRoutes from "./routes/checkin.routes";
 import { connectDB } from "./config/db";
 import { initializeRedis, closeRedis } from "./config/redis";
 import { honeypot } from "./middleware/botDetection.middleware";
@@ -31,7 +32,8 @@ app.use(express.json());
 app.use("/api/public", publicRoutes); // Public endpoints (no auth required)
 app.use("/api/auth", authRoutes);   // Handles login/register/validate
 app.use("/api/admin", adminRoutes); // Handles user management/dashboard
-app.use("/api/seat", seatRoutes ); // Handles user management/dashboard
+app.use("/api/seat", seatRoutes ); // Handles seat management
+app.use("/api/checkin", checkInRoutes); // Handles check-in/check-out
 
 // --- Honeypot Endpoints (catch aggressive scrapers) ---
 app.get("/api/admin/all-users", honeypot);

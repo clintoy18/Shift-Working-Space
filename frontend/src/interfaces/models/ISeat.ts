@@ -1,20 +1,30 @@
 // src/interfaces/models/ISeat.ts
-export type SeatType = 'Regular' | 'Premium' | 'VIP';
+export type SeatType = 'Regular' | 'Premium' | 'VIP' | 'regular' | 'premium';
 export type SeatStatus = 'available' | 'reserved' | 'occupied' | 'maintenance';
 
+export interface IPricingOption {
+    duration: number;
+    label: string;
+    price: number;
+    isActive: boolean;
+}
+
 export interface ISeat {
-    seatId: number;
+    _id?: string;
+    id?: string;
+    seatId?: number;
     seatNumber: string;
     seatCode: string;
     displayLabel: string;
     seatType: SeatType;
-    status: SeatStatus;     
+    status: SeatStatus;
     location: string;
     zoneType: string;
     hourlyRate: number;
     dailyRate: number;
+    pricingOptions?: IPricingOption[];
     isActive: boolean;
-    createdTime: string;
+    createdTime?: string;
     updatedTime?: string;
     isDeleted: boolean;
 }
