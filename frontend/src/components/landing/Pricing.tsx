@@ -249,7 +249,7 @@ const Pricing = () => {
                       </div>
                       <div className="text-right shrink-0">
                         <div className="flex flex-col items-end">
-                          <span className="text-xs line-through text-muted-foreground">
+                          <span className="text-sm font-semibold line-through text-slate-500">
                             ₱{item.originalPrice}
                           </span>
                           <div className="text-3xl font-black text-primary">
