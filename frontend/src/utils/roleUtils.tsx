@@ -1,5 +1,7 @@
 import Profile from '../components/dashboard/Profile';
+import Report from '../components/dashboard/report/Report';
 import AdminOverView from '../components/dashboard/admin/AdminOverview';
+import Membership from '../components/dashboard/admin/Membership';
 import UserTable from '../components/dashboard/user-management/Table';
 import { CustomerDashboard } from "../components/dashboard/customer/CustomerDashboard";
 
@@ -25,7 +27,9 @@ export const cashierTabs = [
 export const adminTabs = [
   { label: "Overview", content: <AdminOverView /> },
   { label: "Users", content: <UserTable /> },
+  { label: "Membership", content: <Membership /> },
   { label: "Profile", content: <Profile /> },
+  { label: "Sales Report", content: <Report /> },
 ];
 
 // ✅ 3. Updated switch case to use lowercase roles

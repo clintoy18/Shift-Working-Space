@@ -53,10 +53,29 @@ export const getRecentUsers = async (userCount: number) => {
   return response.data
 }
 
+export const getUsersByRoleAdmin = async (role: string) => {
+  const response = await admin.get("/getUsersByRole", { params: { role } });
+  return response.data;
+};
+
 export const fetchStats = async() => {
   const response = await admin.get('/dashboard-stats')
   return response.data
 }
+
+type SalesReportParams = {
+  startDate?: string;
+  endDate?: string;
+  reportType?: "daily" | "weekly" | "monthly";
+  cashierId?: string;
+  cashierName?: string;
+  paymentStatus?: "pending" | "paid" | "refunded";
+};
+
+export const fetchSalesReport = async (params: SalesReportParams) => {
+  const response = await admin.get("/reports/sales", { params });
+  return response.data;
+};
 
 export const assignTeacherToCourse = async (courseId: number, teacherId: string) => {
   const response = await admin.put(`/course/assign-teacher/${courseId}`, null, {

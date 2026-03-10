@@ -1,6 +1,7 @@
 // controllers/adminController.ts
 import { Request, Response } from "express";
 import User from "../models/User";
+import CheckIn from "../models/CheckIn";
 import bcrypt from "bcryptjs";
 import { isValidObjectId } from "mongoose";
 
@@ -13,6 +14,8 @@ const findActiveUser = (identifier: string) => {
 
   return User.findOne(query);
 };
+
+const escapeRegex = (value: string) => value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
 
 // ─── CREATE USER ──────────────────────────────────────────────────────────────
 
@@ -244,6 +247,120 @@ export const getDashboardStats = async (req: Request, res: Response): Promise<vo
     });
   } catch (err) {
     console.error("Error fetching dashboard stats:", err);
+    res.status(500).json({ message: "An internal server error has occurred." });
+  }
+};
+
+// ─── SALES REPORT ────────────────────────────────────────────────────────────
+
+export const getSalesReport = async (req: Request, res: Response): Promise<void> => {
+  const { startDate, endDate, reportType, cashierId, cashierName, paymentStatus } = req.query;
+
+  const filter: Record<string, unknown> = { isDeleted: false };
+
+  let rangeStart: Date | undefined;
+  let rangeEnd: Date | undefined;
+
+  if (startDate) {
+    const parsed = new Date(String(startDate));
+    if (Number.isNaN(parsed.getTime())) {
+      res.status(400).json({ message: "Invalid startDate." });
+      return;
+    }
+    rangeStart = parsed;
+  }
+
+  if (endDate) {
+    const parsed = new Date(String(endDate));
+    if (Number.isNaN(parsed.getTime())) {
+      res.status(400).json({ message: "Invalid endDate." });
+      return;
+    }
+    parsed.setHours(23, 59, 59, 999);
+    rangeEnd = parsed;
+  }
+
+  if (!rangeStart && !rangeEnd && reportType) {
+    const now = new Date();
+    const type = String(reportType).toLowerCase();
+
+    if (type === "daily") {
+      rangeStart = new Date(now);
+      rangeStart.setHours(0, 0, 0, 0);
+      rangeEnd = new Date(now);
+      rangeEnd.setHours(23, 59, 59, 999);
+    } else if (type === "weekly") {
+      rangeEnd = new Date(now);
+      rangeEnd.setHours(23, 59, 59, 999);
+      rangeStart = new Date(now);
+      rangeStart.setDate(rangeStart.getDate() - 6);
+      rangeStart.setHours(0, 0, 0, 0);
+    } else if (type === "monthly") {
+      rangeStart = new Date(now.getFullYear(), now.getMonth(), 1);
+      rangeStart.setHours(0, 0, 0, 0);
+      rangeEnd = new Date(now);
+      rangeEnd.setHours(23, 59, 59, 999);
+    } else {
+      res.status(400).json({ message: "Invalid reportType. Use daily, weekly, or monthly." });
+      return;
+    }
+  }
+
+  if (rangeStart || rangeEnd) {
+    filter.checkInTime = {
+      ...(rangeStart ? { $gte: rangeStart } : {}),
+      ...(rangeEnd ? { $lte: rangeEnd } : {}),
+    };
+  }
+
+  if (paymentStatus) {
+    const allowedStatuses = ["pending", "paid", "refunded"];
+    const status = String(paymentStatus).toLowerCase();
+    if (!allowedStatuses.includes(status)) {
+      res.status(400).json({ message: "Invalid paymentStatus." });
+      return;
+    }
+    filter.paymentStatus = status;
+  }
+
+  const processedByOr: Record<string, unknown>[] = [];
+
+  if (cashierId) {
+    const cashierIdValue = String(cashierId).trim();
+    if (cashierIdValue) {
+      processedByOr.push({ processedBy: cashierIdValue });
+
+      if (isValidObjectId(cashierIdValue)) {
+        const cashier = await User.findOne({ _id: cashierIdValue, isDeleted: false });
+        if (cashier?.fullName) {
+          processedByOr.push({ processedBy: cashier.fullName });
+        }
+      }
+    }
+  }
+
+  if (cashierName) {
+    const cashierNameValue = String(cashierName).trim();
+    if (cashierNameValue) {
+      processedByOr.push({ processedBy: { $regex: escapeRegex(cashierNameValue), $options: "i" } });
+    }
+  }
+
+  if (processedByOr.length > 0) {
+    filter.$or = processedByOr;
+  }
+
+  try {
+    const records = await CheckIn.find(filter)
+      .sort({ checkInTime: -1 })
+      .lean();
+
+    res.status(200).json({
+      count: records.length,
+      records,
+    });
+  } catch (err) {
+    console.error("Error fetching sales report:", err);
     res.status(500).json({ message: "An internal server error has occurred." });
   }
 };

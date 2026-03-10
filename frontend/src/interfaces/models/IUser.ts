@@ -1,7 +1,7 @@
 import type { Role } from 'utils/roleUtils';
 
 // Keep these as they match your enum
-export type MembershipType = 'None' | 'Regular' | 'Weekly' | 'Monthly';
+export type MembershipType = "None" | "Regular" | "Weekly" | "Monthly" | "Premium" | "Platinum";
 export type MembershipStatus = 'Active' | 'Inactive' | 'Expired' | 'Suspended';
 
 export interface IUser {
