@@ -8,6 +8,7 @@ import {
   getUsersByRole,
   getRecentUsers,
   getDashboardStats,
+  getSalesReport,
 } from "../controllers/admin.controller";
 import { authenticate, checkRole } from "../middleware/auth.middleware";
 import { apiLimiter } from "../middleware/rateLimiter.middleware";
@@ -30,5 +31,6 @@ router.get   ("/user",                ...adminOnly, getAllUsers);
 // ─── Filters & Stats ──────────────────────────────────────────────────────────
 router.get("/getUsersByRole", ...adminOnly, getUsersByRole);
 router.get("/dashboard-stats", ...adminOnly, getDashboardStats);
+router.get("/reports/sales", ...adminOnly, getSalesReport);
 
 export default router;
