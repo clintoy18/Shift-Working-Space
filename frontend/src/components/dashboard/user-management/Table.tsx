@@ -24,7 +24,7 @@ import type { IUser } from "@interfaces";
 import CreateTeacherModal from "./CreateTeacherModal";
 import UpdateUserModal from "./UpdateUserModal";
 import DeleteUserModal from "./DeleteUserModal";
-import { InlineSpinner } from "../../../components/common/LoadingSpinnerPage";
+import Loader from "@/components/ui/loader";
 
 const columnHelper = createColumnHelper<IUser>();
 
@@ -149,6 +149,8 @@ export default function UserTable() {
             membershipStatus: user.membershipStatus,
             isVerified:       user.isVerified,
             isDeleted:        user.isDeleted,
+            termsAccepted:    user.termsAccepted ?? false,
+            privacyPolicyAccepted: user.privacyPolicyAccepted ?? false,
             createdAt:        user.createdAt,
           };
         })
@@ -348,8 +350,7 @@ export default function UserTable() {
               <tr>
                 <td colSpan={6}>
                   <div className="flex flex-col py-32 items-center">
-                    <InlineSpinner />
-                    <span className="text-sm py-4 text-gray-800">Loading users...</span>
+                    <Loader variant="dots" size="lg" text="Loading users..." />
                   </div>
                 </td>
               </tr>

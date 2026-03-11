@@ -10,7 +10,7 @@ const seats: Partial<ISeat>[] = []; // The "proper" TypeScript way
 // 1. ISLAND TABLES (16 seats: 4 tables × 4 seats)
 for (let i = 1; i <= 16; i++) {
     const tableNum = Math.floor((i - 1) / 4) + 1;
-    const isLeftSide = (i - 1) % 4 < 2; 
+    const isLeftSide = (i - 1) % 4 < 2;
     const sideCode = isLeftSide ? "L" : "R";
     const seatInSide = (i - 1) % 2; // 0 or 1
 
@@ -22,8 +22,8 @@ for (let i = 1; i <= 16; i++) {
         status: "available",
         location: `Floor 1, Central Area, Island Table ${tableNum}, ${isLeftSide ? 'Left' : 'Right'} Side`,
         zoneType: "island",
-        hourlyRate: 20,
-        dailyRate: 160,
+        hourlyRate: 60,
+        dailyRate: 480,
     });
 }
 
@@ -40,8 +40,8 @@ wallLabels.forEach((label, index) => {
         status: "available",
         location: `Floor 1, East Wall, Position ${index + 1}`,
         zoneType: "wall",
-        hourlyRate: 20,
-        dailyRate: 160,
+        hourlyRate: 60,
+        dailyRate: 480,
     });
 });
 
@@ -66,8 +66,8 @@ regularData.forEach((data, index) => {
         status: "available",
         location: `Floor 1, North Wing, Regular Table, ${data.side} Side`,
         zoneType: "regular",
-        hourlyRate: 20,
-        dailyRate: 160,
+        hourlyRate: 60,
+        dailyRate: 480,
     });
 });
 
@@ -88,18 +88,40 @@ for (let i = 0; i < 4; i++) {
     });
 }
 
+// 5. HUDDLE ROOMS (Meeting Rooms - 3 rooms)
+const huddleRooms = [
+    { code: "huddle-1", label: "Huddle 1", capacity: 4, hourlyRate: 270 },
+    { code: "huddle-2-room", label: "Huddle 2", capacity: 4, hourlyRate: 270 },
+    { code: "conference", label: "Conference", capacity: 8, hourlyRate: 420 },
+];
+
+huddleRooms.forEach((room, index) => {
+    const id = 32 + index;
+    seats.push({
+        seatNumber: `S-${id.toString().padStart(3, '0')}`,
+        seatCode: room.code,
+        displayLabel: room.label,
+        seatType: "premium",
+        status: "available",
+        location: `Floor 1, North Wing, ${room.label} Room`,
+        zoneType: "huddle",
+        hourlyRate: room.hourlyRate,
+        dailyRate: room.hourlyRate * 8,
+    });
+});
+
 const seedDatabase = async () => {
     try {
         await mongoose.connect(process.env.MONGO_URI || 'mongodb://localhost:27017/shift_db');
         console.log("🛠️ Connected to MongoDB...");
 
-        // Wipe existing seats to avoid Unique Constraint (Duplicate Key) errors
+        // Clear existing seats collection to avoid Unique Constraint errors
         await Seat.deleteMany({});
-        console.log("🧹 Cleared existing seats.");
+        console.log("🧹 Cleared existing seats collection.");
 
         await Seat.insertMany(seats);
         console.log(`✅ Success: ${seats.length} seats migrated to Node.js!`);
-        
+
         process.exit(0);
     } catch (err) {
         console.error("❌ Seeding failed:", err);

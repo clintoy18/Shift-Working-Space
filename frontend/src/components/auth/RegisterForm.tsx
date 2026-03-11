@@ -2,9 +2,12 @@ import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
-import { AlertCircle, ArrowLeft, UserCircle, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, UserCircle, Check, X } from "lucide-react";
 import type { IRegisterRequest } from '@interfaces';
 import { useNavigate } from "react-router-dom";
+import Loader from "@/components/ui/loader";
+import PasswordInput from "./PasswordInput";
+import TermsModal from "./TermsModal";
 
 const RegisterForm = ({
   onRegister,
@@ -16,6 +19,7 @@ const RegisterForm = ({
   error?: string
 }) => {
   const navigate = useNavigate();
+
   // ✅ Removed userId - matched to IRegisterRequest
   const [formData, setFormData] = useState<IRegisterRequest>({
     firstName: '',
@@ -24,9 +28,26 @@ const RegisterForm = ({
     email: '',
     password: '',
     confirmPassword: '',
+    termsAccepted: false,
+    privacyPolicyAccepted: false,
   });
 
-  const [formErrors, setFormErrors] = useState<Partial<IRegisterRequest>>({});
+  const [formErrors, setFormErrors] = useState<Partial<Record<keyof IRegisterRequest | 'general', string>>>({});
+  const [showPasswordRequirements, setShowPasswordRequirements] = useState(false);
+  const [showTermsModal, setShowTermsModal] = useState(false);
+
+  // Password requirement checks
+  const passwordRequirements = {
+    minLength: formData.password.length >= 12,
+    hasUpperCase: /[A-Z]/.test(formData.password),
+    hasLowerCase: /[a-z]/.test(formData.password),
+    hasNumber: /[0-9]/.test(formData.password),
+    hasSpecialChar: /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]/.test(formData.password),
+  };
+
+  const isPasswordValid = Object.values(passwordRequirements).every(req => req);
+  const passwordsMatch = formData.password && formData.confirmPassword && formData.password === formData.confirmPassword;
+  const showPasswordMismatch = formData.confirmPassword && formData.password !== formData.confirmPassword;
 
   const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { id, value } = e.target;
@@ -34,10 +55,15 @@ const RegisterForm = ({
     if (formErrors[id as keyof IRegisterRequest]) {
       setFormErrors(prev => ({ ...prev, [id]: undefined }));
     }
+
+    // Show password requirements when user focuses on password field
+    if (id === "password") {
+      setShowPasswordRequirements(value.length > 0);
+    }
   };
 
   const validateForm = (): boolean => {
-    const errors: Partial<IRegisterRequest> = {};
+    const errors: Partial<Record<keyof IRegisterRequest | 'general', string>> = {};
     if (!formData.firstName.trim()) errors.firstName = 'Required';
     if (!formData.lastName.trim()) errors.lastName = 'Required';
     if (!formData.email.trim()) {
@@ -47,14 +73,21 @@ const RegisterForm = ({
     }
     if (!formData.password) {
       errors.password = 'Required';
-    } else if (formData.password.length < 6) {
-      errors.password = 'Min 6 characters';
+    } else if (!isPasswordValid) {
+      errors.password = 'Password does not meet requirements';
     }
     if (formData.password !== formData.confirmPassword) {
       errors.confirmPassword = 'Passwords must match';
     }
+    if (!formData.termsAccepted || !formData.privacyPolicyAccepted) {
+      errors.general = 'You must accept both Terms and Privacy Policy';
+    }
     setFormErrors(errors);
     return Object.keys(errors).length === 0;
+  };
+
+  const handleCloseTermsModal = () => {
+    setShowTermsModal(false);
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -65,7 +98,12 @@ const RegisterForm = ({
   };
 
   return (
-    <Card className="w-full max-w-xl shadow-2xl bg-card/50 backdrop-blur-md mx-auto">
+    <>
+      <TermsModal
+        isOpen={showTermsModal}
+        onClose={handleCloseTermsModal}
+      />
+      <Card className="w-full max-w-xl shadow-2xl bg-card/50 backdrop-blur-md mx-auto">
       <CardContent className="p-8">
         <div className="mb-10 text-center">
           <div className="inline-flex h-12 w-12 bg-primary rounded-xl items-center justify-center mb-4 shadow-lg shadow-primary/20">
@@ -137,27 +175,175 @@ const RegisterForm = ({
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Password</label>
-                <Input 
-                  id="password" 
-                  type="password" 
-                  value={formData.password} 
-                  onChange={handleInputChange} 
-                  placeholder="••••••••" 
-                  className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.password ? "border-destructive" : "border-muted-foreground/20"}`} 
+                <PasswordInput
+                  id="password"
+                  value={formData.password}
+                  onChange={handleInputChange}
+                  error={!!formErrors.password}
                 />
+
+                {/* Password Requirements Display */}
+                {showPasswordRequirements && (
+                  <div className={`mt-3 p-3 rounded-lg border space-y-2 ${
+                    isPasswordValid
+                      ? "bg-green-500/10 border-green-500/30"
+                      : "bg-destructive/10 border-destructive/30"
+                  }`}>
+                    <p className={`text-xs font-semibold ${
+                      isPasswordValid
+                        ? "text-green-600"
+                        : "text-destructive"
+                    }`}>
+                      {isPasswordValid ? "✓ Password meets all requirements" : "Password Requirements:"}
+                    </p>
+                    {!isPasswordValid && (
+                      <div className="space-y-1.5">
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.minLength ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.minLength ? "text-green-600" : "text-muted-foreground"}>
+                            At least 12 characters
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.hasUpperCase ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.hasUpperCase ? "text-green-600" : "text-muted-foreground"}>
+                            One uppercase letter (A-Z)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.hasLowerCase ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.hasLowerCase ? "text-green-600" : "text-muted-foreground"}>
+                            One lowercase letter (a-z)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.hasNumber ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.hasNumber ? "text-green-600" : "text-muted-foreground"}>
+                            One number (0-9)
+                          </span>
+                        </div>
+                        <div className="flex items-center gap-2 text-xs">
+                          {passwordRequirements.hasSpecialChar ? (
+                            <Check className="w-4 h-4 text-green-500" />
+                          ) : (
+                            <X className="w-4 h-4 text-destructive" />
+                          )}
+                          <span className={passwordRequirements.hasSpecialChar ? "text-green-600" : "text-muted-foreground"}>
+                            One special character (!@#$%^&*)
+                          </span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
+                )}
               </div>
               <div className="space-y-1.5">
                 <label className="text-xs font-semibold text-muted-foreground ml-1">Confirm Password</label>
-                <Input 
-                  id="confirmPassword" 
-                  type="password" 
-                  value={formData.confirmPassword} 
-                  onChange={handleInputChange} 
-                  placeholder="••••••••" 
-                  className={`h-11 bg-background/50 focus:ring-2 focus:ring-primary/20 transition-all ${formErrors.confirmPassword ? "border-destructive" : "border-muted-foreground/20"}`} 
-                />
+                <div className="relative">
+                  <PasswordInput
+                    id="confirmPassword"
+                    value={formData.confirmPassword}
+                    onChange={handleInputChange}
+                    error={showPasswordMismatch}
+                    className={
+                      showPasswordMismatch
+                        ? "ring-destructive/20"
+                        : passwordsMatch
+                        ? "border-green-500/50 ring-green-500/20"
+                        : ""
+                    }
+                  />
+                </div>
+
+                {/* Password Match Feedback */}
+                {formData.confirmPassword && (
+                  <div className={`mt-2 p-2 rounded-lg flex items-center gap-2 text-xs font-medium ${
+                    passwordsMatch
+                      ? "bg-green-500/10 text-green-600"
+                      : "bg-destructive/10 text-destructive"
+                  }`}>
+                    {passwordsMatch ? (
+                      <>
+                        <Check className="w-4 h-4" />
+                        <span>Passwords match</span>
+                      </>
+                    ) : (
+                      <>
+                        <X className="w-4 h-4" />
+                        <span>Passwords do not match</span>
+                      </>
+                    )}
+                  </div>
+                )}
               </div>
             </div>
+          </div>
+
+          {/* Terms & Privacy Policy Checkbox */}
+          <div className="space-y-3">
+            <label className="flex items-start gap-3 cursor-pointer group p-3 rounded-lg hover:bg-muted/30 transition-colors border border-muted-foreground/10">
+              <input
+                type="checkbox"
+                checked={formData.termsAccepted && formData.privacyPolicyAccepted}
+                onChange={(e) => {
+                  if (e.target.checked) {
+                    setFormData(prev => ({
+                      ...prev,
+                      termsAccepted: true,
+                      privacyPolicyAccepted: true,
+                    }));
+                  } else {
+                    setFormData(prev => ({
+                      ...prev,
+                      termsAccepted: false,
+                      privacyPolicyAccepted: false,
+                    }));
+                  }
+                  if (formErrors.general) {
+                    setFormErrors(prev => ({ ...prev, general: undefined }));
+                  }
+                }}
+                className="mt-1 w-5 h-5 rounded border-2 border-muted-foreground/30 cursor-pointer accent-primary flex-shrink-0"
+              />
+              <div className="flex-1">
+                <span className="text-sm text-muted-foreground group-hover:text-foreground transition-colors">
+                  I accept the{' '}
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.preventDefault();
+                      setShowTermsModal(true);
+                    }}
+                    className="text-primary hover:text-primary/80 font-semibold underline transition-colors"
+                  >
+                    Terms of Service and Privacy Policy
+                  </button>
+                </span>
+              </div>
+            </label>
+
+            {formErrors.general && (
+              <div className="bg-destructive/10 border border-destructive/20 rounded-lg p-3 flex gap-2 items-start text-sm text-destructive">
+                <AlertCircle className="h-4 w-4 flex-shrink-0 mt-0.5" />
+                <span>{formErrors.general}</span>
+              </div>
+            )}
           </div>
 
           {error && (
@@ -167,14 +353,14 @@ const RegisterForm = ({
             </div>
           )}
 
-          <Button 
-            type="submit" 
+          <Button
+            type="submit"
             disabled={isLoading}
             className="w-full h-12 bg-primary hover:bg-primary/90 text-primary-foreground font-bold text-base shadow-lg shadow-primary/20 transition-all active:scale-[0.98]"
           >
             {isLoading ? (
               <span className="flex items-center gap-2">
-                <Loader2 className="h-4 w-4 animate-spin" />
+                <Loader variant="spinner" size="sm" color="white" />
                 Creating account...
               </span>
             ) : 'Create account'}
@@ -191,6 +377,7 @@ const RegisterForm = ({
         </button>
       </CardContent>
     </Card>
+    </>
   );
 };
 

@@ -103,6 +103,8 @@ const AdminOverview = () => {
               membershipStatus: user.membershipStatus,
               isVerified: user.isVerified,
               isDeleted: user.isDeleted,
+              termsAccepted: user.termsAccepted ?? false,
+              privacyPolicyAccepted: user.privacyPolicyAccepted ?? false,
               createdAt:  user.createdAt,
             } satisfies IUser;
           })

@@ -12,7 +12,7 @@
     "db:studio": "prisma studio",
     "db:reset": "prisma migrate reset --force",
     "db:push": "prisma db push",
-  "seed:seats": "ts-node src/utils/seedSeats.ts"
+    "seed:seats": "ts-node src/utils/seedSeats.ts"
   },
   "keywords": [
     "emergency",
@@ -34,11 +34,14 @@
     "cors": "^2.8.5",
     "express": "^5.1.0",
     "express-rate-limit": "^8.1.0",
+    "express-rate-limiter": "^1.3.1",
     "jsonwebtoken": "^9.0.2",
     "mongodb": "^7.1.0",
     "mongoose": "^8.19.0",
     "multer": "^2.0.2",
-    "multer-s3": "^3.0.1"
+    "multer-s3": "^3.0.1",
+    "rate-limit-redis": "^4.3.1",
+    "redis": "^5.11.0"
   },
   "devDependencies": {
     "@types/cors": "^2.8.19",
@@ -47,6 +50,7 @@
     "@types/multer": "^2.0.0",
     "@types/multer-s3": "^3.0.3",
     "@types/node": "^24.6.1",
+    "@types/rate-limit-redis": "^1.7.4",
     "prisma": "^6.16.3",
     "ts-node-dev": "^2.0.0",
     "typescript": "^5.9.3"

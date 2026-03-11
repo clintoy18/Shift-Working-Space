@@ -1,3 +1,4 @@
+
 import React, { useState, useEffect } from "react";
 import TextInputField from "../common/TextInputField";
 import Button from "../common/Button";
@@ -6,6 +7,7 @@ import { useAuth } from "../../context/AuthContext";
 import { updateSelf } from "@services";
 import { type IUser } from "@interfaces";
 import { useToast } from "../../context/ToastContext";
+import Loader from "@/components/ui/loader";
 
 const ProfileForm = () => {
   const { user, handleFetchUser } = useAuth(); // ✅ Added handleFetchUser to refresh state
@@ -89,10 +91,12 @@ const ProfileForm = () => {
         fullName: `${formData.firstName} ${formData.lastName}`,
         role: user.role,
         email: user.email,
-        membershipType: user.membershipType, 
+        membershipType: user.membershipType,
         membershipStatus: user.membershipStatus,
         isDeleted: user.isDeleted,
         isVerified: user.isVerified,
+        termsAccepted: user.termsAccepted,
+        privacyPolicyAccepted: user.privacyPolicyAccepted,
         createdAt: user.createdAt
       };
       
@@ -261,7 +265,7 @@ const ProfileForm = () => {
                 <Button
                   type="submit"
                   label={loading ? "Saving..." : "Save Changes"}
-                  icon={loading ? null : <Save className="w-4 h-4" />}
+                  icon={loading ? <Loader variant="spinner" size="sm" color="white" /> : <Save className="w-4 h-4" />}
                   className="flex-1 py-3 bg-orange-600 text-white hover:bg-orange-700 shadow-lg"
                   disabled={loading}
                 />

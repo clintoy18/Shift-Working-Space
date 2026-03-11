@@ -7,7 +7,7 @@ export interface ISeat extends Document {
   seatType: "regular" | "premium";
   status: "available" | "occupied" | "reserved" | "maintenance";
   location: string;
-  zoneType: "island" | "wall" | "regular" | "cubicle";
+  zoneType: "island" | "wall" | "regular" | "cubicle" | "huddle";
   hourlyRate: number;
   dailyRate: number;
   isActive: boolean;

@@ -1,19 +1,21 @@
-import { Facebook, Instagram, Linkedin, Twitter } from "lucide-react";
+import { Facebook, Instagram, 
+  // Linkedin, Twitter
+ } from "lucide-react";
 
 const Footer = () => {
   const footerLinks = {
-    Product: [
+    Services: [
       { label: "Features", href: "#features" },
       { label: "Pricing", href: "#pricing" },
       { label: "Locations", href: "#location" },
       { label: "FAQ", href: "#faq" },
     ],
-    Company: [
-      { label: "About Us", href: "#" },
-      { label: "Careers", href: "#" },
-      { label: "Blog", href: "#" },
-      { label: "Press", href: "#" },
-    ],
+    // Company: [
+    //   { label: "About Us", href: "#" },
+    //   { label: "Careers", href: "#" },
+    //   { label: "Blog", href: "#" },
+    //   { label: "Press", href: "#" },
+    // ],
     Legal: [
       { label: "Privacy Policy", href: "#" },
       { label: "Terms of Service", href: "#" },
@@ -22,10 +24,10 @@ const Footer = () => {
   };
 
   const socialLinks = [
-    { icon: Twitter, href: "#", label: "Twitter" },
-    { icon: Linkedin, href: "#", label: "LinkedIn" },
-    { icon: Instagram, href: "#", label: "Instagram" },
-    { icon: Facebook, href: "#", label: "Facebook" },
+    // { icon: Twitter, href: "#", label: "Twitter" },
+    // { icon: Linkedin, href: "#", label: "LinkedIn" },
+    { icon: Instagram, href: "https://www.instagram.com/shiftworkingspace.co/", label: "Instagram" },
+    { icon: Facebook, href: "https://www.facebook.com/share/1AqQhwUMHo/?mibextid=wwXIfr", label: "Facebook" },
   ];
 
   return (
@@ -34,16 +36,25 @@ const Footer = () => {
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12">
           {/* Brand Column */}
           <div className="lg:col-span-2">
-            <div className="flex items-center gap-2 mb-4">
-              <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center">
-                <span className="text-primary-foreground font-bold text-lg">S</span>
+            <div className="flex items-center gap-3 mb-4">
+              {/* BIG ROUND LOGO */}
+              <div className="w-16 h-16 rounded-full overflow-hidden border border-white/10">
+                <img
+                  src="/images/logo.png"
+                  alt="Shift Logo"
+                  className="w-full h-full object-contain"
+                />
               </div>
-              <span className="font-bold text-xl">Shift</span>
+
+              <span className="font-bold text-2xl">Shift</span>
             </div>
+
             <p className="text-background/70 mb-6 max-w-sm">
-              Modern coworking spaces designed for the way you work. Book your 
-              perfect desk in seconds and join a community of driven professionals.
+              Modern coworking spaces designed for the way you work. Book your
+              perfect desk in seconds and join a community of driven
+              professionals.
             </p>
+
             {/* Social Links */}
             <div className="flex gap-4">
               {socialLinks.map((social, index) => (
@@ -58,7 +69,6 @@ const Footer = () => {
               ))}
             </div>
           </div>
-
           {/* Link Columns */}
           {Object.entries(footerLinks).map(([title, links]) => (
             <div key={title}>
@@ -82,8 +92,10 @@ const Footer = () => {
         {/* Bottom Bar */}
         <div className="border-t border-background/10 mt-12 pt-8 flex flex-col md:flex-row items-center justify-between gap-4">
           <p className="text-background/60 text-sm">
-            © {new Date().getFullYear()} Shift Working Space. All rights reserved.
+            © {new Date().getFullYear()} Shift Working Space. All rights
+            reserved.
           </p>
+
           <p className="text-background/60 text-sm">
             Made with ❤️ for remote workers everywhere
           </p>

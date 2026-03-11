@@ -20,6 +20,9 @@ const addAuthInterceptor = (instance: AxiosInstance): AxiosInstance => {
       if (error.response?.status === 401) {
         console.log("Unauthorized, redirecting to login...");
       }
+      if (error.response?.status === 429) {
+        console.log("Rate limit exceeded, please try again later");
+      }
       return Promise.reject(error);
     }
   );
@@ -38,3 +41,6 @@ export const auth = addAuthInterceptor(axios.create({ baseURL: `${apiUrl}/auth` 
 export const admin = addAuthInterceptor(axios.create({ baseURL: `${apiUrl}/admin` }));
 export const course = addAuthInterceptor(axios.create({ baseURL: `${apiUrl}/course` }));
 export const stats = addAuthInterceptor(axios.create({ baseURL: `${apiUrl}/stats` }));
+
+// ✅ Public API (no auth required)
+export const publicApi = axios.create({ baseURL: `${apiUrl}/public` });

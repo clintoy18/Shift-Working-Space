@@ -1,13 +1,45 @@
 import { Request, Response } from 'express';
 import Seat from '../models/Seat';
+import { escapeRegex } from '../utils/validation';
+
+// Simple in-memory cache (use Redis in production)
+const seatCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
 
 /**
- * @desc Get all active seats with current status
+ * Get cached data or fetch from DB
+ */
+const getCachedData = async (key: string, fetchFn: () => Promise<any>) => {
+  const cached = seatCache.get(key);
+  const now = Date.now();
+
+  if (cached && now - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+
+  const data = await fetchFn();
+  seatCache.set(key, { data, timestamp: now });
+  return data;
+};
+
+/**
+ * @desc Get all active seats with caching
  * @route GET /api/seat
+ *
+ * Caching strategy:
+ * - Data cached for 5 minutes
+ * - Reduces database load
+ * - Prevents real-time scraping
+ * - Users see fresh data every 5 minutes
  */
 export const getAllSeats = async (req: Request, res: Response) => {
   try {
-    const seats = await Seat.find({ isDeleted: false, isActive: true });
+    const cacheKey = 'all_seats';
+
+    const seats = await getCachedData(cacheKey, async () => {
+      return await Seat.find({ isDeleted: false, isActive: true }).lean();
+    });
+
     res.status(200).json(seats);
   } catch (error) {
     res.status(500).json({ message: "Error fetching seats", error });
@@ -20,15 +52,26 @@ export const getAllSeats = async (req: Request, res: Response) => {
  */
 export const getSeatsByZone = async (req: Request, res: Response) => {
   try {
-    const { zoneType } = req.params;
+    const zoneType = req.params.zoneType as string;
+
+    // Validate input
+    if (!zoneType || typeof zoneType !== 'string' || zoneType.trim().length === 0) {
+      res.status(400).json({ message: "Zone type is required" });
+      return;
+    }
+
+    // Escape regex special characters to prevent injection
+    const escapedZoneType = escapeRegex(zoneType);
+
     // case-insensitive search using Regex
-    const seats = await Seat.find({ 
-      zoneType: { $regex: new RegExp(`^${zoneType}$`, 'i') },
-      isDeleted: false 
+    const seats = await Seat.find({
+      zoneType: { $regex: new RegExp(`^${escapedZoneType}$`, 'i') },
+      isDeleted: false
     });
     res.status(200).json(seats);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching seats by zone", error });
+    console.error("Error fetching seats by zone:", error);
+    res.status(500).json({ message: "Error fetching seats by zone" });
   }
 };
 
@@ -38,19 +81,30 @@ export const getSeatsByZone = async (req: Request, res: Response) => {
  */
 export const getSeatByCode = async (req: Request, res: Response) => {
   try {
-    const { seatCode } = req.params;
-    const seat = await Seat.findOne({ 
-      seatCode: { $regex: new RegExp(`^${seatCode}$`, 'i') },
-      isDeleted: false 
+    const seatCode = req.params.seatCode as string;
+
+    // Validate input
+    if (!seatCode || typeof seatCode !== 'string' || seatCode.trim().length === 0) {
+      res.status(400).json({ message: "Seat code is required" });
+      return;
+    }
+
+    // Escape regex special characters to prevent injection
+    const escapedSeatCode = escapeRegex(seatCode);
+
+    const seat = await Seat.findOne({
+      seatCode: { $regex: new RegExp(`^${escapedSeatCode}$`, 'i') },
+      isDeleted: false
     });
 
     if (!seat) {
-      return res.status(404).json({ message: `Seat with code '${seatCode}' not found` });
+      return res.status(404).json({ message: "Seat not found" });
     }
 
     res.status(200).json(seat);
   } catch (error) {
-    res.status(500).json({ message: "Error fetching seat", error });
+    console.error("Error fetching seat:", error);
+    res.status(500).json({ message: "Error fetching seat" });
   }
 };
 
@@ -60,22 +114,37 @@ export const getSeatByCode = async (req: Request, res: Response) => {
  */
 export const updateSeatStatus = async (req: Request, res: Response) => {
   try {
-    const { seatCode } = req.params;
+    const seatCode = req.params.seatCode as string;
     const { status } = req.body;
 
+    // Validate inputs
+    if (!seatCode || typeof seatCode !== 'string' || seatCode.trim().length === 0) {
+      res.status(400).json({ message: "Seat code is required" });
+      return;
+    }
+
+    if (!status || typeof status !== 'string' || status.trim().length === 0) {
+      res.status(400).json({ message: "Status is required" });
+      return;
+    }
+
+    // Escape regex special characters to prevent injection
+    const escapedSeatCode = escapeRegex(seatCode);
+
     const seat = await Seat.findOneAndUpdate(
-      { seatCode: { $regex: new RegExp(`^${seatCode}$`, 'i') }, isDeleted: false },
+      { seatCode: { $regex: new RegExp(`^${escapedSeatCode}$`, 'i') }, isDeleted: false },
       { status: status },
       { new: true } // Returns the updated document
     );
 
     if (!seat) {
-      return res.status(404).json({ message: `Seat with code '${seatCode}' not found` });
+      return res.status(404).json({ message: "Seat not found" });
     }
 
     res.status(200).json(seat);
   } catch (error) {
-    res.status(500).json({ message: "Error updating seat status", error });
+    console.error("Error updating seat status:", error);
+    res.status(500).json({ message: "Error updating seat status" });
   }
 };
 

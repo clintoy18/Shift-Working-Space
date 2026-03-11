@@ -16,8 +16,8 @@ const RegisterPage: React.FC = () => {
   setIsLoading(true);
   try {
     await handleRegister(credentials);
-    success('Account created! Please sign in.');
-    navigate("/login");
+    success('Account created successfully! Welcome to Shift.');
+    navigate("/dashboard");
   } catch (err: any) {
     // ✅ Extract actual backend error message
     const errorMsg = err.response?.data?.message || "Registration failed. Please try again.";
@@ -27,11 +27,7 @@ const RegisterPage: React.FC = () => {
   }
 };
   return (
-    <AuthLayout 
-      title="Create your workspace." 
-      subtitle="Join the Shift community avail exclusive member discounts and 
-    premium hourly rates. "
-    >
+    <AuthLayout>
       <RegisterForm onRegister={onRegister} isLoading={isLoading} />
     </AuthLayout>
   );
