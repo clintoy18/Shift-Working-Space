@@ -239,7 +239,7 @@ export const CheckInForm: React.FC<CheckInFormProps> = ({
       }
     } catch (error) {
       let errorMessage = "Error during check-in. Please try again."
-      const err = error as any
+      const err = error as unknown as { response?: { status: number; data?: { message?: string; existingSeatId?: string; existingCheckInType?: string; checkInType?: string; existingCheckInId?: string } }; message?: string }
 
       if (err.response?.status === 409) {
         const data = err.response?.data
@@ -564,7 +564,10 @@ export const CheckInForm: React.FC<CheckInFormProps> = ({
             currentStep={currentStep}
             onNext={handleNext}
             onBack={handleBack}
-            onSubmit={handleSubmit}
+            onSubmit={() => {
+              const event = new Event('submit', { bubbles: true, cancelable: true })
+              handleSubmit(event as unknown as React.FormEvent<HTMLFormElement>)
+            }}
             isNextDisabled={!isStepValid()}
             isSubmitDisabled={!isStepValid() || submitting}
             loading={submitting}
