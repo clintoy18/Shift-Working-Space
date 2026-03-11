@@ -57,6 +57,7 @@ export const fetchStats = async() => {
   const response = await admin.get('/dashboard-stats')
   return response.data
 }
+
 export const assignTeacherToCourse = async (courseId: number, teacherId: string) => {
   const response = await admin.put(`/course/assign-teacher/${courseId}`, null, {
     params: { teacherId }

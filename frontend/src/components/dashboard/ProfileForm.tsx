@@ -91,10 +91,12 @@ const ProfileForm = () => {
         fullName: `${formData.firstName} ${formData.lastName}`,
         role: user.role,
         email: user.email,
-        membershipType: user.membershipType, 
+        membershipType: user.membershipType,
         membershipStatus: user.membershipStatus,
         isDeleted: user.isDeleted,
         isVerified: user.isVerified,
+        termsAccepted: user.termsAccepted,
+        privacyPolicyAccepted: user.privacyPolicyAccepted,
         createdAt: user.createdAt
       };
       

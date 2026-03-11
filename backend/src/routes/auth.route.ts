@@ -1,18 +1,18 @@
 import express from "express";
 import { login, register, getMe, updateMe } from "../controllers/auth.controller";
 import { authenticate } from "../middleware/auth.middleware";
-import { authLimiter } from "../middleware/rateLimiter.middleware";
+import { authLimiter, apiLimiter } from "../middleware/rateLimiter.middleware";
 
 const router = express.Router();
 
 // Apply rate limiting to authentication endpoints
-router.post("/register", authLimiter, register);
-router.post("/login", authLimiter, login);
+router.post("/register", authLimiter ,register);
+router.post("/login",  login);
 
-// This works now!
-router.get("/me", authenticate, getMe);
-router.put("/me/update", authenticate, updateMe);
-router.get("/validate", authenticate, (req, res) => {
+// Apply general API rate limiting to authenticated endpoints
+router.get("/me", authenticate, apiLimiter, getMe);
+router.put("/me/update", authenticate, apiLimiter, updateMe);
+router.get("/validate", authenticate, apiLimiter, (req, res) => {
     res.json({ valid: true, user: req.user });
 });
 

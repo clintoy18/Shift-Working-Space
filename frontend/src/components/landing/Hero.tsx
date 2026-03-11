@@ -1,27 +1,33 @@
 import { Button } from "@/components/ui/button";
 import { MapPin, Users, ArrowRight } from "lucide-react";
 import { useNavigate } from "react-router-dom";
-// import { fetchStats } from "@services/StatsService";
-// import { useEffect, useState } from "react"; // ✅ IMPORT HOOKS
+import { useEffect, useState } from "react";
+import { fetchShiftyCount } from "@/services/PublicService";
 
 const Hero = () => {
   const navigate = useNavigate();
 
-  // // ✅ STATE FOR STATS
-  // const [stats, setStats] = useState({
-  //   totalSeats: 0,
-  //   totalMembers: 0,
-  // });
+  // ✅ STATE FOR STATS
+  const [shiftyCount, setShiftyCount] = useState(0);
+  const [loading, setLoading] = useState(true);
 
-  // // ✅ FETCH STATS ON LOAD
-  // useEffect(() => {
-  //   const loadStats = async () => {
-  //     const data = await fetchStats();
-  //     setStats(data);
-  //   };
+  // ✅ FETCH SHIFTY COUNT ON LOAD
+  useEffect(() => {
+    const loadShiftyCount = async () => {
+      try {
+        setLoading(true);
+        const count = await fetchShiftyCount();
+        setShiftyCount(count);
+      } catch (error) {
+        console.error("Failed to load shifty count:", error);
+        setShiftyCount(0);
+      } finally {
+        setLoading(false);
+      }
+    };
 
-  //   loadStats();
-  // }, []);
+    loadShiftyCount();
+  }, []);
 
   return (
     <section
@@ -103,13 +109,10 @@ const Hero = () => {
               </div>
               <div className="text-left">
                 <p className="text-3xl font-black text-white">
-                  {/* {stats.totalMembers
-                    ? stats.totalMembers.toLocaleString()
-                    : "500+"} */}
-                  20+
+                  {loading ? "..." : shiftyCount > 0 ? `${shiftyCount}+` : "You!"}
                 </p>
                 <p className="text-slate-300 text-sm font-medium">
-                  Active Members
+                  {loading ? "Loading..." : shiftyCount > 0 ? "Members Joined" : "Be our first member!"}
                 </p>
               </div>
             </div>
@@ -119,7 +122,7 @@ const Hero = () => {
                 <MapPin className="w-7 h-7 text-white" />
               </div>
               <div className="text-left">
-                <p className="text-lg font-black text-white">Mandaue City</p>
+                <p className="text-lg font-black text-white">Canduman, Mandaue City</p>
                 <p className="text-slate-300 text-sm font-medium">
                   Cebu, Philippines
                 </p>

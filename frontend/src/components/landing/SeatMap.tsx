@@ -128,24 +128,30 @@ const ShiftFloorPlanFinal = () => {
                 </span>
               </h3>
 
-              <FacilityItem 
-                icon={<Users size={14} />} 
-                label="Team Collaboration" 
-                description="Conf & Huddle Rooms" 
-                price="From ₱270/hr" 
+              <FacilityItem
+                icon={<Users size={14} />}
+                label="Open Seating"
+                description="Island Tables & Wall Seats"
+                price="₱60/hr"
               />
-              <FacilityItem 
-                icon={<Monitor size={14} />} 
-                label="Deep Work Zone" 
-                description="Private Focus Cubicles" 
-                price="₱175/hr" 
-                available={getAvailableCount("Cubicle")}
+              <FacilityItem
+                icon={<Monitor size={14} />}
+                label="Deep Work Zone"
+                description="Private Focus Cubicles"
+                price="₱175/hr"
+                available={getAvailableCount("cubicle")}
               />
-              <FacilityItem 
-                icon={<Coffee size={14} />} 
-                label="Unlimited Fuel" 
-                description="Pantry & Premium Drinks" 
-                price="FREE" 
+              <FacilityItem
+                icon={<Users size={14} />}
+                label="Team Collaboration"
+                description="Huddle Rooms (2) & Conference"
+                price="From ₱270/hr"
+              />
+              <FacilityItem
+                icon={<Coffee size={14} />}
+                label="Unlimited Fuel"
+                description="Pantry & Premium Drinks"
+                price="FREE"
               />
             </div>
 
@@ -168,25 +174,27 @@ const ShiftFloorPlanFinal = () => {
                   {/* ============================================ */}
                   <div className="flex gap-2 h-[22%] mb-6">
                     {/* Conference Room */}
-                    <ZoneBox 
-                      label="Conference" 
-                      className="w-[38%]" 
-                      icon={<Users className="text-slate-500" />} 
+                    <ZoneBox
+                      label="Conference"
+                      className="w-[38%]"
+                      active={getAvailableCount("huddle") > 0}
+                      icon={<Users className={getAvailableCount("huddle") > 0 ? "text-primary" : "text-slate-500"} />}
                     />
                     
                     {/* Huddle 1 */}
-                    <ZoneBox 
-                      label="Huddle 1" 
-                      className="w-[20%]" 
-                      active 
-                      icon={<Users className="text-primary" />} 
+                    <ZoneBox
+                      label="Huddle 1"
+                      className="w-[20%]"
+                      active={getAvailableCount("huddle") > 0}
+                      icon={<Users className={getAvailableCount("huddle") > 0 ? "text-primary" : "text-slate-500"} />}
                     />
-                    
+
                     {/* Huddle 2 */}
-                    <ZoneBox 
-                      label="Huddle 2" 
-                      className="w-[20%]" 
-                      icon={<Users className="text-slate-500" />} 
+                    <ZoneBox
+                      label="Huddle 2"
+                      className="w-[20%]"
+                      active={getAvailableCount("huddle") > 0}
+                      icon={<Users className={getAvailableCount("huddle") > 0 ? "text-primary" : "text-slate-500"} />}
                     />
                     
                     {/* Regular Table (6 seats) - huddle-2-L/R-[0-2] */}

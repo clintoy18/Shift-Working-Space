@@ -5,11 +5,17 @@ import { generateToken } from "../utils/jwt";
 import { validatePassword, validateEmail, validateNameField } from "../utils/validation";
 
 export const register = async (req: Request, res: Response): Promise<void> => {
-  const { email, password, firstName, lastName, role } = req.body;
+  const { email, password, firstName, lastName, role, termsAccepted, privacyPolicyAccepted } = req.body;
 
   // Validate required fields
   if (!email || !password || !firstName || !lastName) {
     res.status(400).json({ message: "Required fields are missing" });
+    return;
+  }
+
+  // Validate agreement acceptance
+  if (!termsAccepted || !privacyPolicyAccepted) {
+    res.status(400).json({ message: "You must accept both Terms of Service and Privacy Policy to register" });
     return;
   }
 
@@ -61,12 +67,24 @@ export const register = async (req: Request, res: Response): Promise<void> => {
       firstName,
       lastName,
       role: isFirstUser ? "admin" : (role || "shifty"),
-      isVerified: isFirstUser ? true : false, // First user auto-verified, others need approval
+      isVerified: true, // All users auto-verified on registration
+      termsAccepted: true,
+      privacyPolicyAccepted: true,
+      agreementAcceptedAt: new Date(),
     });
 
     await newUser.save();
+
+    // Generate token for immediate login
+    const token = generateToken({
+      id: (newUser._id as any).toString(),
+      email: newUser.email,
+      role: newUser.role,
+    });
+
     res.status(201).json({
-      message: isFirstUser ? "Admin created" : "User registered successfully",
+      message: "User registered successfully",
+      token,
       user: newUser,
     });
   } catch (err) {

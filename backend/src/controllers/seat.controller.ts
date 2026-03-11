@@ -2,13 +2,44 @@ import { Request, Response } from 'express';
 import Seat from '../models/Seat';
 import { escapeRegex } from '../utils/validation';
 
+// Simple in-memory cache (use Redis in production)
+const seatCache = new Map<string, { data: any; timestamp: number }>();
+const CACHE_TTL = 5 * 60 * 1000; // 5 minutes
+
 /**
- * @desc Get all active seats with current status
+ * Get cached data or fetch from DB
+ */
+const getCachedData = async (key: string, fetchFn: () => Promise<any>) => {
+  const cached = seatCache.get(key);
+  const now = Date.now();
+
+  if (cached && now - cached.timestamp < CACHE_TTL) {
+    return cached.data;
+  }
+
+  const data = await fetchFn();
+  seatCache.set(key, { data, timestamp: now });
+  return data;
+};
+
+/**
+ * @desc Get all active seats with caching
  * @route GET /api/seat
+ *
+ * Caching strategy:
+ * - Data cached for 5 minutes
+ * - Reduces database load
+ * - Prevents real-time scraping
+ * - Users see fresh data every 5 minutes
  */
 export const getAllSeats = async (req: Request, res: Response) => {
   try {
-    const seats = await Seat.find({ isDeleted: false, isActive: true });
+    const cacheKey = 'all_seats';
+
+    const seats = await getCachedData(cacheKey, async () => {
+      return await Seat.find({ isDeleted: false, isActive: true }).lean();
+    });
+
     res.status(200).json(seats);
   } catch (error) {
     res.status(500).json({ message: "Error fetching seats", error });
