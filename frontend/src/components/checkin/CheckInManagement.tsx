@@ -39,7 +39,7 @@ export const CheckInManagement: React.FC = () => {
       setActiveCheckIns(data)
     } catch (error) {
       let errorMessage = "Error loading check-ins. Please try again."
-      const err = error as any
+      const err = error as unknown as { response?: { status: number }; message?: string }
 
       if (err.response?.status === 401) {
         errorMessage = "Session expired. Please log in again."
@@ -73,7 +73,8 @@ export const CheckInManagement: React.FC = () => {
     return () => {
       if (interval) clearInterval(interval)
     }
-  }, [filterType, filterStatus, showToast])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [filterType, filterStatus])
 
   // Handle check-out
   const handleCheckOut = async (checkInId: string) => {
@@ -87,7 +88,7 @@ export const CheckInManagement: React.FC = () => {
       fetchActiveCheckIns()
     } catch (error) {
       let errorMessage = "Error during check-out. Please try again."
-      const err = error as any
+      const err = error as unknown as { response?: { status: number; data?: { message?: string } }; message?: string }
 
       if (err.response?.status === 404) {
         errorMessage = "Check-in record not found. It may have already been checked out."
