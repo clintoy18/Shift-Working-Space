@@ -4,9 +4,11 @@ import GuestRoute from "./components/routing/GuestRoute";
 import LandingPage from "./pages/LandingPage";
 import { BrowserRouter as Router, Route, Routes } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
-import { ToastProvider } from "./context/ToastContext"; 
+import { ToastProvider } from "./context/ToastContext";
 import LoginPage from "./components/auth/LoginPage";
 import RegisterPage from "./components/auth/RegisterPage";
+import CheckInForm from "./components/checkin/CheckInForm";
+import CheckInManagement from "./components/checkin/CheckInManagement";
 
 export default function App() {
   return (
@@ -21,6 +23,8 @@ export default function App() {
             </Route>
             <Route element={<ProtectedRoute />}>
               <Route path="/dashboard" element={<DashboardLayout />} />
+              <Route path="/checkin" element={<CheckInForm />} />
+              <Route path="/checkin/management" element={<CheckInManagement />} />
             </Route>
           </Routes>
         </Router>
