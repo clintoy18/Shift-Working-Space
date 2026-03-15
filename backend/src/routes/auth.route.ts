@@ -7,7 +7,7 @@ const router = express.Router();
 
 // Apply rate limiting to authentication endpoints
 router.post("/register", authLimiter ,register);
-router.post("/login", authLimiter, login);
+router.post("/login",  login);
 
 // Apply general API rate limiting to authenticated endpoints
 router.get("/me", authenticate, apiLimiter, getMe);
