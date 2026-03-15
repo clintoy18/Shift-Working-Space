@@ -15,12 +15,16 @@ export interface IUser extends Document {
   termsAccepted: boolean;
   privacyPolicyAccepted: boolean;
   agreementAcceptedAt?: Date;
+  // OAuth fields
+  googleId?: string;
+  googleEmail?: string;
+  authProvider: "email" | "google";
 }
 
 const UserSchema: Schema = new Schema(
   {
     email: { type: String, required: true, unique: true, maxlength: 150 },
-    password: { type: String, required: true },
+    password: { type: String },
     firstName: { type: String, required: true },
     middleName: { type: String },
     lastName: { type: String, required: true },
@@ -37,6 +41,14 @@ const UserSchema: Schema = new Schema(
     termsAccepted: { type: Boolean, required: true, default: false },
     privacyPolicyAccepted: { type: Boolean, required: true, default: false },
     agreementAcceptedAt: { type: Date },
+    // OAuth fields
+    googleId: { type: String, sparse: true },
+    googleEmail: { type: String, sparse: true },
+    authProvider: { 
+      type: String, 
+      enum: ["email", "google"], 
+      default: "email" 
+    },
   },
   { 
     timestamps: true,

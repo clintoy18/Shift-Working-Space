@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { GoogleLogin } from "@react-oauth/google";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
@@ -7,15 +8,21 @@ import { useNavigate } from "react-router-dom";
 import Loader from "@/components/ui/loader";
 import PasswordInput from "./PasswordInput";
 
-const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
-  // ✅ Changed state name to match backend expectation
+interface LoginFormProps {
+  onLogin: (credentials: { email: string; password: string }) => void;
+  isLoading?: boolean;
+  error?: string | null;
+  onGoogleLogin: (idToken: string) => Promise<void>;
+}
+
+const LoginForm = ({ onLogin, isLoading = false, error = null, onGoogleLogin }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [googleLoading, setGoogleLoading] = useState(false);
   const navigate = useNavigate();
 
-  const handleSubmit = (e) => {
+  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    // ✅ Now passes { email, password } directly
     onLogin({ email, password });
   };
 
@@ -79,7 +86,7 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
 
           <Button
             type="submit"
-            disabled={isLoading}
+            disabled={isLoading || googleLoading}
             className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-6 text-base transition-all active:scale-[0.98] shadow-lg shadow-primary/20"
           >
             {isLoading ? (
@@ -92,6 +99,37 @@ const LoginForm = ({ onLogin, isLoading = false, error = null }) => {
             )}
           </Button>
         </form>
+
+        {/* Divider */}
+        <div className="mt-8 flex items-center gap-3">
+          <div className="flex-1 h-px bg-muted"></div>
+          <span className="text-xs text-muted-foreground font-medium">Or continue with</span>
+          <div className="flex-1 h-px bg-muted"></div>
+        </div>
+
+        {/* Google Sign-In Button */}
+        <div className="flex justify-center mt-4">
+          <GoogleLogin
+            onSuccess={async (credentialResponse) => {
+              try {
+                setGoogleLoading(true);
+                if (credentialResponse.credential) {
+                  await onGoogleLogin(credentialResponse.credential);
+                }
+              } catch (err) {
+                console.error("Google login error:", err);
+              } finally {
+                setGoogleLoading(false);
+              }
+            }}
+            onError={() => {
+              console.error("Google login failed");
+            }}
+            text="signin_with"
+            size="large"
+            width="100"
+          />
+        </div>
 
         <div className="mt-8 pt-6 border-t border-muted">
           <button

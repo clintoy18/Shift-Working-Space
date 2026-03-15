@@ -4,12 +4,23 @@ import AuthLayout from "../../pages/AuthLayout";
 import LoginForm from "../../components/auth/LoginForm";
 import { useAuth } from "../../context/AuthContext";
 import { useToast } from "../../context/ToastContext";
+import { handleGoogleLogin } from "../../services/GoogleOAuthService";
 import type { ILoginRequest } from "@interfaces";
+
+interface ErrorResponse {
+  response?: {
+    data?: {
+      message?: string;
+    };
+    status?: number;
+  };
+  message?: string;
+}
 
 const LoginPage: React.FC = () => {
   const { success, error, warning } = useToast();
   const navigate = useNavigate();
-  const { handleLogin } = useAuth();
+  const { handleLogin, handleFetchUser } = useAuth();
   const [isLoading, setIsLoading] = React.useState(false);
 
   const onLogin = async (credentials: ILoginRequest) => {
@@ -19,11 +30,12 @@ const LoginPage: React.FC = () => {
       await handleLogin(credentials);
       success("Welcome back to Shift");
       navigate("/dashboard", { replace: true });
-    } catch (err: any) {
+    } catch (err: unknown) {
+      const errorObj = err as ErrorResponse;
       // Pull the specific error from backend if it exists
       const errorMessage =
-        err.response?.data?.message || "Invalid email or password.";
-      const status = err.response?.status;
+        errorObj.response?.data?.message || "Invalid email or password.";
+      const status = errorObj.response?.status;
 
       // Display warning for rate limit (429) instead of error
       if (status === 429) {
@@ -36,9 +48,40 @@ const LoginPage: React.FC = () => {
     }
   };
 
+  const onGoogleLogin = async (accessToken: string) => {
+    setIsLoading(true);
+    try {
+      // Send access token to backend for verification
+      await handleGoogleLogin(accessToken);
+      
+      // Fetch user data to populate context
+      await handleFetchUser();
+      
+      success("Welcome back to Shift");
+      navigate("/dashboard", { replace: true });
+    } catch (err: unknown) {
+      const errorObj = err as ErrorResponse;
+      const errorMessage =
+        errorObj.message || "Google login failed. Please try again.";
+      const status = errorObj.response?.status;
+
+      if (status === 429) {
+        warning(errorMessage);
+      } else {
+        error(errorMessage);
+      }
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
   return (
     <AuthLayout>
-      <LoginForm onLogin={onLogin} isLoading={isLoading} />
+      <LoginForm 
+        onLogin={onLogin} 
+        isLoading={isLoading}
+        onGoogleLogin={onGoogleLogin}
+      />
     </AuthLayout>
   );
 };
