@@ -85,7 +85,7 @@ export const checkIn = async (req: Request, res: Response) => {
 
       return res.status(409).json({
         message: `Seat is currently occupied. ${identifier} is still checked in.`,
-        existingCheckInId: existingCheckIn._id.toString(),
+        existingCheckInId: (existingCheckIn._id as any).toString(),
         existingCheckInType: existingCheckIn.checkInType,
         checkInTime: existingCheckIn.checkInTime,
         status: existingCheckIn.status,
@@ -103,7 +103,7 @@ export const checkIn = async (req: Request, res: Response) => {
       if (userActiveCheckIn) {
         return res.status(409).json({
           message: `User already has an active check-in on seat ${userActiveCheckIn.seat}. Please check out first before checking in again.`,
-          existingCheckInId: userActiveCheckIn._id.toString(),
+          existingCheckInId: (userActiveCheckIn._id as any).toString(),
           existingCheckInType: "registered",
           checkInTime: userActiveCheckIn.checkInTime,
           status: userActiveCheckIn.status,
@@ -187,7 +187,7 @@ export const checkIn = async (req: Request, res: Response) => {
     if (checkInType === "guest") {
       const guestRecord = await Guest.findOne({ guestId });
       if (guestRecord) {
-        guestObjectId = guestRecord._id.toString();
+        guestObjectId = (guestRecord._id as any).toString();
       }
     }
 
@@ -215,12 +215,12 @@ export const checkIn = async (req: Request, res: Response) => {
 
     // Return response
     res.status(201).json({
-      id: checkInRecord._id.toString(),
+      id: (checkInRecord._id as any).toString(),
       checkInType,
       guestId: guestId || undefined,
       userId: userId_ || undefined,
       userName: userName || undefined,
-      seatId: seat._id.toString(),
+      seatId: (seat._id as any).toString(),
       seatCode: seat.seatCode,
       seatLabel: seat.displayLabel,
       checkInTime: checkInRecord.checkInTime,
@@ -293,7 +293,7 @@ export const checkOut = async (req: Request, res: Response) => {
     await seat.save();
 
     res.status(200).json({
-      id: checkInRecord._id.toString(),
+      id: (checkInRecord._id as any).toString(),
       checkOutTime,
       durationMinutes,
       allocatedDurationMinutes: checkInRecord.allocatedDurationMinutes,
@@ -579,7 +579,7 @@ export const extendCheckIn = async (req: Request, res: Response) => {
     await Seat.findByIdAndUpdate(checkInRecord.seat, { status: "occupied" });
 
     res.status(200).json({
-      id: checkInRecord._id.toString(),
+      id: (checkInRecord._id as any).toString(),
       newAllocatedDuration: checkInRecord.allocatedDurationMinutes,
       newWarningTime: checkInRecord.allocatedDurationMinutes - checkInRecord.warningThresholdMinutes,
       extensionRecord: checkInRecord.extensionHistory[checkInRecord.extensionHistory.length - 1],
@@ -632,7 +632,7 @@ export const applyPenalty = async (req: Request, res: Response) => {
     );
 
     res.status(200).json({
-      id: checkInRecord._id.toString(),
+      id: (checkInRecord._id as any).toString(),
       totalPenalties,
       penaltyRecord: checkInRecord.penaltyCharges[checkInRecord.penaltyCharges.length - 1],
     });
