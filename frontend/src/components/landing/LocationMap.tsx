@@ -18,6 +18,8 @@ const LocationMap = () => {
     window.open(location.googleMapsUrl, '_blank');
   };
 
+  const normalizedPhoneHref = `tel:${location.phone.replace(/[^0-9+]/g, "")}`;
+
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-slate-50" id="location">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -88,7 +90,7 @@ const LocationMap = () => {
                   </div>
                   <div>
                     <p className="text-xs text-slate-500 uppercase font-semibold tracking-wider">Phone</p>
-                    <a href={`tel:${location.phone}`} className="text-slate-900 font-semibold hover:text-orange-600 transition-colors">
+                    <a href={normalizedPhoneHref} className="text-slate-900 font-semibold hover:text-orange-600 transition-colors">
                       {location.phone}
                     </a>
                   </div>
