@@ -13,9 +13,10 @@ interface LoginFormProps {
   isLoading?: boolean;
   error?: string | null;
   onGoogleLogin: (idToken: string) => Promise<void>;
+  googleClientId?: string | null;
 }
 
-const LoginForm = ({ onLogin, isLoading = false, error = null, onGoogleLogin }: LoginFormProps) => {
+const LoginForm = ({ onLogin, isLoading = false, error = null, onGoogleLogin, googleClientId }: LoginFormProps) => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [googleLoading, setGoogleLoading] = useState(false);
@@ -109,26 +110,32 @@ const LoginForm = ({ onLogin, isLoading = false, error = null, onGoogleLogin }: 
 
         {/* Google Sign-In Button */}
         <div className="flex justify-center mt-4">
-          <GoogleLogin
-            onSuccess={async (credentialResponse) => {
-              try {
-                setGoogleLoading(true);
-                if (credentialResponse.credential) {
-                  await onGoogleLogin(credentialResponse.credential);
+          {googleClientId ? (
+            <GoogleLogin
+              onSuccess={async (credentialResponse) => {
+                try {
+                  setGoogleLoading(true);
+                  if (credentialResponse.credential) {
+                    await onGoogleLogin(credentialResponse.credential);
+                  }
+                } catch (err) {
+                  console.error("Google login error:", err);
+                } finally {
+                  setGoogleLoading(false);
                 }
-              } catch (err) {
-                console.error("Google login error:", err);
-              } finally {
-                setGoogleLoading(false);
-              }
-            }}
-            onError={() => {
-              console.error("Google login failed");
-            }}
-            text="signin_with"
-            size="large"
-            width="100"
-          />
+              }}
+              onError={() => {
+                console.error("Google login failed");
+              }}
+              text="signin_with"
+              size="large"
+              width="100"
+            />
+          ) : (
+            <div className="text-sm text-slate-500 bg-slate-100 border border-slate-200 rounded-lg px-4 py-2">
+              Google Sign-in not configured. Use email/password login.
+            </div>
+          )}
         </div>
 
         <div className="mt-8 pt-6 border-t border-muted">

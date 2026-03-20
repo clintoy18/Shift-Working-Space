@@ -3,7 +3,7 @@ import { GoogleOAuthProvider } from '@react-oauth/google'
 import App from './App.tsx'
 
 export function MainApp() {
-  const [clientId, setClientId] = useState<string>('')
+  const [clientId, setClientId] = useState<string | null>(null)
   const [loading, setLoading] = useState(true)
 
   useEffect(() => {
@@ -13,9 +13,11 @@ export function MainApp() {
         const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:5000/api'
         const response = await fetch(`${apiUrl}/auth/google/config`)
         const data = await response.json()
-        setClientId(data.clientId)
+        // if response clientId missing, keep as null
+        setClientId(data?.clientId || null)
       } catch (error) {
         console.error('Failed to fetch Google Client ID:', error)
+        setClientId(null)
       } finally {
         setLoading(false)
       }
@@ -25,16 +27,18 @@ export function MainApp() {
   }, [])
 
   if (loading) {
-    return <div className="flex items-center justify-center h-screen">Loading...</div>
+    // Render app immediately with fallback and avoid a full-screen loading lock
+    return <App googleClientId={null} />
   }
 
-  if (!clientId) {
-    return <div className="flex items-center justify-center h-screen">Error: Could not load Google OAuth configuration</div>
+  if (clientId) {
+    return (
+      <GoogleOAuthProvider clientId={clientId}>
+        <App googleClientId={clientId} />
+      </GoogleOAuthProvider>
+    )
   }
 
-  return (
-    <GoogleOAuthProvider clientId={clientId}>
-      <App />
-    </GoogleOAuthProvider>
-  )
+  // Load app without Google provider when not configured
+  return <App googleClientId={null} />
 }

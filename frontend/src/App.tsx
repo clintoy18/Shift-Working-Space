@@ -10,7 +10,11 @@ import RegisterPage from "./components/auth/RegisterPage";
 import CheckInForm from "./components/checkin/CheckInForm";
 import CheckInManagement from "./components/checkin/CheckInManagement";
 
-export default function App() {
+interface AppProps {
+  googleClientId?: string | null;
+}
+
+export default function App({ googleClientId }: AppProps) {
   return (
     <ToastProvider> 
       <AuthProvider>
@@ -18,7 +22,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<LandingPage />} />
             <Route element={<GuestRoute />}>
-              <Route path="/login" element={<LoginPage />} />
+              <Route path="/login" element={<LoginPage googleClientId={googleClientId} />} />
               <Route path="/register" element={<RegisterPage />} />
             </Route>
             <Route element={<ProtectedRoute />}>

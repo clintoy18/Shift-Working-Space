@@ -17,7 +17,11 @@ interface ErrorResponse {
   message?: string;
 }
 
-const LoginPage: React.FC = () => {
+interface LoginPageProps {
+  googleClientId?: string | null;
+}
+
+const LoginPage: React.FC<LoginPageProps> = ({ googleClientId = null }) => {
   const { success, error, warning } = useToast();
   const navigate = useNavigate();
   const { handleLogin, handleFetchUser } = useAuth();
@@ -81,6 +85,7 @@ const LoginPage: React.FC = () => {
         onLogin={onLogin} 
         isLoading={isLoading}
         onGoogleLogin={onGoogleLogin}
+        googleClientId={googleClientId}
       />
     </AuthLayout>
   );
