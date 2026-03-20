@@ -18,7 +18,33 @@ const LocationMap = () => {
     window.open(location.googleMapsUrl, '_blank');
   };
 
-  const normalizedPhoneHref = `tel:${location.phone.replace(/[^0-9+]/g, "")}`;
+  const formatTelephoneLink = (rawPhone: string): string => {
+    const cleaned = rawPhone.replace(/[^0-9+]/g, "");
+
+    if (cleaned.startsWith("+")) {
+      if (cleaned.startsWith("+0")) {
+        const local = cleaned.replace("+0", "");
+        return `tel:+63${local}`;
+      }
+      return `tel:${cleaned}`;
+    }
+
+    if (cleaned.startsWith("0")) {
+      return `tel:+63${cleaned.slice(1)}`;
+    }
+
+    if (cleaned.startsWith("63")) {
+      return `tel:+${cleaned}`;
+    }
+
+    if (cleaned.startsWith("9")) {
+      return `tel:+63${cleaned}`;
+    }
+
+    return `tel:${cleaned}`;
+  };
+
+  const normalizedPhoneHref = formatTelephoneLink(location.phone);
 
   return (
     <section className="py-16 sm:py-20 lg:py-24 bg-slate-50" id="location">
