@@ -19,6 +19,7 @@ const Pricing = () => {
   const regularSeats = [
     {
       name: "Nomad",
+      from: "160",
       price: "145",
       period: "first 2 hrs",
       description: "₱60 succeeding hours",
@@ -27,6 +28,7 @@ const Pricing = () => {
     },
     {
       name: "Quick Shift",
+      from: "270",
       price: "250",
       period: "4 hours",
       description: "₱60 succeeding hour",
@@ -36,6 +38,7 @@ const Pricing = () => {
     },
     {
       name: "Pro (Day Pass)",
+      from: "480",
       price: "450",
       period: "8 hours",
       description: "₱60 succeeding hour",
@@ -159,6 +162,9 @@ const Pricing = () => {
                     : "border-border hover:border-primary/50"
                 }`}
               >
+                <div className="absolute top-3 left-3 text-red-600 font-black text-xs uppercase tracking-wider">
+                  FROM: ₱{plan.from}
+                </div>
                 {plan.highlighted && (
                   <div className="absolute -top-4 left-1/2 -translate-x-1/2 bg-primary text-white px-4 py-1 text-xs font-bold rounded-full flex items-center gap-1 uppercase">
                     <Zap className="w-3 h-3" /> Most Popular
