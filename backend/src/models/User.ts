@@ -8,7 +8,11 @@ export interface IUser extends Document {
   lastName: string;
   fullName: string;
   role: "shifty" | "cashier" | "admin";
-  membershipType: string;
+  membershipType: {
+  type: String,
+  enum: ["None", "Regular", "Weekly", "Monthly", "Premium", "Platinum"],
+  default: "None",
+  },
   membershipStatus: string;
   isVerified: boolean;
   isDeleted: boolean;
@@ -34,8 +38,12 @@ const UserSchema: Schema = new Schema(
       enum: ["shifty", "cashier", "admin"],
       default: "shifty",
     },
-    membershipType: { type: String, default: "None" },
-    membershipStatus: { type: String, default: "Inactive" },
+  membershipType: {
+    type: String,
+    enum: ["None", "Regular", "Weekly", "Monthly", "Premium", "Platinum"],
+    default: "None",
+    },    
+  membershipStatus: { type: String, default: "Inactive" },
     isVerified: { type: Boolean, default: false },
     isDeleted: { type: Boolean, default: false },
     termsAccepted: { type: Boolean, required: true, default: false },
