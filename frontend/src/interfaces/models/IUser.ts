@@ -1,8 +1,7 @@
 import type { Role } from 'utils/roleUtils';
 
 // Keep these as they match your enum
-export type MembershipType = 'None' | 'Regular' | 'Weekly' | 'Monthly';
-export type MembershipStatus = 'Active' | 'Inactive' | 'Expired' | 'Suspended';
+export type MembershipType = "None" | "Regular" | "Weekly" | "Monthly" | "Premium" | "Platinum";export type MembershipStatus = 'Active' | 'Inactive' | 'Expired' | 'Suspended';
 
 export interface IUser {
     id: string;                // From ret.id = ret._id.toString()

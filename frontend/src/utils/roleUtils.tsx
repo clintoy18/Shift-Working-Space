@@ -1,9 +1,11 @@
 import Profile from '../components/dashboard/Profile';
+import Report from '../components/dashboard/report/Report';
 import AdminOverView from '../components/dashboard/admin/AdminOverview';
 import UserTable from '../components/dashboard/user-management/Table';
 import { CustomerDashboard } from "../components/dashboard/customer/CustomerDashboard";
 import CheckInForm from '../components/checkin/CheckInForm';
 import CheckInManagement from '../components/checkin/CheckInManagement';
+import Membership from '../components/dashboard/admin/Membership';
 
 // ✅ 1. Match your Node.js backend lowercase strings
 export type Role = 'shifty' | 'cashier' | 'admin';
@@ -25,9 +27,14 @@ export const cashierTabs = [
   { label: "Profile", content: <Profile /> },
 ];
 
+import PromoManagement from '../components/dashboard/admin/PromoManagement';
+
 export const adminTabs = [
   { label: "Overview", content: <AdminOverView /> },
   { label: "Users", content: <UserTable /> },
+  { label: "Membership", content: <Membership /> },
+  { label: "Promo", content: <PromoManagement /> },
+  { label: "Sales Report", content: <Report /> },
   { label: "Profile", content: <Profile /> },
 ];
 

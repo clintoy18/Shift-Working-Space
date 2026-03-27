@@ -10,6 +10,7 @@ export interface ICheckIn extends Document {
   checkOutTime?: Date;
   durationMinutes?: number;
   processedBy: string;
+  cashier?: mongoose.Types.ObjectId; // FK to User (cashier)
   paymentStatus: "pending" | "paid" | "refunded";
   paymentAmount: number;
   allocatedDurationMinutes: number;
@@ -48,6 +49,7 @@ const CheckInSchema = new Schema(
     checkOutTime: { type: Date },
     durationMinutes: { type: Number },
     processedBy: { type: String, required: true },
+    cashier: { type: Schema.Types.ObjectId, ref: "User" },
     paymentStatus: {
       type: String,
       enum: ["pending", "paid", "refunded"],

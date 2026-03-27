@@ -6,6 +6,7 @@ import cors from "cors";
 import authRoutes from "./routes/auth.route";
 import adminRoutes from "./routes/admin.route";
 import seatRoutes from "./routes/seat.routes";
+import promoRoutes from "./routes/promo.route";
 import publicRoutes from "./routes/public.route";
 import checkInRoutes from "./routes/checkin.routes";
 import { connectDB } from "./config/db";
@@ -33,6 +34,7 @@ app.use("/api/public", publicRoutes); // Public endpoints (no auth required)
 app.use("/api/auth", authRoutes);   // Handles login/register/validate and Google OAuth
 app.use("/api/admin", adminRoutes); // Handles user management/dashboard
 app.use("/api/seat", seatRoutes ); // Handles seat management
+app.use("/api/promo", promoRoutes); // Handles promo management
 app.use("/api/checkin", checkInRoutes); // Handles check-in/check-out
 
 // --- Honeypot Endpoints (catch aggressive scrapers) ---

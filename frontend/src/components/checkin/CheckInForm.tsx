@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -8,6 +8,7 @@ import CheckInService from "@/services/CheckInService"
 import { seatService } from "@/services/SeatService"
 import { fetchAllUsersAdmin } from "@/services/AdminService"
 import { useToast } from "@/context/ToastContext"
+import { AuthContext } from "@/context/AuthContext"
 import {
   getPricingForSeatType,
   formatPrice,
@@ -35,10 +36,13 @@ interface CheckInFormProps {
  * Supports both guest and registered user check-ins
  * Organized into 5 steps with progress indicator
  */
-export const CheckInForm: React.FC<CheckInFormProps> = ({
+
+
+const CheckInForm: React.FC<CheckInFormProps> = ({
   onSuccess,
   processedBy = "System",
 }) => {
+  const { user } = useContext(AuthContext) || {};
   const { showToast } = useToast()
 
   // Wizard state
@@ -207,11 +211,7 @@ export const CheckInForm: React.FC<CheckInFormProps> = ({
         seatId: String(seatOfType._id || seatOfType.id || seatOfType.seatId || ""),
         pricingOptionId: pricingIndex,
         paymentStatus,
-        processedBy,
-        ...(checkInType === "guest" && {
-          email: email || undefined,
-          phoneNumber: phoneNumber || undefined,
-        }),
+        processedBy: user?.fullName || processedBy || "System",
         ...(checkInType === "registered" && {
           userId: selectedUser?.id,
         }),

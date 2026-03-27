@@ -11,7 +11,7 @@ export interface ICheckInRequest {
   userId?: string; // Required if checkInType is 'registered'
   email?: string; // Optional for guest receipts
   phoneNumber?: string; // Optional for guest follow-up
-  processedBy?: string; // Cashier name/ID
+  processedBy?: string; // Name of the person who processed the check-in
 }
 
 export interface ICheckOutRequest {

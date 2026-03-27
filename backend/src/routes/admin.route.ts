@@ -8,6 +8,7 @@ import {
   getUsersByRole,
   getRecentUsers,
   getDashboardStats,
+  getSalesReport,
 } from "../controllers/admin.controller";
 import { authenticate, checkRole } from "../middleware/auth.middleware";
 import { apiLimiter } from "../middleware/rateLimiter.middleware";
@@ -30,6 +31,7 @@ router.delete("/user/delete/:userId", ...adminOnly, deleteUser);
 router.get   ("/user/recent",         ...adminOrCashier, getRecentUsers);
 router.get   ("/user/:userId",        ...adminOrCashier, getUser);
 router.get   ("/user",                ...adminOrCashier, getAllUsers);
+router.get("/reports/sales",          ...adminOnly, getSalesReport);
 
 // ─── Filters & Stats ──────────────────────────────────────────────────────────
 // Admin or Cashier - Get users by role (for check-in purposes)
